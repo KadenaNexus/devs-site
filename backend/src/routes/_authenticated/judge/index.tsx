@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { getAssignedChallenges } from '@/services/judges'
 import { Card } from '@/components/ui/card'
+import { getAssignedChallenges } from '@/services/judges'
 
 export const Route = createFileRoute('/_authenticated/judge/')({
   component: JudgeDashboard,

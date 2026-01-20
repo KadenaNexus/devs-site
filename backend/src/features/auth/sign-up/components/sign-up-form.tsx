@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+import { IconFacebook, IconGithub, IconGoogle } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { signInWithGoogle, signUpWithEmail } from '@/services/auth'
+import { toast } from 'sonner'
 
 const formSchema = z
   .object({
@@ -48,15 +50,24 @@ export function SignUpForm({
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+ async function onSubmit(data: z.infer<typeof formSchema>) {
+  try {
     setIsLoading(true)
-    // eslint-disable-next-line no-console
-    console.log(data)
 
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
+    await signUpWithEmail({
+      email: data.email,
+      password: data.password,
+      role: 'public', // ✅ dynamic
+    })
+
+    toast.success('Account created! Check your email to confirm.')
+  } catch (error: any) {
+    toast.error(error.message ?? 'Signup failed')
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   return (
     <Form {...form}>
@@ -119,24 +130,16 @@ export function SignUpForm({
           </div>
         </div>
 
-        <div className='grid grid-cols-2 gap-2'>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
-            <IconGithub className='h-4 w-4' /> GitHub
-          </Button>
-          <Button
-            variant='outline'
-            className='w-full'
-            type='button'
-            disabled={isLoading}
-          >
-            <IconFacebook className='h-4 w-4' /> Facebook
-          </Button>
-        </div>
+        <Button
+          type='button'
+          variant='outline'
+          onClick={() => signInWithGoogle('public')}
+          disabled={isLoading}
+          className='flex items-center gap-2'
+        >
+          <IconGoogle className='h-4 w-4' />
+          Continue with Google
+        </Button>
       </form>
     </Form>
   )

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+import { IconGoogle } from '@/assets/brand-icons'
 import { useAuthStore } from '@/stores/auth-store'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { signInWithEmail } from '@/services/auth'
 
 const formSchema = z.object({
   email: z.email({
@@ -51,36 +52,47 @@ export function UserAuthForm({
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  /**
+ * @param {{ email: string; password: string }} data
+ */
+async function onSubmit(data: { email: any; password: any }) {
+  try {
     setIsLoading(true)
 
-    // Mock successful authentication
-    const mockUser = {
-      accountNo: 'ACC001',
+    const result = await signInWithEmail({
       email: data.email,
-      role: ['user'],
-      exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+      password: data.password,
+    })
+
+    if (!result.user.email) {
+      throw new Error('User email not found')
     }
 
-    toast.promise(sleep(2000), {
-      loading: 'Signing in...',
-      success: () => {
-        setIsLoading(false)
-
-        // Set user and access token
-        auth.setUser(mockUser)
-        auth.setAccessToken('mock-access-token')
-
-        // Redirect to the stored location or default to dashboard
-        const targetPath = redirectTo || '/'
-        navigate({ to: targetPath, replace: true })
-
-        return `Welcome back, ${data.email}!`
-      },
-      error: 'Error',
+    auth.setUser({
+      id: result.user.id,
+      email: result.user.email,
+      role: result.role,
     })
-  }
 
+    auth.setAccessToken(result.accessToken)
+
+    toast.success(`Welcome back, ${result.user.email}`)
+
+    navigate({
+      to: redirectTo || '/',
+      replace: true,
+    })
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Invalid email or password'
+
+    toast.error(message)
+  } finally {
+    setIsLoading(false)
+  }
+}
   return (
     <Form {...form}>
       <form
@@ -138,10 +150,7 @@ export function UserAuthForm({
 
         <div className='grid grid-cols-2 gap-2'>
           <Button variant='outline' type='button' disabled={isLoading}>
-            <IconGithub className='h-4 w-4' /> GitHub
-          </Button>
-          <Button variant='outline' type='button' disabled={isLoading}>
-            <IconFacebook className='h-4 w-4' /> Facebook
+            <IconGoogle className='h-4 w-4' /> Google
           </Button>
         </div>
       </form>

@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
@@ -9,8 +9,12 @@ import {
 } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
 import { SignUpForm } from './components/sign-up-form'
+import { JudgesSignUpForm } from './components/judges-sign-up-form'
 
 export function SignUp() {
+  const location = useLocation()
+
+  const isJudgesSignup = location.pathname === '/judges-sign-up'
   return (
     <AuthLayout>
       <Card className='gap-4'>
@@ -30,7 +34,7 @@ export function SignUp() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SignUpForm />
+          {isJudgesSignup ? <JudgesSignUpForm /> : <SignUpForm />}
         </CardContent>
         <CardFooter>
           <p className='text-muted-foreground px-8 text-center text-sm'>

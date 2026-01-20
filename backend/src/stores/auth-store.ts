@@ -3,49 +3,70 @@ import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
 
 const ACCESS_TOKEN = 'thisisjustarandomstring'
 
-interface AuthUser {
-  accountNo: string
-  email: string
-  role: string[]
-  exp: number
+export interface AuthUser {
+  userId: string | null
+  email: string | null
+  role: string | null
 }
 
 interface AuthState {
   auth: {
     user: AuthUser | null
-    setUser: (user: AuthUser | null) => void
     accessToken: string
+    setUser: (user: AuthUser | null) => void
     setAccessToken: (accessToken: string) => void
     resetAccessToken: () => void
     reset: () => void
   }
 }
 
-export const useAuthStore = create<AuthState>()((set) => {
+export const useAuthStore = create<AuthState>((set) => {
   const cookieState = getCookie(ACCESS_TOKEN)
   const initToken = cookieState ? JSON.parse(cookieState) : ''
+
   return {
     auth: {
       user: null,
-      setUser: (user) =>
-        set((state) => ({ ...state, auth: { ...state.auth, user } })),
       accessToken: initToken,
-      setAccessToken: (accessToken) =>
+      setUser: (user: AuthUser | null) =>
+        set((state) => ({
+          auth: {
+            ...state.auth,
+            user,
+          },
+        })),
+      setAccessToken: (accessToken: string) =>
         set((state) => {
           setCookie(ACCESS_TOKEN, JSON.stringify(accessToken))
-          return { ...state, auth: { ...state.auth, accessToken } }
+          return {
+            auth: {
+              ...state.auth,
+              accessToken,
+            },
+          }
         }),
       resetAccessToken: () =>
         set((state) => {
           removeCookie(ACCESS_TOKEN)
-          return { ...state, auth: { ...state.auth, accessToken: '' } }
+          return {
+            auth: {
+              ...state.auth,
+              accessToken: '',
+            },
+          }
         }),
       reset: () =>
-        set((state) => {
+        set(() => {
           removeCookie(ACCESS_TOKEN)
           return {
-            ...state,
-            auth: { ...state.auth, user: null, accessToken: '' },
+            auth: {
+              user: null,
+              accessToken: '',
+              setUser: () => {},
+              setAccessToken: () => {},
+              resetAccessToken: () => {},
+              reset: () => {},
+            },
           }
         }),
     },
