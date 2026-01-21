@@ -1,12 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 import { upsertScore } from '@/services/judges'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export const Route = createFileRoute(
-  '/_authenticated/judge/score/$id'
-)({
+export const Route = createFileRoute('/_authenticated/judge/score/$id')({
   component: ScoreSubmission,
 })
 
@@ -32,15 +30,15 @@ function ScoreSubmission() {
   }
 
   return (
-    <div className="space-y-4 max-w-md">
-      <h1 className="text-xl font-semibold">Score Submission</h1>
+    <div className='max-w-md space-y-4'>
+      <h1 className='text-xl font-semibold'>Score Submission</h1>
 
       {Object.keys(score).map(
         (k) =>
           k !== 'notes' && (
             <Input
               key={k}
-              type="number"
+              type='number'
               placeholder={k}
               onChange={(e) =>
                 setScore({ ...score, [k]: Number(e.target.value) })

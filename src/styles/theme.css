@@ -32,6 +32,21 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
+
+  --frontend-primary: oklch(0.73 0.17 162);
+  --frontend-primary-foreground: oklch(0.98 0.01 160);
+
+  --frontend-secondary: oklch(0.67 0.15 162);
+  --frontend-secondary-foreground: oklch(0.98 0.01 160);
+
+  --frontend-accent: oklch(0.58 0.14 162);
+  --frontend-accent-foreground: oklch(0.98 0.01 160);
+
+  --frontend-background: oklch(0.22 0.04 160);
+  --frontend-foreground: oklch(0.96 0.01 160);
+
+  --frontend-btn-hover: oklch(0.44 0.1 163.73);
+  --frontend-btn-foreground: oklch(0.98 0.01 160);
 }
 
 .dark {

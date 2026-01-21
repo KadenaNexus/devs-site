@@ -1,4 +1,6 @@
-import { useSearch } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { persistUserRole } from '@/services/auth'
 import {
   Card,
   CardContent,
@@ -12,6 +14,23 @@ import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn() {
   const { redirect } = useSearch({ from: '/(auth)/sign-in' })
+  const search = useSearch({ from: '/(auth)/sign-in' })
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!search.role) return
+
+    async function handleOAuthRole() {
+      await persistUserRole(search.role)
+
+      navigate({
+        to: search.role === 'judge' ? '/judge' : '/dashboard',
+        replace: true,
+      })
+    }
+
+    handleOAuthRole()
+  }, [search.role])
 
   return (
     <AuthLayout>

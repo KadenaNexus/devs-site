@@ -1,5 +1,4 @@
-import { supabase } from "./supabase"
-
+import { supabase } from './supabase'
 
 export type UserRole = 'public' | 'judge' | 'admin'
 
@@ -9,14 +8,14 @@ type SignUpInput = {
   role: UserRole
 }
 
+interface SignInWithEmailParams {
+  email: string
+  password: string
+}
 /* ----------------------------------
    Email + Password Sign Up
 ---------------------------------- */
-export async function signUpWithEmail({
-  email,
-  password,
-  role,
-}: SignUpInput) {
+export async function signUpWithEmail({ email, password, role }: SignUpInput) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -33,12 +32,14 @@ export async function signUpWithEmail({
    Google OAuth Sign In / Sign Up
 ---------------------------------- */
 export async function signInWithGoogle(role: UserRole) {
+  const redirectPath =
+    role === 'judge' ? '/sign-in?role=judge' : '/sign-in?role=public'
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/login`,
+      redirectTo: `${window.location.origin}${redirectPath}`,
       queryParams: {
-        role, // ✅ dynamic role
         access_type: 'offline',
         prompt: 'consent',
       },
@@ -48,8 +49,23 @@ export async function signInWithGoogle(role: UserRole) {
   if (error) throw error
   return data
 }
+export async function persistUserRole(role: UserRole) {
+  const { data } = await supabase.auth.getUser()
+  const user = data?.user
+  if (!user) return
 
-export async function signInWithEmail({ email, password }) {
+  // Prevent overwrite
+  if (user.user_metadata?.role) return
+
+  await supabase.auth.updateUser({
+    data: { role }, // ✅ THIS goes into raw_user_meta_data
+  })
+}
+
+export async function signInWithEmail({
+  email,
+  password,
+}: SignInWithEmailParams) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -64,19 +80,12 @@ export async function signInWithEmail({ email, password }) {
     throw new Error('Authentication failed')
   }
 
-  // Fetch role from profiles
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('user_id', user.id)
-    .maybeSingle() // ✅ <-- use maybeSingle
-
-  if (profileError) throw profileError
+  // ✅ Role from auth metadata (JWT)
+  const role = (user.user_metadata?.role as string | undefined) ?? 'public'
 
   return {
     user,
-    role: profile?.role ?? 'public', // fallback if profile missing
+    role,
     accessToken: session.access_token,
   }
 }
-

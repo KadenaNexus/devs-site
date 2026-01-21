@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as pagesProjectSubmissionRouteImport } from './routes/(pages)/project-submission'
+import { Route as pagesHomepageRouteImport } from './routes/(pages)/homepage'
+import { Route as pagesChallengeListRouteImport } from './routes/(pages)/challenge-list'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -56,6 +59,21 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const pagesProjectSubmissionRoute = pagesProjectSubmissionRouteImport.update({
+  id: '/(pages)/project-submission',
+  path: '/project-submission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const pagesHomepageRoute = pagesHomepageRouteImport.update({
+  id: '/(pages)/homepage',
+  path: '/homepage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const pagesChallengeListRoute = pagesChallengeListRouteImport.update({
+  id: '/(pages)/challenge-list',
+  path: '/challenge-list',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const errors503Route = errors503RouteImport.update({
   id: '/(errors)/503',
@@ -231,6 +249,9 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/challenge-list': typeof pagesChallengeListRoute
+  '/homepage': typeof pagesHomepageRoute
+  '/project-submission': typeof pagesProjectSubmissionRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -261,6 +282,9 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/challenge-list': typeof pagesChallengeListRoute
+  '/homepage': typeof pagesHomepageRoute
+  '/project-submission': typeof pagesProjectSubmissionRoute
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
@@ -297,6 +321,9 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
+  '/(pages)/challenge-list': typeof pagesChallengeListRoute
+  '/(pages)/homepage': typeof pagesHomepageRoute
+  '/(pages)/project-submission': typeof pagesProjectSubmissionRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
@@ -332,6 +359,9 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/challenge-list'
+    | '/homepage'
+    | '/project-submission'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -362,6 +392,9 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/challenge-list'
+    | '/homepage'
+    | '/project-submission'
     | '/'
     | '/errors/$error'
     | '/settings/account'
@@ -397,6 +430,9 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/(pages)/challenge-list'
+    | '/(pages)/homepage'
+    | '/(pages)/project-submission'
     | '/_authenticated/'
     | '/_authenticated/errors/$error'
     | '/_authenticated/settings/account'
@@ -430,6 +466,9 @@ export interface RootRouteChildren {
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
+  pagesChallengeListRoute: typeof pagesChallengeListRoute
+  pagesHomepageRoute: typeof pagesHomepageRoute
+  pagesProjectSubmissionRoute: typeof pagesProjectSubmissionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -454,6 +493,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/(pages)/project-submission': {
+      id: '/(pages)/project-submission'
+      path: '/project-submission'
+      fullPath: '/project-submission'
+      preLoaderRoute: typeof pagesProjectSubmissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(pages)/homepage': {
+      id: '/(pages)/homepage'
+      path: '/homepage'
+      fullPath: '/homepage'
+      preLoaderRoute: typeof pagesHomepageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(pages)/challenge-list': {
+      id: '/(pages)/challenge-list'
+      path: '/challenge-list'
+      fullPath: '/challenge-list'
+      preLoaderRoute: typeof pagesChallengeListRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(errors)/503': {
       id: '/(errors)/503'
@@ -777,6 +837,9 @@ const rootRouteChildren: RootRouteChildren = {
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
+  pagesChallengeListRoute: pagesChallengeListRoute,
+  pagesHomepageRoute: pagesHomepageRoute,
+  pagesProjectSubmissionRoute: pagesProjectSubmissionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

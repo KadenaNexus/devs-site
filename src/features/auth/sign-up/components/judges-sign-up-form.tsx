@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { signInWithGoogle, signUpWithEmail } from '@/services/auth'
 import { toast } from 'sonner'
 import { IconGoogle } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
@@ -16,7 +17,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { signInWithGoogle, signUpWithEmail } from '@/services/auth'
 
 const formSchema = z
   .object({

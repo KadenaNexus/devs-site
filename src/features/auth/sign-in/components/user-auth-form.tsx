@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { signInWithEmail } from '@/services/auth'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconGoogle } from '@/assets/brand-icons'
@@ -19,7 +20,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { signInWithEmail } from '@/services/auth'
 
 const formSchema = z.object({
   email: z.email({
@@ -53,46 +53,54 @@ export function UserAuthForm({
   })
 
   /**
- * @param {{ email: string; password: string }} data
- */
-async function onSubmit(data: { email: any; password: any }) {
-  try {
-    setIsLoading(true)
+   * @param {{ email: string; password: string }} data
+   */
+  async function onSubmit(data: { email: any; password: any }) {
+    try {
+      setIsLoading(true)
 
-    const result = await signInWithEmail({
-      email: data.email,
-      password: data.password,
-    })
+      const result = await signInWithEmail({
+        email: data.email,
+        password: data.password,
+      })
 
-    if (!result.user.email) {
-      throw new Error('User email not found')
+      if (!result.user.email) {
+        throw new Error('User email not found')
+      }
+
+      auth.setUser({
+        id: result.user.id,
+        email: result.user.email,
+        role: result.role,
+      })
+
+      auth.setAccessToken(result.accessToken)
+
+      toast.success(`Welcome back, ${result.user.email}`)
+
+      // navigate({
+      //   to: redirectTo || '/',
+      //   replace: true,
+      // })
+      if (result.role === 'judge') {
+        navigate({ to: '/judge-dashboard' })
+        return
+      }
+
+      // 🔁 fallback redirect
+      navigate({
+        to: redirectTo ?? '/',
+        replace: true,
+      })
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Invalid email or password'
+
+      toast.error(message)
+    } finally {
+      setIsLoading(false)
     }
-
-    auth.setUser({
-      id: result.user.id,
-      email: result.user.email,
-      role: result.role,
-    })
-
-    auth.setAccessToken(result.accessToken)
-
-    toast.success(`Welcome back, ${result.user.email}`)
-
-    navigate({
-      to: redirectTo || '/',
-      replace: true,
-    })
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : 'Invalid email or password'
-
-    toast.error(message)
-  } finally {
-    setIsLoading(false)
   }
-}
   return (
     <Form {...form}>
       <form

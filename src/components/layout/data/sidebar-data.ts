@@ -201,9 +201,9 @@ export const sidebarData: SidebarData = {
         },
         {
           title: 'Judge',
-          href: '/judge',
-          icon: 'star',
-        }        
+          url: '/judge',
+          icon: HelpCircle,
+        },
       ],
     },
   ],

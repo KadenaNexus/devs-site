@@ -15,6 +15,7 @@ import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
+import './styles/custom.css'
 // Styles
 import './styles/index.css'
 
