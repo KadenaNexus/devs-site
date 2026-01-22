@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { signInWithEmail } from '@/services/auth'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconGoogle } from '@/assets/brand-icons'
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { signInWithEmail, signInWithGoogle } from '@/services/auth'
 
 const formSchema = z.object({
   email: z.email({
@@ -53,8 +53,8 @@ export function UserAuthForm({
   })
 
   /**
-   * @param {{ email: string; password: string }} data
-   */
+ * @param {{ email: string; password: string }} data
+ */
   async function onSubmit(data: { email: any; password: any }) {
     try {
       setIsLoading(true)
@@ -87,6 +87,7 @@ export function UserAuthForm({
         return
       }
 
+
       // 🔁 fallback redirect
       navigate({
         to: redirectTo ?? '/',
@@ -94,7 +95,9 @@ export function UserAuthForm({
       })
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Invalid email or password'
+        error instanceof Error
+          ? error.message
+          : 'Invalid email or password'
 
       toast.error(message)
     } finally {
@@ -157,9 +160,23 @@ export function UserAuthForm({
         </div>
 
         <div className='grid grid-cols-2 gap-2'>
-          <Button variant='outline' type='button' disabled={isLoading}>
+          <Button
+            variant='outline'
+            type='button'
+            disabled={isLoading}
+            onClick={async () => {
+              try {
+                setIsLoading(true)
+                await signInWithGoogle()
+              } catch (error) {
+                toast.error('Google sign-in failed')
+                setIsLoading(false)
+              }
+            }}
+          >
             <IconGoogle className='h-4 w-4' /> Google
           </Button>
+
         </div>
       </form>
     </Form>

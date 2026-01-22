@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signInWithGoogle, signUpWithEmail } from '@/services/auth'
-import { toast } from 'sonner'
 import { IconFacebook, IconGithub, IconGoogle } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -17,6 +15,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { signInWithGoogle, signUpWithEmail } from '@/services/auth'
+import { toast } from 'sonner'
 
 const formSchema = z
   .object({
@@ -50,23 +50,24 @@ export function SignUpForm({
     },
   })
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
-    try {
-      setIsLoading(true)
+ async function onSubmit(data: z.infer<typeof formSchema>) {
+  try {
+    setIsLoading(true)
 
-      await signUpWithEmail({
-        email: data.email,
-        password: data.password,
-        role: 'public', // ✅ dynamic
-      })
+    await signUpWithEmail({
+      email: data.email,
+      password: data.password,
+      role: 'public', // ✅ dynamic
+    })
 
-      toast.success('Account created! Check your email to confirm.')
-    } catch (error: any) {
-      toast.error(error.message ?? 'Signup failed')
-    } finally {
-      setIsLoading(false)
-    }
+    toast.success('Account created! Check your email to confirm.')
+  } catch (error: any) {
+    toast.error(error.message ?? 'Signup failed')
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   return (
     <Form {...form}>

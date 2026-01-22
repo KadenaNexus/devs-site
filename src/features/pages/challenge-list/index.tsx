@@ -56,8 +56,8 @@ export function ChallengeList() {
     <HomeLayout>
       <section className='serv-main other-bg relative'>
         <div className='serv-overlay overflow-hidden pt-16 pb-16'>
-          <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75'>
-            <div className='serv-banner w-full py-15 text-center'>
+          <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75 '>
+            <div className='serv-banner py-15 w-full text-center'>
               <h1 className='text-gradient text-4xl leading-tight font-bold md:text-5xl lg:text-6xl'>
                 Challenge List
               </h1>
@@ -112,7 +112,9 @@ export function ChallengeList() {
                         </p>
 
                         <div className='pt-2'>
-                          <p className='mb-1 text-xs text-white'>Prize pool</p>
+                          <p className='mb-1 text-xs text-white'>
+                            Prize pool
+                          </p>
                           <p className='text-2xl font-bold text-white'>
                             {challenge.prizePool}
                           </p>

@@ -8,8 +8,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
-import { JudgesSignUpForm } from './components/judges-sign-up-form'
 import { SignUpForm } from './components/sign-up-form'
+import { JudgesSignUpForm } from './components/judges-sign-up-form'
 
 export function SignUp() {
   const location = useLocation()

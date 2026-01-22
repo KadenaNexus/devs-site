@@ -3,6 +3,16 @@
 import { useState, useEffect } from 'react'
 import Counter from '../components/Counter'
 import { HomeLayout } from '../home-layout'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+export const Route = createFileRoute('/')({
+  beforeLoad: ({ context }) => {
+    if (context.auth?.user) {
+      throw redirect({ to: '/_authenticated' })
+    }
+
+    throw redirect({ to: '/homepage' })
+  },
+})
 
 export function Homepage({ value }: { value: string }) {
   const [isVisible, setIsVisible] = useState(false)
@@ -439,7 +449,7 @@ export function Homepage({ value }: { value: string }) {
               {recentWinners.map((winner, index) => (
                 <div
                   key={winner.id}
-                  className='winner-card recent-winner-item mb-6 flex items-center justify-between rounded-2xl bg-[#0D1D18] p-6 backdrop-blur-sm last:mb-0'
+                  className="winner-card flex items-center justify-between rounded-2xl bg-[#0D1D18] p-6 backdrop-blur-sm mb-6 last:mb-0 recent-winner-item"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className='flex items-center gap-4'>
@@ -487,7 +497,7 @@ export function Homepage({ value }: { value: string }) {
               ))}
             </div>
 
-            <div className='space-y-6 rounded-2xl bg-[#0D1D18] p-8'>
+            <div className='space-y-6 bg-[#0D1D18] p-8 rounded-2xl'>
               <div className='mb-6 flex items-center justify-between'>
                 <h3 className='text-2xl font-bold text-white'>
                   Top Submisssion
@@ -501,7 +511,7 @@ export function Homepage({ value }: { value: string }) {
                 {topSubmissions.map((submission, index) => (
                   <div
                     key={submission.id}
-                    className='submission-card rounded-2xl bg-[#0D0D0D] p-6 backdrop-blur-sm'
+                    className='submission-card rounded-2xl bg-[#0D0D0D] p-6 backdrop-blur-sm '
                     style={{ animationDelay: `${index * 0.15}s` }}
                   >
                     <div className='mb-4 flex items-center gap-4'>

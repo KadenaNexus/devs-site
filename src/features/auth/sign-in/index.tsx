@@ -1,6 +1,3 @@
-import { useEffect } from 'react'
-import { useNavigate, useSearch } from '@tanstack/react-router'
-import { persistUserRole } from '@/services/auth'
 import {
   Card,
   CardContent,
@@ -11,26 +8,63 @@ import {
 } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
 import { UserAuthForm } from './components/user-auth-form'
-
+import { useEffect } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { persistUserRole } from '@/services/auth'
+import { useAuthStore } from '@/stores/auth-store'
+import { supabase } from '@/services/supabase'
 export function SignIn() {
   const { redirect } = useSearch({ from: '/(auth)/sign-in' })
-  const search = useSearch({ from: '/(auth)/sign-in' })
-  const navigate = useNavigate()
+// const search = useSearch({ from: '/(auth)/sign-in' })
+//   const navigate = useNavigate()
+
+//   useEffect(() => {
+//     if (!search.role) return
+
+//     async function handleOAuthRole() {
+//       await persistUserRole(search.role)
+
+//       navigate({
+//         to: search.role === 'judge' ? '/judge' : '/dashboard',
+//         replace: true,
+//       })
+//     }
+
+//     handleOAuthRole()
+//   }, [search.role])
+const navigate = useNavigate()
+  const { auth } = useAuthStore()
 
   useEffect(() => {
-    if (!search.role) return
+    const handleRedirect = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-    async function handleOAuthRole() {
-      await persistUserRole(search.role)
+      if (!session?.user) return
 
-      navigate({
-        to: search.role === 'judge' ? '/judge' : '/dashboard',
-        replace: true,
+      const user = session.user
+      const role =
+        (user.user_metadata?.role as string | undefined) ?? 'public'
+
+      auth.setUser({
+        id: user.id,
+        email: user.email!,
+        role,
       })
+
+      auth.setAccessToken(session.access_token)
+
+      // ✅ ROLE BASED REDIRECT
+      if (role === 'judge') {
+        navigate({ to: '/judge-dashboard', replace: true })
+      } else {
+        navigate({ to: '/dashboard', replace: true })
+      }
     }
 
-    handleOAuthRole()
-  }, [search.role])
+    handleRedirect()
+  }, [auth, navigate])
 
   return (
     <AuthLayout>

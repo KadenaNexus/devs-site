@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as pagesProjectSubmissionRouteImport } from './routes/(pages)/project-submission'
 import { Route as pagesHomepageRouteImport } from './routes/(pages)/homepage'
 import { Route as pagesChallengeListRouteImport } from './routes/(pages)/challenge-list'
@@ -32,9 +32,10 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
-import { Route as AuthenticatedJudgeIndexRouteImport } from './routes/_authenticated/judge/index'
+import { Route as AuthenticatedJudgeDashboardIndexRouteImport } from './routes/_authenticated/judge-dashboard/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
+import { Route as AuthenticatedChallengesIndexRouteImport } from './routes/_authenticated/challenges/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
 import { Route as ClerkauthSignUpRouteImport } from './routes/clerk/(auth)/sign-up'
@@ -44,7 +45,7 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
-import { Route as AuthenticatedJudgeScoreIdRouteImport } from './routes/_authenticated/judge/score.$id'
+import { Route as AuthenticatedChallengesIdSubmissionsIndexRouteImport } from './routes/_authenticated/challenges/$id/submissions/index'
 
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
   id: '/clerk',
@@ -55,10 +56,10 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const pagesProjectSubmissionRoute = pagesProjectSubmissionRouteImport.update({
   id: '/(pages)/project-submission',
@@ -160,11 +161,12 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedJudgeIndexRoute = AuthenticatedJudgeIndexRouteImport.update({
-  id: '/judge/',
-  path: '/judge/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedJudgeDashboardIndexRoute =
+  AuthenticatedJudgeDashboardIndexRouteImport.update({
+    id: '/judge-dashboard/',
+    path: '/judge-dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedHelpCenterIndexRoute =
   AuthenticatedHelpCenterIndexRouteImport.update({
     id: '/help-center/',
@@ -176,6 +178,12 @@ const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
   path: '/chats/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedChallengesIndexRoute =
+  AuthenticatedChallengesIndexRouteImport.update({
+    id: '/challenges/',
+    path: '/challenges/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
   id: '/apps/',
   path: '/apps/',
@@ -227,15 +235,15 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedJudgeScoreIdRoute =
-  AuthenticatedJudgeScoreIdRouteImport.update({
-    id: '/judge/score/$id',
-    path: '/judge/score/$id',
+const AuthenticatedChallengesIdSubmissionsIndexRoute =
+  AuthenticatedChallengesIdSubmissionsIndexRouteImport.update({
+    id: '/challenges/$id/submissions/',
+    path: '/challenges/$id/submissions/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof IndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -261,15 +269,17 @@ export interface FileRoutesByFullPath {
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
   '/apps/': typeof AuthenticatedAppsIndexRoute
+  '/challenges/': typeof AuthenticatedChallengesIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
-  '/judge/': typeof AuthenticatedJudgeIndexRoute
+  '/judge-dashboard/': typeof AuthenticatedJudgeDashboardIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
-  '/judge/score/$id': typeof AuthenticatedJudgeScoreIdRoute
+  '/challenges/$id/submissions/': typeof AuthenticatedChallengesIdSubmissionsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/judges-sign-up': typeof authJudgesSignUpRoute
@@ -285,7 +295,6 @@ export interface FileRoutesByTo {
   '/challenge-list': typeof pagesChallengeListRoute
   '/homepage': typeof pagesHomepageRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
-  '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -295,16 +304,18 @@ export interface FileRoutesByTo {
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
+  '/challenges': typeof AuthenticatedChallengesIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
-  '/judge': typeof AuthenticatedJudgeIndexRoute
+  '/judge-dashboard': typeof AuthenticatedJudgeDashboardIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/judge/score/$id': typeof AuthenticatedJudgeScoreIdRoute
+  '/challenges/$id/submissions': typeof AuthenticatedChallengesIdSubmissionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/clerk': typeof ClerkRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -324,7 +335,6 @@ export interface FileRoutesById {
   '/(pages)/challenge-list': typeof pagesChallengeListRoute
   '/(pages)/homepage': typeof pagesHomepageRoute
   '/(pages)/project-submission': typeof pagesProjectSubmissionRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -334,13 +344,14 @@ export interface FileRoutesById {
   '/clerk/(auth)/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
+  '/_authenticated/challenges/': typeof AuthenticatedChallengesIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
-  '/_authenticated/judge/': typeof AuthenticatedJudgeIndexRoute
+  '/_authenticated/judge-dashboard/': typeof AuthenticatedJudgeDashboardIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
-  '/_authenticated/judge/score/$id': typeof AuthenticatedJudgeScoreIdRoute
+  '/_authenticated/challenges/$id/submissions/': typeof AuthenticatedChallengesIdSubmissionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -371,15 +382,17 @@ export interface FileRouteTypes {
     | '/clerk/sign-up'
     | '/clerk/user-management'
     | '/apps/'
+    | '/challenges/'
     | '/chats/'
     | '/help-center/'
-    | '/judge/'
+    | '/judge-dashboard/'
     | '/settings/'
     | '/tasks/'
     | '/users/'
-    | '/judge/score/$id'
+    | '/challenges/$id/submissions/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/clerk'
     | '/forgot-password'
     | '/judges-sign-up'
@@ -395,7 +408,6 @@ export interface FileRouteTypes {
     | '/challenge-list'
     | '/homepage'
     | '/project-submission'
-    | '/'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -405,15 +417,17 @@ export interface FileRouteTypes {
     | '/clerk/sign-up'
     | '/clerk/user-management'
     | '/apps'
+    | '/challenges'
     | '/chats'
     | '/help-center'
-    | '/judge'
+    | '/judge-dashboard'
     | '/settings'
     | '/tasks'
     | '/users'
-    | '/judge/score/$id'
+    | '/challenges/$id/submissions'
   id:
     | '__root__'
+    | '/'
     | '/_authenticated'
     | '/clerk'
     | '/_authenticated/settings'
@@ -433,7 +447,6 @@ export interface FileRouteTypes {
     | '/(pages)/challenge-list'
     | '/(pages)/homepage'
     | '/(pages)/project-submission'
-    | '/_authenticated/'
     | '/_authenticated/errors/$error'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -443,16 +456,18 @@ export interface FileRouteTypes {
     | '/clerk/(auth)/sign-up'
     | '/clerk/_authenticated/user-management'
     | '/_authenticated/apps/'
+    | '/_authenticated/challenges/'
     | '/_authenticated/chats/'
     | '/_authenticated/help-center/'
-    | '/_authenticated/judge/'
+    | '/_authenticated/judge-dashboard/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
-    | '/_authenticated/judge/score/$id'
+    | '/_authenticated/challenges/$id/submissions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ClerkRouteRoute: typeof ClerkRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
@@ -487,12 +502,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/': {
-      id: '/_authenticated/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(pages)/project-submission': {
       id: '/(pages)/project-submission'
@@ -634,11 +649,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/judge/': {
-      id: '/_authenticated/judge/'
-      path: '/judge'
-      fullPath: '/judge/'
-      preLoaderRoute: typeof AuthenticatedJudgeIndexRouteImport
+    '/_authenticated/judge-dashboard/': {
+      id: '/_authenticated/judge-dashboard/'
+      path: '/judge-dashboard'
+      fullPath: '/judge-dashboard/'
+      preLoaderRoute: typeof AuthenticatedJudgeDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/help-center/': {
@@ -653,6 +668,13 @@ declare module '@tanstack/react-router' {
       path: '/chats'
       fullPath: '/chats/'
       preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/challenges/': {
+      id: '/_authenticated/challenges/'
+      path: '/challenges'
+      fullPath: '/challenges/'
+      preLoaderRoute: typeof AuthenticatedChallengesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/apps/': {
@@ -718,11 +740,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/judge/score/$id': {
-      id: '/_authenticated/judge/score/$id'
-      path: '/judge/score/$id'
-      fullPath: '/judge/score/$id'
-      preLoaderRoute: typeof AuthenticatedJudgeScoreIdRouteImport
+    '/_authenticated/challenges/$id/submissions/': {
+      id: '/_authenticated/challenges/$id/submissions/'
+      path: '/challenges/$id/submissions'
+      fullPath: '/challenges/$id/submissions/'
+      preLoaderRoute: typeof AuthenticatedChallengesIdSubmissionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -753,28 +775,29 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
+  AuthenticatedChallengesIndexRoute: typeof AuthenticatedChallengesIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
-  AuthenticatedJudgeIndexRoute: typeof AuthenticatedJudgeIndexRoute
+  AuthenticatedJudgeDashboardIndexRoute: typeof AuthenticatedJudgeDashboardIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
-  AuthenticatedJudgeScoreIdRoute: typeof AuthenticatedJudgeScoreIdRoute
+  AuthenticatedChallengesIdSubmissionsIndexRoute: typeof AuthenticatedChallengesIdSubmissionsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
+  AuthenticatedChallengesIndexRoute: AuthenticatedChallengesIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
-  AuthenticatedJudgeIndexRoute: AuthenticatedJudgeIndexRoute,
+  AuthenticatedJudgeDashboardIndexRoute: AuthenticatedJudgeDashboardIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
-  AuthenticatedJudgeScoreIdRoute: AuthenticatedJudgeScoreIdRoute,
+  AuthenticatedChallengesIdSubmissionsIndexRoute:
+    AuthenticatedChallengesIdSubmissionsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -824,6 +847,7 @@ const ClerkRouteRouteWithChildren = ClerkRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ClerkRouteRoute: ClerkRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,

@@ -3,9 +3,7 @@
 /* ============================= */
 
 .animate-fadeInUp {
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
 .animate-fadeInUp:hover {
@@ -20,14 +18,15 @@
 
 /* Button micro interaction */
 .animate-fadeInUp button {
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .animate-fadeInUp button:hover {
   transform: translateY(-2px);
 }
+
+
+
 
 /* ============================= */
 /* Filter Tabs Animation */
@@ -46,8 +45,8 @@
 
 /* Active tab animation */
 .serv-main button.bg-gradient-to-br {
-  animation: tabPop 0.35s ease forwards;
-  box-shadow: 0 0 20px rgb(0 186 124 / 36%);
+    animation: tabPop 0.35s ease forwards;
+    box-shadow: 0 0 20px rgb(0 186 124 / 36%);
 }
 
 @keyframes tabPop {
@@ -63,6 +62,10 @@
     transform: scale(1);
   }
 }
+
+
+
+
 
 /* ============================= */
 /* Card Entry Animation */
@@ -82,6 +85,10 @@
 .animate-fadeInUp {
   animation: fadeInUpSoft 0.6s ease both;
 }
+
+
+
+
 
 /* Upcoming Challenges Section Animations */
 
@@ -107,8 +114,7 @@
 }
 
 @keyframes timerPulse {
-  0%,
-  100% {
+  0%, 100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
   }
   50% {
@@ -116,9 +122,9 @@
   }
 }
 
+
 @keyframes dotPulse {
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1);
     opacity: 0.3;
   }
@@ -164,6 +170,7 @@
   position: relative;
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .upcoming-card {
@@ -179,9 +186,15 @@
   .glow-effect {
     animation: none !important;
   }
-
+  
   .upcoming-card {
     opacity: 1;
     transform: none;
   }
 }
+
+
+
+
+
+

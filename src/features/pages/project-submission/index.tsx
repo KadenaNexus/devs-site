@@ -60,10 +60,10 @@ export function ProjectSubmission() {
             </div>
           </section>
 
-          <section className='relative mt-16 overflow-hidden'>
+          <section className='relative overflow-hidden mt-16'>
             <div className='mx-auto max-w-[1296px] px-[15px]'>
-              <div className='relative z-10'>
-                <div className='rounded-3xl border-1 border-[var(--frontend-primary)] bg-[#1f413780] p-8 backdrop-blur-[4px] backdrop-blur-sm lg:p-12'>
+              <div className='relative z-10 '>
+                <div className='rounded-3xl border-1 border-[var(--frontend-primary)] bg-[#1f413780] backdrop-blur-[4px] p-8 backdrop-blur-sm lg:p-12'>
                   <h2 className='mb-12 text-center text-3xl font-bold text-white md:text-4xl lg:text-5xl'>
                     SUBMIT YOUR <span className='text-emerald-400'>BUIDL</span>
                   </h2>

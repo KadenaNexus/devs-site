@@ -7,7 +7,9 @@ export type Challenge = {
 }
 
 export const getAssignedChallenges = async (): Promise<Challenge[]> => {
-  const { data, error } = await supabase.from('challenge_judges').select(`
+  const { data, error } = await supabase
+    .from('challenge_judges')
+    .select(`
       challenges (
         id,
         title,
@@ -42,3 +44,4 @@ export const upsertScore = async (payload) => {
   const { error } = await supabase.from('scores').upsert(payload)
   if (error) throw error
 }
+

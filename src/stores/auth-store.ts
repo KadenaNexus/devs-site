@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
+import { Session } from 'inspector'
 
 const ACCESS_TOKEN = 'thisisjustarandomstring'
 
@@ -10,12 +11,15 @@ export interface AuthUser {
 }
 
 interface AuthState {
+  user: any
   auth: {
     user: AuthUser | null
     accessToken: string
     setUser: (user: AuthUser | null) => void
     setAccessToken: (accessToken: string) => void
     resetAccessToken: () => void
+    session: Session | null
+    isAuthenticated: boolean
     reset: () => void
   }
 }
