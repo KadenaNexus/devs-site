@@ -2,23 +2,34 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type Submission } from '../../data/submissions-schema'
 
-type SubmissionsDialogType = 'view' | 'delete'
+type SubmissionsDialogType = 'view' | 'view-score' | 'delete'
 
 type SubmissionsContextType = {
   open: SubmissionsDialogType | null
   setOpen: (str: SubmissionsDialogType | null) => void
   currentRow: Submission | null
   setCurrentRow: React.Dispatch<React.SetStateAction<Submission | null>>
+  userId: string | null | undefined
 }
 
-const SubmissionsContext = React.createContext<SubmissionsContextType | null>(null)
+const SubmissionsContext = React.createContext<SubmissionsContextType | null>(
+  null
+)
 
-export function SubmissionsProvider({ children }: { children: React.ReactNode }) {
+export function SubmissionsProvider({
+  children,
+  userId,
+}: {
+  children: React.ReactNode
+  userId: string | null | undefined
+}) {
   const [open, setOpen] = useDialogState<SubmissionsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Submission | null>(null)
 
   return (
-    <SubmissionsContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <SubmissionsContext
+      value={{ open, setOpen, currentRow, setCurrentRow, userId }}
+    >
       {children}
     </SubmissionsContext>
   )

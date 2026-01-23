@@ -57,7 +57,7 @@ export const sidebarData: SidebarData = {
           url: '/judge-dashboard',
           icon: LayoutDashboard,
         },
-        {  
+        {
           title: 'Challenges',
           url: '/challenges',
           icon: ListTodo,
@@ -213,7 +213,7 @@ export const sidebarData: SidebarData = {
     //       title: 'Judge',
     //       url: '/judge',
     //       icon: HelpCircle,
-    //     }        
+    //     }
     //   ],
     // },
   ],

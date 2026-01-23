@@ -1,7 +1,13 @@
 .text-gradient {
-  background: linear-gradient(to right, #00ba7c 0%, #ffffff 100%);
+  background: linear-gradient(
+    to right,
+    var(--ft-grad-heading-start) 0%,
+    var(--ft-grad-heading-end) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
   display: inline-block;
 }
 
@@ -23,7 +29,7 @@
   opacity: 0;
   z-index: 0;
   border-radius: 1.5rem;
-  background: linear-gradient(260deg, #002a1d 0%, #008259 100%);
+  background: linear-gradient(260deg, #092200 0%, #1e600a 100%);
 }
 
 .feature-card:hover::before {
@@ -48,13 +54,12 @@
 
 .feature-card:hover {
   transform: translateY(-5px);
-  border: 1px solid #00ba7c;
-  /* background-color: #00ba7c2b; */
+  border: 1px solid #61df35;
 }
 
 /* Icon color transition */
 .feature-card svg {
-  color: #10b981; /* emerald-400 */
+  color: var(--ft-primary); /* emerald-400 */
   transition: color 0.3s ease;
 }
 
@@ -120,7 +125,7 @@ button[class*='px-6 py-2 rounded-full']:active {
 
 .proj-grid:before {
   content: '';
-  background-color: #00ba7c;
+  background-color: #61df35;
   width: 300px;
   height: 300px;
   position: absolute;
@@ -132,7 +137,7 @@ button[class*='px-6 py-2 rounded-full']:active {
 }
 
 .proj-btn-box {
-  background: linear-gradient(260deg, #002a1d 0%, #008259 100%);
+  background: linear-gradient(260deg, #092200 0%, #1e600a 100%);
   padding: 20px;
   border-radius: 20px;
   transition: 0.8s;
@@ -165,12 +170,12 @@ button[class*='px-6 py-2 rounded-full']:active {
   transition: opacity 0.5s linear;
   opacity: 0;
   z-index: -1;
-  background: linear-gradient(260deg, #002a1d 0%, #008259 100%);
+  background: linear-gradient(260deg, #092200 0%, #1e600a 100%);
 }
 
 .recent-winner-item:hover::before {
   opacity: 1;
 }
 .recent-winner-item:hover {
-  border: 1px solid #00ba7c;
+  border: 1px solid var(--ft-primary);
 }

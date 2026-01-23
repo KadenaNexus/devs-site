@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getRouteApi } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { getRouteApi } from '@tanstack/react-router'
 import {
   type SortingState,
   type VisibilityState,
@@ -13,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { fetchChallenges } from '@/services/challenges'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   Table,
@@ -25,9 +26,8 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { priorities, statuses } from '../data/data'
 import { type Challenge } from '../data/schema'
-import { fetchChallenges } from '@/services/challenges'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { challengesColumns as columns } from './challenges-columns'
+import { DataTableBulkActions } from './data-table-bulk-actions'
 
 const route = getRouteApi('/_authenticated/challenges/')
 
@@ -66,9 +66,7 @@ export function ChallengesTable({ data: initialData }: DataTableProps) {
     navigate: route.useNavigate(),
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: true, key: 'filter' },
-    columnFilters: [
-      { columnId: 'status', searchKey: 'status', type: 'array' },
-    ],
+    columnFilters: [{ columnId: 'status', searchKey: 'status', type: 'array' }],
   })
 
   const table = useReactTable({
@@ -92,7 +90,11 @@ export function ChallengesTable({ data: initialData }: DataTableProps) {
       const description = String(row.getValue('description')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
 
-      return id.includes(searchValue) || title.includes(searchValue) || description.includes(searchValue)
+      return (
+        id.includes(searchValue) ||
+        title.includes(searchValue) ||
+        description.includes(searchValue)
+      )
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -134,9 +136,9 @@ export function ChallengesTable({ data: initialData }: DataTableProps) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   )
                 })}

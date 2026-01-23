@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { fetchChallenges } from '@/services/challenges'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -9,7 +10,6 @@ import { ChallengesDialogs } from './components/challenges-dialogs'
 import { ChallengesPrimaryButtons } from './components/challenges-primary-buttons'
 import { ChallengesProvider } from './components/challenges-provider'
 import { ChallengesTable } from './components/challenges-table'
-import { fetchChallenges } from '@/services/challenges'
 
 export function Challenges() {
   const { data: challenges = [], isLoading } = useQuery({
@@ -41,7 +41,7 @@ export function Challenges() {
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
           {isLoading ? (
-            <div className='flex items-center justify-center h-96'>
+            <div className='flex h-96 items-center justify-center'>
               <p className='text-muted-foreground'>Loading challenges...</p>
             </div>
           ) : (

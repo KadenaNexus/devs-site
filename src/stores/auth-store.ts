@@ -1,6 +1,6 @@
+import { Session } from 'inspector'
 import { create } from 'zustand'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
-import { Session } from 'inspector'
 
 const ACCESS_TOKEN = 'thisisjustarandomstring'
 

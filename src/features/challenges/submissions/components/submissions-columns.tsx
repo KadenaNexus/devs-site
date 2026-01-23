@@ -1,11 +1,12 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
 import { ExternalLink } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { submissionStatuses } from '../data/data'
 import { type Submission } from '../../data/submissions-schema'
+import { submissionStatuses } from '../data/data'
+import { DataTableRowActions } from './data-table-row-actions'
 
 export const submissionsColumns: ColumnDef<Submission>[] = [
   {
@@ -55,9 +56,7 @@ export const submissionsColumns: ColumnDef<Submission>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Email' />
     ),
-    cell: ({ row }) => (
-      <span className='text-sm'>{row.getValue('email')}</span>
-    ),
+    cell: ({ row }) => <span className='text-sm'>{row.getValue('email')}</span>,
   },
   {
     accessorKey: 'status',
@@ -133,5 +132,9 @@ export const submissionsColumns: ColumnDef<Submission>[] = [
         <span className='text-muted-foreground text-sm'>N/A</span>
       )
     },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ]

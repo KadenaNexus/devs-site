@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 const Counter = ({ value }: { value: string }) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
-    const isK = value.includes('K');
-    const isPlus = value.includes('+');
+    const isK = value.includes('K')
+    const isPlus = value.includes('+')
 
-    const target = parseFloat(value);
-    const duration = 1500;
-    const startTime = performance.now();
+    const target = parseFloat(value)
+    const duration = 1500
+    const startTime = performance.now()
 
     const animate = (time: number) => {
-      const progress = Math.min((time - startTime) / duration, 1);
-      setCount(Math.floor(progress * target));
+      const progress = Math.min((time - startTime) / duration, 1)
+      setCount(Math.floor(progress * target))
 
-      if (progress < 1) requestAnimationFrame(animate);
-    };
+      if (progress < 1) requestAnimationFrame(animate)
+    }
 
-    requestAnimationFrame(animate);
-  }, [value]);
+    requestAnimationFrame(animate)
+  }, [value])
 
   return (
     <span>
@@ -27,7 +27,7 @@ const Counter = ({ value }: { value: string }) => {
       {value.includes('K') && 'K'}
       {value.includes('+') && '+'}
     </span>
-  );
-};
+  )
+}
 
-export default Counter;
+export default Counter

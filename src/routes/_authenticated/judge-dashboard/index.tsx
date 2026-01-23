@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Dashboard } from '@/features/dashboard'
+import { JudgeDashboard } from '@/features/judge-dashboard'
 
 export const Route = createFileRoute('/_authenticated/judge-dashboard/')({
-  component: Dashboard,
+  component: JudgeDashboard,
 })
 
 // function JudgeDashboard() {

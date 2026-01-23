@@ -1,6 +1,6 @@
-import { supabase } from './supabase'
 import { type Challenge } from '@/features/challenges/data/schema'
 import { type Submission } from '@/features/challenges/data/submissions-schema'
+import { supabase } from './supabase'
 
 export async function fetchChallenges(): Promise<Challenge[]> {
   const { data, error } = await supabase
@@ -31,7 +31,9 @@ export async function fetchChallenge(id: string): Promise<Challenge | null> {
   return data
 }
 
-export async function fetchSubmissions(challengeId: string): Promise<Submission[]> {
+export async function fetchSubmissions(
+  challengeId: string
+): Promise<Submission[]> {
   const { data, error } = await supabase
     .from('submissions')
     .select('*')

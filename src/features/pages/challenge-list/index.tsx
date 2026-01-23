@@ -56,8 +56,8 @@ export function ChallengeList() {
     <HomeLayout>
       <section className='serv-main other-bg relative'>
         <div className='serv-overlay overflow-hidden pt-16 pb-16'>
-          <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75 '>
-            <div className='serv-banner py-15 w-full text-center'>
+          <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75'>
+            <div className='serv-banner w-full py-15 text-center'>
               <h1 className='text-gradient text-4xl leading-tight font-bold md:text-5xl lg:text-6xl'>
                 Challenge List
               </h1>
@@ -79,7 +79,7 @@ export function ChallengeList() {
                         onClick={() => setActiveFilter(filter)}
                         className={`rounded-full px-6 py-2 text-sm font-medium transition-colors ${
                           activeFilter === filter
-                            ? 'bg-gradient-to-br from-[var(--frontend-primary)] to-[#155842]'
+                            ? 'bg-gradient-to-br from-[var(--ft-primary)] to-[#155842]'
                             : 'bg-gray-800 text-gray-300'
                         }`}
                       >
@@ -95,7 +95,7 @@ export function ChallengeList() {
                   filteredChallenges.map((challenge, index) => (
                     <div
                       key={challenge.id}
-                      className='animate-fadeInUp overflow-hidden rounded-2xl border-1 border-[var(--frontend-primary)] bg-[#1f413780] backdrop-blur-[4px]'
+                      className='animate-fadeInUp overflow-hidden rounded-2xl border-1 border-[var(--ft-primary)] bg-[#1f413780] backdrop-blur-[4px]'
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className='space-y-4 p-4'>
@@ -112,15 +112,13 @@ export function ChallengeList() {
                         </p>
 
                         <div className='pt-2'>
-                          <p className='mb-1 text-xs text-white'>
-                            Prize pool
-                          </p>
+                          <p className='mb-1 text-xs text-white'>Prize pool</p>
                           <p className='text-2xl font-bold text-white'>
                             {challenge.prizePool}
                           </p>
                         </div>
 
-                        <button className='w-full rounded-full bg-[var(--frontend-primary)] py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--frontend-btn-hover)]'>
+                        <button className='w-full rounded-full bg-[var(--ft-primary)] py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--ft-btn-hover)]'>
                           View Details
                         </button>
                       </div>

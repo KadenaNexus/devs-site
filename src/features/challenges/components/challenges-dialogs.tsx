@@ -58,7 +58,8 @@ export function ChallengesDialogs() {
             title={`Delete this challenge: ${currentRow.title} ?`}
             desc={
               <>
-                You are about to delete a challenge <strong>{currentRow.title}</strong>. <br />
+                You are about to delete a challenge{' '}
+                <strong>{currentRow.title}</strong>. <br />
                 This action cannot be undone.
               </>
             }

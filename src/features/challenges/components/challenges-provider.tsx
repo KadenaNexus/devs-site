@@ -11,9 +11,15 @@ type ChallengesContextType = {
   setCurrentRow: React.Dispatch<React.SetStateAction<Challenge | null>>
 }
 
-const ChallengesContext = React.createContext<ChallengesContextType | null>(null)
+const ChallengesContext = React.createContext<ChallengesContextType | null>(
+  null
+)
 
-export function ChallengesProvider({ children }: { children: React.ReactNode }) {
+export function ChallengesProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [open, setOpen] = useDialogState<ChallengesDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Challenge | null>(null)
 

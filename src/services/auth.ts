@@ -1,5 +1,4 @@
-import { supabase } from "./supabase"
-
+import { supabase } from './supabase'
 
 export type UserRole = 'public' | 'judge' | 'admin'
 
@@ -16,11 +15,7 @@ interface SignInWithEmailParams {
 /* ----------------------------------
    Email + Password Sign Up
 ---------------------------------- */
-export async function signUpWithEmail({
-  email,
-  password,
-  role,
-}: SignUpInput) {
+export async function signUpWithEmail({ email, password, role }: SignUpInput) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -67,8 +62,6 @@ export async function persistUserRole(role: UserRole) {
   })
 }
 
-
-
 export async function signInWithEmail({
   email,
   password,
@@ -88,8 +81,7 @@ export async function signInWithEmail({
   }
 
   // ✅ Role from auth metadata (JWT)
-  const role =
-    (user.user_metadata?.role as string | undefined) ?? 'public'
+  const role = (user.user_metadata?.role as string | undefined) ?? 'public'
 
   return {
     user,
@@ -112,5 +104,3 @@ export async function signOut() {
   const { error } = await supabase.auth.signOut()
   if (error) throw error
 }
-
-

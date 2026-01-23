@@ -1,9 +1,9 @@
-import { type ColumnDef } from '@tanstack/react-table'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
 import { useNavigate } from '@tanstack/react-router'
+import { type ColumnDef } from '@tanstack/react-table'
 import { Eye } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type Challenge } from '../data/schema'
@@ -39,7 +39,11 @@ export const challengesColumns: ColumnDef<Challenge>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='ID' />
     ),
-    cell: ({ row }) => <div className='w-[80px] text-xs'>{row.getValue<string>('id').slice(0, 8)}...</div>,
+    cell: ({ row }) => (
+      <div className='w-[80px] text-xs'>
+        {row.getValue<string>('id').slice(0, 8)}...
+      </div>
+    ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -60,7 +64,7 @@ export const challengesColumns: ColumnDef<Challenge>[] = [
       <DataTableColumnHeader column={column} title='Description' />
     ),
     cell: ({ row }) => (
-      <span className='max-w-48 truncate text-sm text-muted-foreground'>
+      <span className='text-muted-foreground max-w-48 truncate text-sm'>
         {row.getValue('description')}
       </span>
     ),
