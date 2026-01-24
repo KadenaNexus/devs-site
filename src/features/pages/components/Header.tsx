@@ -57,15 +57,15 @@ export default function Header() {
           <div className='flex-shrink-0'>
             <a href='#' className='flex items-center space-x-2'>
               <img
-                src='/images/light-logo.svg'
+                src='/images/logo.png'
                 alt='Logo'
-                className='m-0 w-34'
+                className='m-0 w-26'
                 style={{ display: 'var(--logo-dark-display)' }}
               />
               <img
-                src='/images/dark-logo.svg'
+                src='/images/logo.png'
                 alt='Logo'
-                className='m-0 w-34'
+                className='m-0 w-26'
                 style={{ display: 'var(--logo-light-display)' }}
               />
             </a>

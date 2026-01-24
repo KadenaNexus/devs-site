@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { HomeLayout } from '../home-layout'
+import FillButton from '../components/FillButton'
 
 export function ChallengeList() {
   const [activeFilter, setActiveFilter] = useState('All')
@@ -55,9 +56,9 @@ export function ChallengeList() {
   return (
     <HomeLayout>
       <section className='serv-main other-bg relative'>
-        <div className='serv-overlay overflow-hidden pt-16 pb-16'>
+        <div className='serv-overlay overflow-hidden pt-30 pb-16'>
           <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75'>
-            <div className='serv-banner w-full py-15 text-center'>
+            <div className='serv-banner bg-[var(--ft-light)] w-full py-15 text-center'>
               <h1 className='text-gradient text-4xl leading-tight font-bold md:text-5xl lg:text-6xl'>
                 Challenge List
               </h1>
@@ -72,15 +73,15 @@ export function ChallengeList() {
                     Challenges
                   </h2>
 
-                  <div className='flex flex-wrap gap-3 rounded-full bg-[#0D1D18] p-3'>
+                  <div className='flex flex-wrap gap-3 rounded-full bg-[var(--ft-light)] p-3'>
                     {filters.map((filter) => (
                       <button
                         key={filter}
                         onClick={() => setActiveFilter(filter)}
-                        className={`rounded-full px-6 py-2 text-sm font-medium transition-colors ${
+                        className={`rounded-full text-white px-6 py-2 text-sm font-medium transition-colors ${
                           activeFilter === filter
                             ? 'bg-gradient-to-br from-[var(--ft-primary)] to-[#155842]'
-                            : 'bg-gray-800 text-gray-300'
+                            : 'bg-[#031700] text-gray-300'
                         }`}
                       >
                         {filter}
@@ -95,7 +96,7 @@ export function ChallengeList() {
                   filteredChallenges.map((challenge, index) => (
                     <div
                       key={challenge.id}
-                      className='animate-fadeInUp overflow-hidden rounded-2xl border-1 border-[var(--ft-primary)] bg-[#1f413780] backdrop-blur-[4px]'
+                      className='animate-fadeInUp overflow-hidden rounded-2xl border-1 border-[var(--ft-primary)] bg-[var(--ft-serv-box-bg)] backdrop-blur-[4px]'
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className='space-y-4 p-4'>
@@ -118,9 +119,10 @@ export function ChallengeList() {
                           </p>
                         </div>
 
-                        <button className='w-full rounded-full bg-[var(--ft-primary)] py-3 text-sm font-medium text-white transition-colors hover:bg-[var(--ft-btn-hover)]'>
-                          View Details
-                        </button>
+                        <FillButton className='w-full'>
+                           View Details
+                        </FillButton>
+                        
                       </div>
                     </div>
                   ))

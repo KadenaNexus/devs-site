@@ -10,6 +10,18 @@
   color: transparent;
   display: inline-block;
 }
+.serv-banner .text-gradient, .form-main .text-gradient{
+  background: linear-gradient(
+    to right,
+    oklch(0.8 0.23 139.18) 0%,
+    oklch(0.98 0.01 160) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
 
 /* Feature Card Styles */
 .feature-card {
@@ -76,16 +88,11 @@
   background-repeat: no-repeat;
 }
 .serv-banner {
-  background-color: #102a21;
-  border: 1px solid #00ba7c;
+  border: 1px solid var(--ft-primary);
   border-radius: 30px;
 }
 .serv-overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(3, 29, 21, 1) 0%,
-    rgba(5, 7, 9, 0.9) 100%
-  );
+  background-color: var(--ft-dark-serv-bg);
 }
 
 /* Challenge List Animation */

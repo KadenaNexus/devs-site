@@ -4,7 +4,7 @@ const Footer = () => {
       <div className='mx-auto max-w-7xl px-4 py-14 text-center'>
         <div className='mb-6 flex justify-center'>
           <img
-            src='/images/light-logo.svg'
+            src='/images/logo.png'
             width={200}
             height={200}
             alt='Logo'

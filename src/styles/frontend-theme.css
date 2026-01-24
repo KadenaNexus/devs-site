@@ -14,8 +14,10 @@
   --background: oklch(1 0 0);
   --foreground: oklch(0.18 0.02 250);
 
-  --ft-dark-bg: oklch(0.99 0.005 140);
+  --ft-dark-bg: oklch(99.068% 0.00605 138.551 / 0.932);
   --ft-footer-bg: oklch(0.96 0.01 240);
+
+  --ft-dark-serv-bg: oklch(98.511% 0.00011 271.152 / 0.90);
 
   /* Buttons */
   --ft-btn-hover: oklch(0.61 0.18 139.26);
@@ -41,6 +43,8 @@
 
   --ft-grad-heading-start: oklch(0.6 0.19 139.74);
   --ft-grad-heading-end: oklch(0.36 0.09 138.58);
+
+  --ft-serv-box-bg: oklch(0.35 0.09 138.75);
 }
 
 /* ================================
@@ -53,6 +57,8 @@
 
   --ft-dark-bg: oklch(0.16 0.03 136.86);
   --ft-footer-bg: oklch(0.1 0.03 250);
+
+  --ft-dark-serv-bg: oklch(15.916% 0.03043 136.6 / 0.90);
 
   --ft-primary: oklch(0.8 0.23 139.18);
   --ft-primary-foreground: oklch(0.98 0.01 160);
@@ -79,4 +85,6 @@
 
   --ft-grad-heading-start: oklch(0.8 0.23 139.18);
   --ft-grad-heading-end: oklch(0.98 0.01 160);
+
+  --ft-serv-box-bg: oklab(34.609% -0.04354 0.00577 / 0.502);
 }

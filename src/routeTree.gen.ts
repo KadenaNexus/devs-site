@@ -26,6 +26,7 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authJudgesSignUpRouteImport } from './routes/(auth)/judges-sign-up'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
+import { Route as authAdminLoginRouteImport } from './routes/(auth)/admin-login'
 import { Route as ClerkAuthenticatedRouteRouteImport } from './routes/clerk/_authenticated/route'
 import { Route as ClerkauthRouteRouteImport } from './routes/clerk/(auth)/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
@@ -37,6 +38,8 @@ import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedChallengesIndexRouteImport } from './routes/_authenticated/challenges/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminDashboardIndexRouteImport } from './routes/_authenticated/admin-dashboard/index'
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
 import { Route as ClerkauthSignUpRouteImport } from './routes/clerk/(auth)/sign-up'
 import { Route as ClerkauthSignInRouteImport } from './routes/clerk/(auth)/sign-in'
@@ -45,6 +48,8 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
+import { Route as AuthenticatedAdminDashboardAdminDashboardRouteImport } from './routes/_authenticated/admin-dashboard/admin-dashboard'
 import { Route as AuthenticatedChallengesIdSubmissionsIndexRouteImport } from './routes/_authenticated/challenges/$id/submissions/index'
 
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
@@ -131,6 +136,11 @@ const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authAdminLoginRoute = authAdminLoginRouteImport.update({
+  id: '/(auth)/admin-login',
+  path: '/admin-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClerkAuthenticatedRouteRoute = ClerkAuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => ClerkRouteRoute,
@@ -189,6 +199,17 @@ const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
   path: '/apps/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminDashboardIndexRoute =
+  AuthenticatedAdminDashboardIndexRouteImport.update({
+    id: '/admin-dashboard/',
+    path: '/admin-dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ClerkAuthenticatedUserManagementRoute =
   ClerkAuthenticatedUserManagementRouteImport.update({
     id: '/user-management',
@@ -235,6 +256,18 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminDashboardRoute =
+  AuthenticatedAdminDashboardRouteImport.update({
+    id: '/admin/dashboard',
+    path: '/admin/dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminDashboardAdminDashboardRoute =
+  AuthenticatedAdminDashboardAdminDashboardRouteImport.update({
+    id: '/admin-dashboard/admin-dashboard',
+    path: '/admin-dashboard/admin-dashboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedChallengesIdSubmissionsIndexRoute =
   AuthenticatedChallengesIdSubmissionsIndexRouteImport.update({
     id: '/challenges/$id/submissions/',
@@ -246,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+  '/admin-login': typeof authAdminLoginRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/judges-sign-up': typeof authJudgesSignUpRoute
   '/otp': typeof authOtpRoute
@@ -260,6 +294,8 @@ export interface FileRoutesByFullPath {
   '/challenge-list': typeof pagesChallengeListRoute
   '/homepage': typeof pagesHomepageRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
+  '/admin-dashboard/admin-dashboard': typeof AuthenticatedAdminDashboardAdminDashboardRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -268,6 +304,8 @@ export interface FileRoutesByFullPath {
   '/clerk/sign-in': typeof ClerkauthSignInRoute
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
+  '/admin-dashboard/': typeof AuthenticatedAdminDashboardIndexRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/apps/': typeof AuthenticatedAppsIndexRoute
   '/challenges/': typeof AuthenticatedChallengesIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
@@ -281,6 +319,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
+  '/admin-login': typeof authAdminLoginRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/judges-sign-up': typeof authJudgesSignUpRoute
   '/otp': typeof authOtpRoute
@@ -295,6 +334,8 @@ export interface FileRoutesByTo {
   '/challenge-list': typeof pagesChallengeListRoute
   '/homepage': typeof pagesHomepageRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
+  '/admin-dashboard/admin-dashboard': typeof AuthenticatedAdminDashboardAdminDashboardRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -303,6 +344,8 @@ export interface FileRoutesByTo {
   '/clerk/sign-in': typeof ClerkauthSignInRoute
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
+  '/admin-dashboard': typeof AuthenticatedAdminDashboardIndexRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/challenges': typeof AuthenticatedChallengesIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
@@ -321,6 +364,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/clerk/(auth)': typeof ClerkauthRouteRouteWithChildren
   '/clerk/_authenticated': typeof ClerkAuthenticatedRouteRouteWithChildren
+  '/(auth)/admin-login': typeof authAdminLoginRoute
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/judges-sign-up': typeof authJudgesSignUpRoute
   '/(auth)/otp': typeof authOtpRoute
@@ -335,6 +379,8 @@ export interface FileRoutesById {
   '/(pages)/challenge-list': typeof pagesChallengeListRoute
   '/(pages)/homepage': typeof pagesHomepageRoute
   '/(pages)/project-submission': typeof pagesProjectSubmissionRoute
+  '/_authenticated/admin-dashboard/admin-dashboard': typeof AuthenticatedAdminDashboardAdminDashboardRoute
+  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -343,6 +389,8 @@ export interface FileRoutesById {
   '/clerk/(auth)/sign-in': typeof ClerkauthSignInRoute
   '/clerk/(auth)/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
+  '/_authenticated/admin-dashboard/': typeof AuthenticatedAdminDashboardIndexRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/challenges/': typeof AuthenticatedChallengesIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
@@ -359,6 +407,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clerk'
     | '/settings'
+    | '/admin-login'
     | '/forgot-password'
     | '/judges-sign-up'
     | '/otp'
@@ -373,6 +422,8 @@ export interface FileRouteTypes {
     | '/challenge-list'
     | '/homepage'
     | '/project-submission'
+    | '/admin-dashboard/admin-dashboard'
+    | '/admin/dashboard'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -381,6 +432,8 @@ export interface FileRouteTypes {
     | '/clerk/sign-in'
     | '/clerk/sign-up'
     | '/clerk/user-management'
+    | '/admin-dashboard/'
+    | '/admin/'
     | '/apps/'
     | '/challenges/'
     | '/chats/'
@@ -394,6 +447,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/clerk'
+    | '/admin-login'
     | '/forgot-password'
     | '/judges-sign-up'
     | '/otp'
@@ -408,6 +462,8 @@ export interface FileRouteTypes {
     | '/challenge-list'
     | '/homepage'
     | '/project-submission'
+    | '/admin-dashboard/admin-dashboard'
+    | '/admin/dashboard'
     | '/errors/$error'
     | '/settings/account'
     | '/settings/appearance'
@@ -416,6 +472,8 @@ export interface FileRouteTypes {
     | '/clerk/sign-in'
     | '/clerk/sign-up'
     | '/clerk/user-management'
+    | '/admin-dashboard'
+    | '/admin'
     | '/apps'
     | '/challenges'
     | '/chats'
@@ -433,6 +491,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/clerk/(auth)'
     | '/clerk/_authenticated'
+    | '/(auth)/admin-login'
     | '/(auth)/forgot-password'
     | '/(auth)/judges-sign-up'
     | '/(auth)/otp'
@@ -447,6 +506,8 @@ export interface FileRouteTypes {
     | '/(pages)/challenge-list'
     | '/(pages)/homepage'
     | '/(pages)/project-submission'
+    | '/_authenticated/admin-dashboard/admin-dashboard'
+    | '/_authenticated/admin/dashboard'
     | '/_authenticated/errors/$error'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -455,6 +516,8 @@ export interface FileRouteTypes {
     | '/clerk/(auth)/sign-in'
     | '/clerk/(auth)/sign-up'
     | '/clerk/_authenticated/user-management'
+    | '/_authenticated/admin-dashboard/'
+    | '/_authenticated/admin/'
     | '/_authenticated/apps/'
     | '/_authenticated/challenges/'
     | '/_authenticated/chats/'
@@ -470,6 +533,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ClerkRouteRoute: typeof ClerkRouteRouteWithChildren
+  authAdminLoginRoute: typeof authAdminLoginRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authJudgesSignUpRoute: typeof authJudgesSignUpRoute
   authOtpRoute: typeof authOtpRoute
@@ -607,6 +671,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/admin-login': {
+      id: '/(auth)/admin-login'
+      path: '/admin-login'
+      fullPath: '/admin-login'
+      preLoaderRoute: typeof authAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clerk/_authenticated': {
       id: '/clerk/_authenticated'
       path: ''
@@ -684,6 +755,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin-dashboard/': {
+      id: '/_authenticated/admin-dashboard/'
+      path: '/admin-dashboard'
+      fullPath: '/admin-dashboard/'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/clerk/_authenticated/user-management': {
       id: '/clerk/_authenticated/user-management'
       path: '/user-management'
@@ -740,6 +825,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/dashboard': {
+      id: '/_authenticated/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin-dashboard/admin-dashboard': {
+      id: '/_authenticated/admin-dashboard/admin-dashboard'
+      path: '/admin-dashboard/admin-dashboard'
+      fullPath: '/admin-dashboard/admin-dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/challenges/$id/submissions/': {
       id: '/_authenticated/challenges/$id/submissions/'
       path: '/challenges/$id/submissions'
@@ -775,7 +874,11 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
+  AuthenticatedAdminDashboardAdminDashboardRoute: typeof AuthenticatedAdminDashboardAdminDashboardRoute
+  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedAdminDashboardIndexRoute: typeof AuthenticatedAdminDashboardIndexRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChallengesIndexRoute: typeof AuthenticatedChallengesIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
@@ -788,7 +891,12 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
+  AuthenticatedAdminDashboardAdminDashboardRoute:
+    AuthenticatedAdminDashboardAdminDashboardRoute,
+  AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedAdminDashboardIndexRoute: AuthenticatedAdminDashboardIndexRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChallengesIndexRoute: AuthenticatedChallengesIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
@@ -850,6 +958,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ClerkRouteRoute: ClerkRouteRouteWithChildren,
+  authAdminLoginRoute: authAdminLoginRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authJudgesSignUpRoute: authJudgesSignUpRoute,
   authOtpRoute: authOtpRoute,

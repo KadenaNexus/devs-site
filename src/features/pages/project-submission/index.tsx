@@ -164,11 +164,11 @@ export function ProjectSubmission() {
   return (
     <HomeLayout>
       <div className='serv-main other-bg relative'>
-        <section className='serv-overlay relative overflow-hidden pt-16 pb-16'>
+        <section className='serv-overlay overflow-hidden pt-30 pb-16'>
           <div className='absolute inset-0 via-transparent to-transparent'></div>
 
           <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75'>
-            <div className='serv-banner w-full py-15 text-center'>
+            <div className='serv-banner w-full bg-[var(--ft-light)] py-15 text-center'>
               <h1 className='text-gradient text-4xl leading-tight font-bold md:text-5xl lg:text-6xl'>
                 Project Submission
               </h1>
@@ -178,7 +178,7 @@ export function ProjectSubmission() {
           <section className='relative mt-16 overflow-hidden'>
             <div className='mx-auto max-w-[1296px] px-[15px]'>
               <div className='relative z-10'>
-                <div className='rounded-3xl border-1 border-[var(--ft-primary)] bg-[#ffffff08] p-8 shadow-2xl backdrop-blur-[4px] backdrop-blur-md lg:p-12'>
+                <div className='form-main rounded-3xl border-1 border-[var(--ft-primary)] bg-[var(--ft-light)] p-8 shadow-2xl backdrop-blur-[4px] backdrop-blur-md lg:p-12'>
                   <div className='flex justify-center'>
                     <h2 className='text-gradient mb-12 bg-clip-text text-center text-3xl font-bold text-transparent md:text-4xl lg:text-5xl'>
                       SUBMIT YOUR BUILD
@@ -186,10 +186,9 @@ export function ProjectSubmission() {
                   </div>
 
                   <div className='space-y-6'>
-                    {/* Row 1: Developer Name, Email, Discord */}
                     <div className='grid gap-6 md:grid-cols-3'>
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Developer/Team Name{' '}
                           <span className='text-red-400'>*</span>
                         </label>
@@ -204,11 +203,11 @@ export function ProjectSubmission() {
                             className={`w-full rounded-xl border ${
                               errors.developerName && touched.developerName
                                 ? 'border-red-500/50'
-                                : 'border-emerald-500/30'
-                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                                : 'border-[var(--ft-primary)]'
+                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
-                            <PersonIcon className='h-5 w-5 text-emerald-400' />
+                            <PersonIcon className='h-5 w-5 text-[var(--ft-primary)]' />
                           </div>
                         </div>
                         {errors.developerName && touched.developerName && (
@@ -220,7 +219,7 @@ export function ProjectSubmission() {
                       </div>
 
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Email <span className='text-red-400'>*</span>
                         </label>
                         <div className='relative'>
@@ -234,11 +233,11 @@ export function ProjectSubmission() {
                             className={`w-full rounded-xl border ${
                               errors.email && touched.email
                                 ? 'border-red-500/50'
-                                : 'border-emerald-500/30'
-                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                                : 'border-[var(--ft-primary)]'
+                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
-                            <EnvelopeClosedIcon className='h-5 w-5 text-emerald-400' />
+                            <EnvelopeClosedIcon className='h-5 w-5 text-[var(--ft-primary)]' />
                           </div>
                         </div>
                         {errors.email && touched.email && (
@@ -250,7 +249,7 @@ export function ProjectSubmission() {
                       </div>
 
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Discord <span className='text-red-400'>*</span>
                         </label>
                         <div className='relative'>
@@ -264,11 +263,11 @@ export function ProjectSubmission() {
                             className={`w-full rounded-xl border ${
                               errors.discord && touched.discord
                                 ? 'border-red-500/50'
-                                : 'border-emerald-500/30'
-                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                                : 'border-[var(--ft-primary)]'
+                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
-                            <DiscordLogoIcon className='h-5 w-5 text-emerald-400' />
+                            <DiscordLogoIcon className='h-5 w-5 text-[var(--ft-primary)]' />
                           </div>
                         </div>
                         {errors.discord && touched.discord && (
@@ -280,10 +279,9 @@ export function ProjectSubmission() {
                       </div>
                     </div>
 
-                    {/* Row 2: Telegram, Project Title */}
                     <div className='grid gap-6 md:grid-cols-2'>
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Telegram
                         </label>
                         <div className='relative'>
@@ -293,11 +291,11 @@ export function ProjectSubmission() {
                             value={formData.telegram}
                             onChange={handleChange}
                             placeholder='@username'
-                            className='w-full rounded-xl border border-emerald-500/30 bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none'
+                            className='w-full rounded-xl border border-[var(--ft-primary)] bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none'
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
                             <svg
-                              className='h-5 w-5 text-emerald-400'
+                              className='h-5 w-5 text-[var(--ft-primary)]'
                               fill='currentColor'
                               viewBox='0 0 24 24'
                             >
@@ -308,7 +306,7 @@ export function ProjectSubmission() {
                       </div>
 
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Project Title <span className='text-red-400'>*</span>
                         </label>
                         <div className='relative'>
@@ -322,11 +320,11 @@ export function ProjectSubmission() {
                             className={`w-full rounded-xl border ${
                               errors.projectTitle && touched.projectTitle
                                 ? 'border-red-500/50'
-                                : 'border-emerald-500/30'
-                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                                : 'border-[var(--ft-primary)]'
+                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
-                            <FileTextIcon className='h-5 w-5 text-emerald-400' />
+                            <FileTextIcon className='h-5 w-5 text-[var(--ft-primary)]' />
                           </div>
                         </div>
                         {errors.projectTitle && touched.projectTitle && (
@@ -338,10 +336,9 @@ export function ProjectSubmission() {
                       </div>
                     </div>
 
-                    {/* Row 3: Problem Statement, Solution Description */}
                     <div className='grid gap-6 md:grid-cols-2'>
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Problem Statement{' '}
                           <span className='text-red-400'>*</span>
                         </label>
@@ -355,8 +352,8 @@ export function ProjectSubmission() {
                           className={`w-full resize-none rounded-xl border ${
                             errors.problemStatement && touched.problemStatement
                               ? 'border-red-500/50'
-                              : 'border-emerald-500/30'
-                          } bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                              : 'border-[var(--ft-primary)]'
+                          } bg-gray-900/50 px-4 py-3 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                         />
                         {errors.problemStatement &&
                           touched.problemStatement && (
@@ -368,7 +365,7 @@ export function ProjectSubmission() {
                       </div>
 
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Solution Description{' '}
                           <span className='text-red-400'>*</span>
                         </label>
@@ -383,8 +380,8 @@ export function ProjectSubmission() {
                             errors.solutionDescription &&
                             touched.solutionDescription
                               ? 'border-red-500/50'
-                              : 'border-emerald-500/30'
-                          } bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                              : 'border-[var(--ft-primary)]'
+                          } bg-gray-900/50 px-4 py-3 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                         />
                         {errors.solutionDescription &&
                           touched.solutionDescription && (
@@ -396,10 +393,9 @@ export function ProjectSubmission() {
                       </div>
                     </div>
 
-                    {/* Row 4: GitHub Link, Demo Link */}
                     <div className='grid gap-6 md:grid-cols-2'>
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           GitHub Repository Link
                         </label>
                         <div className='relative'>
@@ -413,11 +409,11 @@ export function ProjectSubmission() {
                             className={`w-full rounded-xl border ${
                               errors.githubLink && touched.githubLink
                                 ? 'border-red-500/50'
-                                : 'border-emerald-500/30'
-                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                                : 'border-[var(--ft-primary)]'
+                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
-                            <CodeIcon className='h-5 w-5 text-emerald-400' />
+                            <CodeIcon className='h-5 w-5 text-[var(--ft-primary)]' />
                           </div>
                         </div>
                         {errors.githubLink && touched.githubLink && (
@@ -429,7 +425,7 @@ export function ProjectSubmission() {
                       </div>
 
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Demo Link
                         </label>
                         <div className='relative'>
@@ -443,11 +439,11 @@ export function ProjectSubmission() {
                             className={`w-full rounded-xl border ${
                               errors.demoLink && touched.demoLink
                                 ? 'border-red-500/50'
-                                : 'border-emerald-500/30'
-                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none`}
+                                : 'border-[var(--ft-primary)]'
+                            } bg-gray-900/50 px-4 py-3 pl-12 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
                           />
                           <div className='absolute top-1/2 left-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center'>
-                            <VideoIcon className='h-5 w-5 text-emerald-400' />
+                            <VideoIcon className='h-5 w-5 text-[var(--ft-primary)]' />
                           </div>
                         </div>
                         {errors.demoLink && touched.demoLink && (
@@ -459,10 +455,9 @@ export function ProjectSubmission() {
                       </div>
                     </div>
 
-                    {/* Row 5: Contract Details, Status */}
                     <div className='grid gap-6 md:grid-cols-2'>
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           Smart Contract / Medicine Details
                         </label>
                         <textarea
@@ -471,18 +466,18 @@ export function ProjectSubmission() {
                           onChange={handleChange}
                           placeholder='Provide smart contract addresses or medicine details...'
                           rows={4}
-                          className='w-full resize-none rounded-xl border border-emerald-500/30 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 transition-colors focus:border-emerald-500 focus:outline-none'
+                          className='w-full resize-none rounded-xl border border-[var(--ft-primary)] bg-gray-900/50 px-4 py-3 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none'
                         />
                       </div>
 
                       <div>
-                        <label className='mb-2 block text-sm text-gray-400'>
+                        <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
                           STATUS
                         </label>
                         <div
                           className={`mt-8 flex items-center gap-3 rounded-xl border px-6 py-4 transition-all ${
                             isSubmitted
-                              ? 'border-emerald-500/30 bg-emerald-500/10'
+                              ? 'border-[var(--ft-primary)] bg-emerald-500/10'
                               : isFormValid()
                                 ? 'border-blue-500/30 bg-blue-500/10'
                                 : 'border-gray-500/30 bg-gray-500/10'
@@ -490,8 +485,8 @@ export function ProjectSubmission() {
                         >
                           {isSubmitted ? (
                             <>
-                              <CheckCircledIcon className='h-6 w-6 text-emerald-400' />
-                              <span className='text-lg font-bold text-emerald-400'>
+                              <CheckCircledIcon className='h-6 w-6 text-[var(--ft-primary)]' />
+                              <span className='text-lg font-bold text-[var(--ft-primary)]'>
                                 SUBMITTED
                               </span>
                             </>
@@ -504,29 +499,28 @@ export function ProjectSubmission() {
                             </>
                           ) : (
                             <>
-                              <CrossCircledIcon className='h-6 w-6 text-gray-400' />
-                              <span className='text-lg font-bold text-gray-400'>
+                              <CrossCircledIcon className='h-6 w-6 text-[var(--ft-only-gray)]' />
+                              <span className='text-lg font-bold text-[var(--ft-only-gray)]'>
                                 INCOMPLETE
                               </span>
                             </>
                           )}
                         </div>
                         {!isFormValid() && !isSubmitted && (
-                          <p className='mt-2 text-xs text-gray-400'>
+                          <p className='mt-2 text-xs text-[var(--ft-only-gray)]'>
                             Fill all required fields (*) to enable submission
                           </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Submit Button */}
                     <div className='flex justify-center pt-6'>
                       <button
                         onClick={handleSubmit}
                         disabled={!isFormValid() || isSubmitted}
-                        className={`transform rounded-full px-12 py-4 text-lg font-bold text-white transition-all duration-300 ${
+                        className={`transform rounded-full px-12 py-4 text-lg font-bold text-black transition-all duration-300 ${
                           isFormValid() && !isSubmitted
-                            ? 'cursor-pointer bg-gradient-to-r from-emerald-500 to-cyan-500 shadow-lg hover:scale-105 hover:from-emerald-600 hover:to-cyan-600 hover:shadow-emerald-500/50'
+                            ? 'cursor-pointer bg-[var(--ft-primary)] shadow-lg hover:scale-105 hover:from-emerald-600 hover:to-cyan-600 hover:shadow-[var(--ft-primary)]'
                             : 'cursor-not-allowed bg-gray-600 opacity-50'
                         }`}
                       >
