@@ -2,6 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { FiTarget, FiUpload, FiAward } from 'react-icons/fi'
+import {
+  FiCheckCircle,
+  FiShield,
+  FiLock,
+  FiUserCheck,
+  FiTrendingUp,
+  FiCode,
+} from 'react-icons/fi'
+import { GiStairsGoal } from "react-icons/gi";
+import { ImUpload } from "react-icons/im";
+
 import Counter from '../components/Counter'
 import FillButton from '../components/FillButton'
 import StrokeButton from '../components/StrokeButton'
@@ -38,210 +50,33 @@ export function Homepage({ value }: { value: string }) {
   const features = [
     {
       id: 1,
-      icon: (
-        <svg
-          viewBox='0 0 64 64'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
-          className='h-full w-full'
-        >
-          <path
-            d='M32 8L8 20V44L32 56L56 44V20L32 8Z'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-          <path
-            d='M32 8V32M32 56V32M32 32L8 20M32 32L56 20M32 32L8 44M32 32L56 44'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-        </svg>
-      ),
+      icon: <GiStairsGoal className='h-full w-full' />,
       title: 'Pick a Real-World Challenge',
       description:
         'P2P payments, fraud detection, supply chain, or DeFi infrastructure.',
     },
     {
       id: 2,
-      icon: (
-        <svg
-          viewBox='0 0 64 64'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
-          className='h-full w-full'
-        >
-          <rect
-            x='12'
-            y='12'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 19 19)'
-          />
-          <rect
-            x='32'
-            y='12'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 39 19)'
-          />
-          <rect
-            x='12'
-            y='32'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 19 39)'
-          />
-          <rect
-            x='32'
-            y='32'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 39 39)'
-          />
-        </svg>
-      ),
+      icon: <FiCode className='h-full w-full' />,
       title: 'Build an MVP on Kadena',
       description:
         'Use Pact smart contracts with your preferred frontend stack.',
     },
     {
       id: 3,
-      icon: (
-        <svg
-          viewBox='0 0 64 64'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
-          className='h-full w-full'
-        >
-          <path
-            d='M32 8L38 24H55L41 35L47 52L32 41L17 52L23 35L9 24H26L32 8Z'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-          <path
-            d='M24 48L20 56H44L40 48'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-          <path
-            d='M20 56L18 60H46L44 56'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-        </svg>
-      ),
+      icon: <ImUpload className='h-full w-full' />,
       title: 'Submit Code & Demo',
       description: 'GitHub repository, live demo, and technical explanation.',
     },
     {
       id: 4,
-      icon: (
-        <svg
-          viewBox='0 0 64 64'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
-          className='h-full w-full'
-        >
-          <rect
-            x='12'
-            y='12'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 19 19)'
-          />
-          <rect
-            x='32'
-            y='12'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 39 19)'
-          />
-          <rect
-            x='12'
-            y='32'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 19 39)'
-          />
-          <rect
-            x='32'
-            y='32'
-            width='14'
-            height='14'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            transform='rotate(45 39 39)'
-          />
-        </svg>
-      ),
+      icon: <FiCheckCircle className='h-full w-full' />,
       title: 'Get Reviewed & Ranked',
       description: 'Transparent judging with clear evaluation criteria.',
     },
     {
       id: 5,
-      icon: (
-        <svg
-          viewBox='0 0 64 64'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
-          className='h-full w-full'
-        >
-          <path
-            d='M32 8L8 20V44L32 56L56 44V20L32 8Z'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-          <path
-            d='M32 8V32M32 56V32M32 32L8 20M32 32L56 20M32 32L8 44M32 32L56 44'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-        </svg>
-      ),
+      icon: <FiAward className='h-full w-full' />,
       title: 'Win Rewards & Recognition',
       description:
         'Cash prizes, public recognition, and potential long-term collaboration.',
@@ -389,7 +224,7 @@ export function Homepage({ value }: { value: string }) {
                   key={index}
                   className='stat-card space-y-1 rounded-xl bg-[var(--ft-light)] p-6 text-center backdrop-blur-sm'
                 >
-                  <h3 className='text-4xl font-bold text-white md:text-5xl'>
+                  <h3 className='text-3xl font-bold text-white md:text-3xl'>
                     {isVisible &&
                       (isNaN(parseFloat(stat.number)) ? (
                         stat.number
@@ -444,6 +279,63 @@ export function Homepage({ value }: { value: string }) {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className='relative bg-[#1f7201] py-24'>
+        <div className='mx-auto max-w-7xl px-6'>
+          <div className='mb-12 text-center'>
+            <h2 className='text-4xl font-bold text-green-400 text-white md:text-5xl'>
+              Solve. Build. Win.
+            </h2>
+            <p className='mt-4 text-white'>
+              Build real Kadena use-cases with production thinking.
+            </p>
+          </div>
+
+          <div className='grid gap-8 md:grid-cols-3'>
+            {[
+              {
+                title: 'Solve Challenges',
+                text: 'Build real Kadena use-cases designed for real-world deployment.',
+                icon: <FiTarget size={36} />,
+              },
+              {
+                title: 'Submit Solutions',
+                text: 'Submit Pact smart contracts, demos, and technical documentation.',
+                icon: <FiUpload size={36} />,
+              },
+              {
+                title: 'Win Rewards',
+                text: 'Earn prizes, visibility, and long-term project opportunities.',
+                icon: <FiAward size={36} />,
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className='rounded-2xl border border-green-900 bg-[#0b1f0b] p-8 text-center transition hover:border-green-500'
+              >
+                {/* Icon */}
+                <div className='mb-4 flex justify-center text-[var(--ft-primary)]'>
+                  {item.icon}
+                </div>
+
+                <h3 className='mb-3 text-xl font-semibold text-white'>
+                  {item.title}
+                </h3>
+                <p className='text-sm leading-relaxed text-[var(--ft-only-gray)]'>
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* MVP Badge */}
+          <div className='mt-16 text-center'>
+            <span className='inline-flex items-center gap-2 rounded-full border border-white bg-green-500/10 px-6 py-2 text-sm text-white'>
+              ⭐ Top projects may become official Kadena MVPs
+            </span>
           </div>
         </div>
       </section>
@@ -528,6 +420,47 @@ export function Homepage({ value }: { value: string }) {
         </div>
       </section>
 
+      <section className='relative bg-[#1f7201] py-24'>
+        <div className='mx-auto max-w-6xl px-6 text-center'>
+          <h2 className='mb-16 text-center text-4xl font-bold text-green-400 text-white md:text-5xl'>
+            Why These Challenges Matter
+          </h2>
+
+          <div className='grid gap-6 md:grid-cols-2'>
+            {[
+              {
+                text: 'Real problems, not toy demos',
+                icon: <FiCheckCircle />,
+              },
+              {
+                text: 'Designed for production use',
+                icon: <FiShield />,
+              },
+              {
+                text: 'No KYC, no gatekeeping',
+                icon: <FiLock />,
+              },
+              {
+                text: 'Builders keep credit for their work',
+                icon: <FiUserCheck />,
+              },
+              {
+                text: 'Potential revenue-sharing projects',
+                icon: <FiTrendingUp />,
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className='flex items-center rounded-xl border border-green-900 bg-[#081a08] px-6 py-5 text-[var(--ft-only-gray)]'
+              >
+                <span className='mr-3 text-xl text-[var(--ft-primary)]'>{item.icon}</span>
+                {item.text}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className='relative overflow-hidden bg-[var(--ft-bg-black)] py-20 lg:py-32'>
         <div className='relative z-10 mx-auto max-w-7xl px-6 lg:px-8'>
           <div className='mb-16 text-center'>
@@ -541,7 +474,7 @@ export function Homepage({ value }: { value: string }) {
               {recentWinners.map((winner, index) => (
                 <div
                   key={winner.id}
-                  className='winner-card recent-winner-item mb-6 flex items-center justify-between rounded-2xl bg-[var(--ft-light)] p-6 backdrop-blur-sm last:mb-0'
+                  className='home-winner-card home-recent-winner-item mb-6 flex items-center justify-between rounded-2xl bg-[var(--ft-light)] p-6 backdrop-blur-sm last:mb-0'
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className='flex items-center gap-4'>
@@ -603,7 +536,7 @@ export function Homepage({ value }: { value: string }) {
                 {topSubmissions.map((submission, index) => (
                   <div
                     key={submission.id}
-                    className='submission-card rounded-2xl bg-[#000000] p-6 backdrop-blur-sm'
+                    className='home-submission-card rounded-2xl bg-[#000000] p-6 backdrop-blur-sm'
                     style={{ animationDelay: `${index * 0.15}s` }}
                   >
                     <div className='mb-4 flex items-center gap-4'>

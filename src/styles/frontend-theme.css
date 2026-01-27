@@ -1,7 +1,9 @@
 /* ================================
    FRONTEND THEME (Light Default)
 ================================ */
-
+:root:not(.dark) .winner-card {
+  background: #1f4512 !important;
+}
 :root {
   /* Brand */
   --ft-primary: oklch(0.8 0.23 139.18);

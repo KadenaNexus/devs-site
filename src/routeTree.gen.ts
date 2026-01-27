@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as pagesWinnersPageRouteImport } from './routes/(pages)/winners-page'
 import { Route as pagesProjectSubmissionRouteImport } from './routes/(pages)/project-submission'
 import { Route as pagesHomepageRouteImport } from './routes/(pages)/homepage'
 import { Route as pagesChallengeListRouteImport } from './routes/(pages)/challenge-list'
+import { Route as pagesChallengeDetailsRouteImport } from './routes/(pages)/challenge-details'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -66,6 +68,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const pagesWinnersPageRoute = pagesWinnersPageRouteImport.update({
+  id: '/(pages)/winners-page',
+  path: '/winners-page',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const pagesProjectSubmissionRoute = pagesProjectSubmissionRouteImport.update({
   id: '/(pages)/project-submission',
   path: '/project-submission',
@@ -79,6 +86,11 @@ const pagesHomepageRoute = pagesHomepageRouteImport.update({
 const pagesChallengeListRoute = pagesChallengeListRouteImport.update({
   id: '/(pages)/challenge-list',
   path: '/challenge-list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const pagesChallengeDetailsRoute = pagesChallengeDetailsRouteImport.update({
+  id: '/(pages)/challenge-details',
+  path: '/challenge-details',
   getParentRoute: () => rootRouteImport,
 } as any)
 const errors503Route = errors503RouteImport.update({
@@ -291,9 +303,11 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/challenge-details': typeof pagesChallengeDetailsRoute
   '/challenge-list': typeof pagesChallengeListRoute
   '/homepage': typeof pagesHomepageRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
+  '/winners-page': typeof pagesWinnersPageRoute
   '/admin-dashboard/admin-dashboard': typeof AuthenticatedAdminDashboardAdminDashboardRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
@@ -331,9 +345,11 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/challenge-details': typeof pagesChallengeDetailsRoute
   '/challenge-list': typeof pagesChallengeListRoute
   '/homepage': typeof pagesHomepageRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
+  '/winners-page': typeof pagesWinnersPageRoute
   '/admin-dashboard/admin-dashboard': typeof AuthenticatedAdminDashboardAdminDashboardRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
@@ -376,9 +392,11 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
+  '/(pages)/challenge-details': typeof pagesChallengeDetailsRoute
   '/(pages)/challenge-list': typeof pagesChallengeListRoute
   '/(pages)/homepage': typeof pagesHomepageRoute
   '/(pages)/project-submission': typeof pagesProjectSubmissionRoute
+  '/(pages)/winners-page': typeof pagesWinnersPageRoute
   '/_authenticated/admin-dashboard/admin-dashboard': typeof AuthenticatedAdminDashboardAdminDashboardRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
@@ -419,9 +437,11 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/challenge-details'
     | '/challenge-list'
     | '/homepage'
     | '/project-submission'
+    | '/winners-page'
     | '/admin-dashboard/admin-dashboard'
     | '/admin/dashboard'
     | '/errors/$error'
@@ -459,9 +479,11 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/challenge-details'
     | '/challenge-list'
     | '/homepage'
     | '/project-submission'
+    | '/winners-page'
     | '/admin-dashboard/admin-dashboard'
     | '/admin/dashboard'
     | '/errors/$error'
@@ -503,9 +525,11 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/(pages)/challenge-details'
     | '/(pages)/challenge-list'
     | '/(pages)/homepage'
     | '/(pages)/project-submission'
+    | '/(pages)/winners-page'
     | '/_authenticated/admin-dashboard/admin-dashboard'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/errors/$error'
@@ -545,9 +569,11 @@ export interface RootRouteChildren {
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
+  pagesChallengeDetailsRoute: typeof pagesChallengeDetailsRoute
   pagesChallengeListRoute: typeof pagesChallengeListRoute
   pagesHomepageRoute: typeof pagesHomepageRoute
   pagesProjectSubmissionRoute: typeof pagesProjectSubmissionRoute
+  pagesWinnersPageRoute: typeof pagesWinnersPageRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -573,6 +599,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(pages)/winners-page': {
+      id: '/(pages)/winners-page'
+      path: '/winners-page'
+      fullPath: '/winners-page'
+      preLoaderRoute: typeof pagesWinnersPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(pages)/project-submission': {
       id: '/(pages)/project-submission'
       path: '/project-submission'
@@ -592,6 +625,13 @@ declare module '@tanstack/react-router' {
       path: '/challenge-list'
       fullPath: '/challenge-list'
       preLoaderRoute: typeof pagesChallengeListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(pages)/challenge-details': {
+      id: '/(pages)/challenge-details'
+      path: '/challenge-details'
+      fullPath: '/challenge-details'
+      preLoaderRoute: typeof pagesChallengeDetailsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(errors)/503': {
@@ -970,9 +1010,11 @@ const rootRouteChildren: RootRouteChildren = {
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
+  pagesChallengeDetailsRoute: pagesChallengeDetailsRoute,
   pagesChallengeListRoute: pagesChallengeListRoute,
   pagesHomepageRoute: pagesHomepageRoute,
   pagesProjectSubmissionRoute: pagesProjectSubmissionRoute,
+  pagesWinnersPageRoute: pagesWinnersPageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
