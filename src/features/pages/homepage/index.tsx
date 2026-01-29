@@ -246,43 +246,6 @@ export function Homepage({ value }: { value: string }) {
         </div>
       </section>
 
-      <section className='what-we-do-section relative overflow-hidden bg-[var(--ft-bg-black)] py-20 transition-colors duration-500 lg:py-32'>
-        <div className='bg-gradient-radial absolute inset-0 from-emerald-900/5 via-transparent to-transparent'></div>
-
-        <div className='relative z-10 mx-auto max-w-7xl px-6 lg:px-8'>
-          <div className='mb-16 text-center lg:mb-20'>
-            <h2 className='fade-in text-gradient mb-4 text-4xl font-bold md:text-5xl lg:text-6xl'>
-              How It Works
-            </h2>
-          </div>
-
-          <div className='resume-widget grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8'>
-            {features.map((feature) => (
-              <div
-                key={feature.id}
-                className='feature-card group resume-item relative cursor-pointer rounded-3xl bg-[var(--ft-light)] p-8 text-center transition-all duration-500 lg:p-10'
-              >
-                <div className='relative mb-8'>
-                  <div className='mx-auto h-10 w-10 text-[var(--ft-primary)] transition-all duration-500 group-hover:text-[var(--ft-primary-foreground)] lg:h-12 lg:w-12'>
-                    {feature.icon}
-                  </div>
-                </div>
-
-                <div className='space-y-4'>
-                  <h3 className='text-2xl font-bold text-white transition-all duration-300 lg:text-3xl'>
-                    {feature.title}
-                  </h3>
-
-                  <p className='text-sm leading-relaxed text-[var(--ft-only-gray)] transition-all duration-300 lg:text-base'>
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className='relative bg-[#1f7201] py-24'>
         <div className='mx-auto max-w-7xl px-6'>
           <div className='mb-12 text-center'>

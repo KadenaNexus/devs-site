@@ -32,13 +32,19 @@ export async function fetchChallenge(id: string): Promise<Challenge | null> {
 }
 
 export async function fetchSubmissions(
-  challengeId: string
+  challengeId?: string
 ): Promise<Submission[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('submissions')
     .select('*')
-    .eq('challenge_id', challengeId)
     .order('created_at', { ascending: false })
+
+  // Filter by challenge if ID is provided
+  if (challengeId) {
+    query = query.eq('challenge_id', challengeId)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     console.error('Error fetching submissions:', error)

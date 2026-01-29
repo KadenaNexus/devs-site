@@ -43,8 +43,8 @@ function MissingClerkPubKey() {
       <div className='bg-background flex h-16 justify-between p-4'>
         <SidebarTrigger variant='outline' className='scale-125 sm:scale-100' />
         <div className='space-x-4'>
-          <ThemeSwitch />
-          <ConfigDrawer />
+          {/* <ThemeSwitch />
+          <ConfigDrawer /> */}
         </div>
       </div>
       <Main className='flex flex-col items-center justify-start'>

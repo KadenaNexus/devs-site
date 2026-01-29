@@ -41,6 +41,8 @@ export function ChallengesManagement() {
   const [currentChallenge, setCurrentChallenge] = useState<Challenge | null>(
     null
   )
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -57,17 +59,24 @@ export function ChallengesManagement() {
     queryFn: fetchChallenges,
   })
 
+  // Pagination logic
+  const totalPages = Math.ceil(challenges.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedChallenges = challenges.slice(startIndex, endIndex)
+
   const createMutation = useMutation({
     mutationFn: (data: any) =>
-      createChallenge({ ...data, created_by: user?.id }),
+      createChallenge(data), // Remove created_by, it's handled in the service
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['challenges'] })
       queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
       toast.success('Challenge created successfully')
       handleCloseDialog()
     },
-    onError: (error) => {
-      toast.error('Failed to create challenge')
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to create challenge'
+      toast.error(errorMessage)
       console.error(error)
     },
   })
@@ -80,8 +89,9 @@ export function ChallengesManagement() {
       toast.success('Challenge updated successfully')
       handleCloseDialog()
     },
-    onError: (error) => {
-      toast.error('Failed to update challenge')
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to update challenge'
+      toast.error(errorMessage)
       console.error(error)
     },
   })
@@ -198,19 +208,20 @@ export function ChallengesManagement() {
             <p className='text-muted-foreground'>No challenges yet</p>
           </div>
         ) : (
-          <div className='overflow-x-auto'>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Prize Pool</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead className='text-right'>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {challenges.map((challenge) => (
+          <>
+            <div className='overflow-x-auto'>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Prize Pool</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead className='text-right'>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedChallenges.map((challenge) => (
                   <TableRow key={challenge.id}>
                     <TableCell className='font-medium'>
                       {challenge.title}
@@ -268,7 +279,45 @@ export function ChallengesManagement() {
                 ))}
               </TableBody>
             </Table>
-          </div>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className='flex items-center justify-between px-2 py-4'>
+              <div className='text-sm text-muted-foreground'>
+                Showing {startIndex + 1} to {Math.min(endIndex, challenges.length)} of {challenges.length} challenges
+              </div>
+              <div className='flex gap-2'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <div className='flex items-center gap-1'>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? 'default' : 'outline'}
+                      size='sm'
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </>
         )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

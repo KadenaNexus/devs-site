@@ -4,26 +4,61 @@ export type Challenge = {
   id: string
   title: string
   status: string
+  description?: string
+  prize_pool?: string
+  created_at?: string
+  created_by?: string
+  rules?: string
+  timeline?: string
+  evaluation_criteria?: string
+  sponsor_link?: string
 }
 
 export const getAssignedChallenges = async (): Promise<Challenge[]> => {
-  const { data, error } = await supabase.from('challenge_judges').select(`
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user?.id) return []
+
+  const { data, error } = await supabase
+    .from('challenge_judges')
+    .select(
+      `
       challenges (
         id,
         title,
-        status
+        description,
+        status,
+        prize_pool,
+        created_at,
+        created_by,
+        rules,
+        timeline,
+        evaluation_criteria,
+        sponsor_link
       )
-    `)
+    `
+    )
+    .eq('judge_user_id', user.id)
 
   if (error) throw error
 
   return (
     data
-      ?.flatMap((row) => row.challenges ?? [])
+      ?.flatMap((row) => (row.challenges ? [row.challenges] : []))
       .map((c) => ({
         id: c.id,
         title: c.title,
         status: c.status,
+        description: c.description,
+        prize_pool: c.prize_pool,
+        created_at: c.created_at,
+        created_by: c.created_by,
+        rules: c.rules,
+        timeline: c.timeline,
+        evaluation_criteria: c.evaluation_criteria,
+        sponsor_link: c.sponsor_link,
       })) ?? []
   )
 }

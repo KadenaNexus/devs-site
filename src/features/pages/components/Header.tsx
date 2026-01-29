@@ -10,7 +10,7 @@ export default function Header() {
 
   const navItems = [
     { name: 'Services', href: '#services' },
-    { name: 'Works', href: '#works' },
+    { name: 'How it Works', href: 'how-it-works' },
     { name: 'Resume', href: '#resume' },
     { name: 'Skills', href: '#skills' },
     { name: 'Testimonials', href: '#testimonials' },
@@ -55,7 +55,7 @@ export default function Header() {
       <div className='mx-auto max-w-[1296px] px-[15px]'>
         <div className='flex h-16 items-center justify-between'>
           <div className='flex-shrink-0'>
-            <a href='#' className='flex items-center space-x-2'>
+            <a href='/' className='flex items-center space-x-2'>
               <img
                 src='/images/logo.png'
                 alt='Logo'

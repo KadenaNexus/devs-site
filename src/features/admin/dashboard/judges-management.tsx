@@ -24,14 +24,18 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { Plus, UserPlus } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
 
 export function JudgesManagement() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
   const [selectedJudgeId, setSelectedJudgeId] = useState('')
-  const [formData, setFormData] = useState({ email: '', name: '' })
+  const [formData, setFormData] = useState({ email: '', name: '', password: '' })
   const [selectedChallengeId, setSelectedChallengeId] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   const { data: judges = [], isLoading } = useQuery({
     queryKey: ['judges'],
@@ -43,15 +47,21 @@ export function JudgesManagement() {
     queryFn: fetchChallenges,
   })
 
+  // Pagination logic
+  const totalPages = Math.ceil(judges.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedJudges = judges.slice(startIndex, endIndex)
+
   const inviteMutation = useMutation({
-    mutationFn: (data: { email: string; name: string }) =>
-      inviteJudge(data.email, data.name),
+    mutationFn: (data: { email: string; name: string; password: string }) =>
+      inviteJudge(data.email, data.name, data.password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['judges'] })
       queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
       toast.success('Judge invited successfully')
       setIsInviteDialogOpen(false)
-      setFormData({ email: '', name: '' })
+      setFormData({ email: '', name: '', password: '' })
     },
     onError: (error) => {
       toast.error('Failed to invite judge')
@@ -114,26 +124,72 @@ export function JudgesManagement() {
             <p className='text-muted-foreground'>No judges yet</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Joined</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {judges.map((judge) => (
-                <TableRow key={judge.id}>
-                  <TableCell className='font-medium'>{judge.name}</TableCell>
-                  <TableCell>{judge.email}</TableCell>
-                  <TableCell>
-                    {new Date(judge.created_at).toLocaleDateString()}
-                  </TableCell>
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Joined</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {paginatedJudges.map((judge) => (
+                  <TableRow 
+                    key={judge.id}
+                    className='cursor-pointer hover:bg-muted/50'
+                    onClick={() => {
+                      console.log('Navigating to judge:', judge.id)
+                      navigate({ to: '/admin/judges/$judgeId', params: { judgeId: judge.id } })
+                    }}
+                  >
+                    <TableCell className='font-medium'>{judge.name}</TableCell>
+                    <TableCell>{judge.email}</TableCell>
+                    <TableCell>
+                      {new Date(judge.created_at).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {/* Pagination Controls */}
+            <div className='flex items-center justify-between px-2 py-4'>
+              <div className='text-sm text-muted-foreground'>
+                Showing {startIndex + 1} to {Math.min(endIndex, judges.length)} of {judges.length} judges
+              </div>
+              <div className='flex gap-2'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <div className='flex items-center gap-1'>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? 'default' : 'outline'}
+                      size='sm'
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </>
         )}
 
         <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
@@ -168,6 +224,18 @@ export function JudgesManagement() {
                   placeholder='judge@example.com'
                 />
               </div>
+              <div>
+                <Label htmlFor='password'>Password *</Label>
+                <Input
+                  id='password'
+                  type='password'
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder='Secure password'
+                />
+              </div>
             </div>
             <DialogFooter>
               <Button
@@ -178,7 +246,7 @@ export function JudgesManagement() {
               </Button>
               <Button
                 onClick={handleInviteJudge}
-                disabled={!formData.email || !formData.name || inviteMutation.isPending}
+                disabled={!formData.email || !formData.name || !formData.password || inviteMutation.isPending}
               >
                 Invite
               </Button>

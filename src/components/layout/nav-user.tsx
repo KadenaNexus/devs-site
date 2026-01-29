@@ -65,7 +65,7 @@ export function NavUser({ user }: NavUserProps) {
               align='end'
               sideOffset={4}
             >
-              <DropdownMenuLabel className='p-0 font-normal'>
+              {/* <DropdownMenuLabel className='p-0 font-normal'>
                 <div className='flex items-center gap-2 px-1 py-1.5 text-start text-sm'>
                   <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage src={user.avatar} alt={user.name} />
@@ -76,15 +76,15 @@ export function NavUser({ user }: NavUserProps) {
                     <span className='truncate text-xs'>{user.email}</span>
                   </div>
                 </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              </DropdownMenuLabel> */}
+              {/* <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <Sparkles />
                   Upgrade to Pro
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator /> */}
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link to='/settings/account'>
@@ -92,7 +92,7 @@ export function NavUser({ user }: NavUserProps) {
                     Account
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                {/* <DropdownMenuItem asChild>
                   <Link to='/settings'>
                     <CreditCard />
                     Billing
@@ -103,7 +103,7 @@ export function NavUser({ user }: NavUserProps) {
                     <Bell />
                     Notifications
                   </Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setOpen(true)}>

@@ -21,9 +21,98 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  Trophy,
+  FileCheck,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
+
+// Admin menu items
+export const adminNavItems: SidebarData['navGroups'] = [
+  {
+    title: 'Admin',
+    items: [
+      {
+        title: 'Admin Dashboard',
+        url: '/admin/dashboard',
+        icon: LayoutDashboard,
+      },
+      {
+        title: 'Challenges Management',
+        url: '/admin/challenges',
+        icon: ListTodo,
+      },
+      {
+        title: 'Judges Management',
+        url: '/admin/judges',
+        icon: Users,
+      },
+      {
+        title: 'Submissions Management',
+        url: '/admin/submissions',
+        icon: FileCheck,
+      },
+      {
+        title: 'Winners Management',
+        url: '/admin/winners',
+        icon: Trophy,
+      },
+    ],
+  },
+]
+
+// Judge menu items
+export const judgeNavItems: SidebarData['navGroups'] = [
+  {
+    title: 'Judge',
+    items: [
+      {
+        title: 'Dashboard',
+        url: '/judge-dashboard',
+        icon: LayoutDashboard,
+      },
+      {
+        title: 'Assigned Challenges',   // <- rename
+        url: '/challenges',             // kept same route; list will be filtered
+        icon: ListTodo,
+      },
+    ],
+  },
+]
+
+// Public user menu items
+export const publicNavItems: SidebarData['navGroups'] = [
+  {
+    title: 'Dashboard',
+    items: [
+      {
+        title: 'Home',
+        url: '/dashboard',
+        icon: LayoutDashboard,
+      },
+      {
+        title: 'Browse Challenges',
+        url: '/public-challenges',
+        icon: ListTodo,
+      },
+      {
+        title: 'My Submissions',
+        url: '/my-submissions',
+        icon: FileCheck,
+      },
+      {
+        title: 'Approved Submissions',
+        url: '/approved-submissions',
+        icon: ShieldCheck,
+      },
+      {
+        title: 'Winners',
+        url: '/winners',
+        icon: Trophy,
+      },
+    ],
+  },
+]
 
 export const sidebarData: SidebarData = {
   user: {
@@ -35,10 +124,10 @@ export const sidebarData: SidebarData = {
     {
       name: 'Shadcn Admin',
       logo: Command,
-      plan: 'Vite + ShadcnUI',
+      plan: '',
     },
     {
-      name: 'Acme Inc',
+      name: 'Acme Inc1212',
       logo: GalleryVerticalEnd,
       plan: 'Enterprise',
     },

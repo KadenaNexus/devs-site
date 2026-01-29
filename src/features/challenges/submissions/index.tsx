@@ -49,8 +49,8 @@ export function ChallengeSubmissions() {
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
-          <ThemeSwitch />
-          <ConfigDrawer />
+          {/* <ThemeSwitch />
+          <ConfigDrawer /> */}
           <ProfileDropdown />
         </div>
       </Header>

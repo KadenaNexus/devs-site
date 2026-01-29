@@ -1,9 +1,8 @@
 import { z } from 'zod'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from '@tanstack/react-router'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,163 +14,258 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+import { PasswordInput } from '@/components/password-input'
+import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
 
 const profileFormSchema = z.object({
   username: z
-    .string('Please enter your username.')
+    .string()
     .min(2, 'Username must be at least 2 characters.')
     .max(30, 'Username must not be longer than 30 characters.'),
-  email: z.email({
-    error: (iss) =>
-      iss.input === undefined
-        ? 'Please select an email to display.'
-        : undefined,
-  }),
-  bio: z.string().max(160).min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.url('Please enter a valid URL.'),
-      })
-    )
-    .optional(),
+  email: z.string().email(),
 })
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
+const passwordFormSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword: z.string().min(6, 'Password must be at least 6 characters.'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  })
 
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-  bio: 'I own a computer.',
-  urls: [
-    { value: 'https://shadcn.com' },
-    { value: 'http://twitter.com/shadcn' },
-  ],
-}
+type ProfileFormValues = z.infer<typeof profileFormSchema>
+type PasswordFormValues = z.infer<typeof passwordFormSchema>
 
 export function ProfileForm() {
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: 'onChange',
+  const queryClient = useQueryClient()
+
+  // Fetch current user data
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.getUser()
+      if (error) throw error
+      return data.user
+    },
   })
 
-  const { fields, append } = useFieldArray({
-    name: 'urls',
-    control: form.control,
+  const profileForm = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      username: user?.user_metadata?.username || '',
+      email: user?.email || '',
+    },
+    values: {
+      username: user?.user_metadata?.username || user?.email?.split('@')[0] || '',
+      email: user?.email || '',
+    },
   })
+
+  const passwordForm = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordFormSchema),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+  })
+
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: async (values: ProfileFormValues) => {
+      const { data, error } = await supabase.auth.updateUser({
+        data: { username: values.username },
+      })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] })
+      toast.success('Profile updated successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
+    },
+  })
+
+  // Change password mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: async (values: PasswordFormValues) => {
+      // First verify current password by attempting sign in
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email: user?.email || '',
+        password: values.currentPassword,
+      })
+      
+      if (verifyError) throw new Error('Current password is incorrect')
+
+      // Update to new password
+      const { error } = await supabase.auth.updateUser({
+        password: values.newPassword,
+      })
+      
+      if (error) throw error
+    },
+    onSuccess: () => {
+      passwordForm.reset()
+      toast.success('Password changed successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
+    },
+  })
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-8'>
+        <Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
+      </div>
+    )
+  }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-        className='space-y-8'
-      >
-        <FormField
-          control={form.control}
-          name='username'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder='shadcn' {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
+    <div className='space-y-8'>
+      {/* Profile Form */}
+      <Form {...profileForm}>
+        <form
+          onSubmit={profileForm.handleSubmit((data) =>
+            updateProfileMutation.mutate(data)
           )}
-        />
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select a verified email to display' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                  <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                  <SelectItem value='m@support.com'>m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                You can manage verified email addresses in your{' '}
-                <Link to='/'>email settings</Link>.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='bio'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder='Tell us a little bit about yourself'
-                  className='resize-none'
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div>
-          {fields.map((field, index) => (
+          className='space-y-6'
+        >
+          <div className='space-y-4'>
+            <h3 className='text-lg font-medium'>Profile Information</h3>
+            
             <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
+              control={profileForm.control}
+              name='username'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={cn(index !== 0 && 'sr-only')}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && 'sr-only')}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder='Enter your username' {...field} />
                   </FormControl>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          ))}
+
+            <FormField
+              control={profileForm.control}
+              name='email'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} disabled />
+                  </FormControl>
+                  <FormDescription>
+                    Your email address cannot be changed.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <Button
-            type='button'
-            variant='outline'
-            size='sm'
-            className='mt-2'
-            onClick={() => append({ value: '' })}
+            type='submit'
+            disabled={updateProfileMutation.isPending}
           >
-            Add URL
+            {updateProfileMutation.isPending && (
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+            )}
+            Update Profile
           </Button>
-        </div>
-        <Button type='submit'>Update profile</Button>
-      </form>
-    </Form>
+        </form>
+      </Form>
+
+      {/* Password Change Form */}
+      <div className='border-t pt-8'>
+        <Form {...passwordForm}>
+          <form
+            onSubmit={passwordForm.handleSubmit((data) =>
+              changePasswordMutation.mutate(data)
+            )}
+            className='space-y-6'
+          >
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium'>Change Password</h3>
+
+              <FormField
+                control={passwordForm.control}
+                name='currentPassword'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder='Enter current password'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={passwordForm.control}
+                name='newPassword'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder='Enter new password'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Must be at least 6 characters long.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={passwordForm.control}
+                name='confirmPassword'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder='Confirm new password'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button
+              type='submit'
+              disabled={changePasswordMutation.isPending}
+            >
+              {changePasswordMutation.isPending && (
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              )}
+              Change Password
+            </Button>
+          </form>
+        </Form>
+      </div>
+    </div>
   )
 }

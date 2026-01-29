@@ -10,7 +10,7 @@ export const challengeSchema = z.object({
   evaluation_criteria: z.string().optional(),
   sponsor_link: z.string().optional(),
   status: z.string(),
-  created_by: z.string().uuid(),
+  created_by: z.string().uuid().optional(),
   created_at: z.string(),
 })
 

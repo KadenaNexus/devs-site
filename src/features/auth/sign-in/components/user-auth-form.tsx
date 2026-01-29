@@ -8,6 +8,7 @@ import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconGoogle } from '@/assets/brand-icons'
 import { useAuthStore } from '@/stores/auth-store'
+import { useAdminStore } from '@/stores/admin-store'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -43,6 +44,7 @@ export function UserAuthForm({
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { auth } = useAuthStore()
+  const { logout: adminLogout } = useAdminStore()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,12 +78,13 @@ export function UserAuthForm({
 
       auth.setAccessToken(result.accessToken)
 
+      // Clear any admin session if this is not an admin login
+      if (result.role !== 'admin') {
+        adminLogout()
+      }
+
       toast.success(`Welcome back, ${result.user.email}`)
 
-      // navigate({
-      //   to: redirectTo || '/',
-      //   replace: true,
-      // })
       if (result.role === 'judge') {
         navigate({ to: '/judge-dashboard' })
         return
@@ -164,7 +167,8 @@ export function UserAuthForm({
             onClick={async () => {
               try {
                 setIsLoading(true)
-                await signInWithGoogle()
+                // For judge OAuth flow, send role=judge so we can persist metadata after redirect
+                await signInWithGoogle('judge')
               } catch (error) {
                 toast.error('Google sign-in failed')
                 setIsLoading(false)

@@ -4,47 +4,103 @@ import { type Challenge } from '@/features/challenges/data/schema'
 // ============= CHALLENGES =============
 
 export async function createChallenge(data: Partial<Challenge>) {
+  // Get current user for created_by field
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
   const { data: result, error } = await supabase
     .from('challenges')
     .insert([
       {
         title: data.title,
         description: data.description,
-        rules: data.rules,
-        timeline: data.timeline,
-        prize_pool: data.prize_pool,
-        evaluation_criteria: data.evaluation_criteria,
-        sponsor_link: data.sponsor_link,
+        rules: data.rules || null,
+        timeline: data.timeline || null,
+        prize_pool: data.prize_pool || null,
+        evaluation_criteria: data.evaluation_criteria || null,
+        sponsor_link: data.sponsor_link || null,
         status: data.status || 'draft',
-        created_by: data.created_by,
+        created_by: user.id, // Use authenticated user ID
       },
     ])
     .select()
-    .single()
 
-  if (error) throw error
-  return result
+  if (error) {
+    console.error('Create challenge error:', error)
+    throw error
+  }
+
+  // Return the first item if array, or null
+  return result && result.length > 0 ? result[0] : null
 }
 
 export async function updateChallenge(id: string, data: Partial<Challenge>) {
+  console.log('=== UPDATE CHALLENGE DEBUG ===')
+  console.log('Challenge ID:', id)
+  console.log('Update data:', data)
+  
+  // Get current user to verify authentication
+  const { data: { user } } = await supabase.auth.getUser()
+  console.log('Current user:', user?.id, user?.email)
+  console.log('User role:', user?.user_metadata?.role)
+  
+  // First check if the challenge exists and is visible
+  const { data: existing, error: selectError } = await supabase
+    .from('challenges')
+    .select('id, title, status')
+    .eq('id', id)
+    .maybeSingle()
+
+  console.log('Existing challenge:', existing)
+  console.log('Select error:', selectError)
+
+  if (selectError) {
+    console.error('Error checking challenge:', selectError)
+    throw selectError
+  }
+
+  if (!existing) {
+    throw new Error('Challenge not found or you do not have permission to view it')
+  }
+
+  // Perform the update
+  const updatePayload = {
+    title: data.title,
+    description: data.description,
+    rules: data.rules || null,
+    timeline: data.timeline || null,
+    prize_pool: data.prize_pool || null,
+    evaluation_criteria: data.evaluation_criteria || null,
+    sponsor_link: data.sponsor_link || null,
+    status: data.status,
+  }
+  
+  console.log('Update payload:', updatePayload)
+
   const { data: result, error } = await supabase
     .from('challenges')
-    .update({
-      title: data.title,
-      description: data.description,
-      rules: data.rules,
-      timeline: data.timeline,
-      prize_pool: data.prize_pool,
-      evaluation_criteria: data.evaluation_criteria,
-      sponsor_link: data.sponsor_link,
-      status: data.status,
-    })
+    .update(updatePayload)
     .eq('id', id)
     .select()
-    .single()
 
-  if (error) throw error
-  return result
+  console.log('Update result:', result)
+  console.log('Update error:', error)
+
+  if (error) {
+    console.error('Update challenge error:', error)
+    throw error
+  }
+
+  if (!result || result.length === 0) {
+    throw new Error('Update succeeded but no data returned. This might be an RLS issue.')
+  }
+
+  // Return the first item
+  console.log('Returning updated challenge:', result[0])
+  return result[0]
 }
 
 export async function deleteChallenge(id: string) {
@@ -59,10 +115,14 @@ export async function toggleChallengeStatus(id: string, status: 'open' | 'closed
     .update({ status })
     .eq('id', id)
     .select()
-    .single()
 
-  if (error) throw error
-  return result
+  if (error) {
+    console.error('Toggle status error:', error)
+    throw error
+  }
+
+  // Return the first item if array, or null
+  return result && result.length > 0 ? result[0] : null
 }
 
 // ============= JUDGES =============
@@ -75,26 +135,48 @@ export interface Judge {
 }
 
 export async function fetchJudges(): Promise<Judge[]> {
-  // Note: Querying auth.users directly may not work with Row Level Security
-  // You might need to create a server function or use the admin API
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('role', 'judge')
+  // Call Postgres function to get judges (requires admin role)
+  const { data, error } = await supabase.rpc('list_judges')
 
   if (error) {
     console.error('Error fetching judges:', error)
     return []
   }
 
-  return (
-    data?.map((user: any) => ({
-      id: user.id,
-      email: user.email,
-      name: user.name || user.email,
-      created_at: user.created_at,
-    })) || []
-  )
+  return data || []
+}
+
+export async function fetchJudgeById(judgeId: string): Promise<Judge | null> {
+  const judges = await fetchJudges()
+  return judges.find(j => j.id === judgeId) || null
+}
+
+export async function fetchJudgeAssignedChallenges(judgeId: string) {
+  const { data, error } = await supabase
+    .from('challenge_judges')
+    .select(`
+      challenge_id,
+      assigned_at,
+      challenges (
+        id,
+        title,
+        description,
+        status,
+        prize_pool,
+        created_at
+      )
+    `)
+    .eq('judge_user_id', judgeId)
+
+  if (error) {
+    console.error('Error fetching judge challenges:', error)
+    return []
+  }
+
+  return data?.map(item => ({
+    assignedAt: item.assigned_at,
+    ...item.challenges
+  })) || []
 }
 
 export async function assignJudgeToChallenge(
@@ -105,7 +187,7 @@ export async function assignJudgeToChallenge(
     .from('challenge_judges')
     .insert([
       {
-        judge_id: judgeId,
+        judge_user_id: judgeId,
         challenge_id: challengeId,
       },
     ])
@@ -123,24 +205,129 @@ export async function removeJudgeFromChallenge(
   const { error } = await supabase
     .from('challenge_judges')
     .delete()
-    .eq('judge_id', judgeId)
+    .eq('judge_user_id', judgeId)
     .eq('challenge_id', challengeId)
 
   if (error) throw error
 }
 
-export async function inviteJudge(email: string, name: string) {
-  // This requires admin privileges - you may need to create a Supabase Edge Function
-  // For now, this is a placeholder
+export async function inviteJudge(
+  email: string,
+  name: string,
+  password: string
+) {
   const { data, error } = await supabase.functions.invoke('invite-judge', {
-    body: { email, name },
+    body: { email, name, password },
   })
 
-  if (error) throw error
+  if (error) {
+    console.error('Invite Judge Error:', {
+      message: error.message,
+      name: error.name,
+      status: error.status,
+      context: error.context,
+    })
+
+    throw new Error(
+      error.context?.error ||
+      error.message ||
+      'Failed to invite judge'
+    )
+  }
+
   return data
 }
 
 // ============= SUBMISSIONS =============
+
+export async function fetchSubmissionsWithDetails(challengeId?: string) {
+  // First, fetch all submissions
+  let submissionsQuery = supabase
+    .from('submissions')
+    .select(`
+      *,
+      challenges!inner (
+        id,
+        title
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  if (challengeId) {
+    submissionsQuery = submissionsQuery.eq('challenge_id', challengeId)
+  }
+
+  const { data: submissions, error: submissionsError } = await submissionsQuery
+
+  if (submissionsError) {
+    console.error('Error fetching submissions:', submissionsError)
+    throw submissionsError
+  }
+
+  // Fetch all scores for these submissions
+  const submissionIds = submissions?.map(s => s.id) || []
+  const { data: allScores, error: scoresError } = await supabase
+    .from('scores')
+    .select('*')
+    .in('submission_id', submissionIds)
+
+  if (scoresError) {
+    console.error('Error fetching scores:', scoresError)
+  }
+
+  console.log('Submissions:', submissions?.length)
+  console.log('Scores fetched:', allScores?.length)
+  
+  // Group scores by submission_id
+  const scoresBySubmission = new Map<string, any[]>()
+  allScores?.forEach(score => {
+    const existing = scoresBySubmission.get(score.submission_id) || []
+    existing.push(score)
+    scoresBySubmission.set(score.submission_id, existing)
+  })
+  
+  // Fetch judges data
+  const judges = await fetchJudges()
+  const judgesMap = new Map(judges.map(j => [j.id, j]))
+
+  // Process submissions with calculated average scores
+  return submissions?.map((submission: any) => {
+    const scores = scoresBySubmission.get(submission.id) || []
+    
+    console.log(`Submission ${submission.project_title} has ${scores.length} scores`)
+    
+    // Calculate average score
+    let averageScore = 0
+    if (scores.length > 0) {
+      const totalScore = scores.reduce((sum: number, score: any) => {
+        const impact = score.impact || 0
+        const execution = score.execution || 0
+        const innovation = score.innovation || 0
+        const security = score.security || 0
+        const uxClarity = score.ux_clarity || 0
+        const scoreSum = impact + execution + innovation + security + uxClarity
+        console.log(`  Score: impact=${impact}, execution=${execution}, innovation=${innovation}, security=${security}, ux_clarity=${uxClarity}, sum=${scoreSum}`)
+        return sum + scoreSum
+      }, 0)
+      averageScore = totalScore / (scores.length * 5) // Divide by number of scores and 5 criteria
+      console.log(`  Total: ${totalScore}, Average: ${averageScore}`)
+    }
+
+    // Get unique judges who scored this submission
+    const uniqueJudgeIds = [...new Set(scores.map((s: any) => s.judge_user_id))] as string[]
+    const judgeNames = uniqueJudgeIds
+      .map((id: string) => judgesMap.get(id)?.name || 'Unknown')
+      .join(', ')
+
+    return {
+      ...submission,
+      challenge_name: submission.challenges?.title || 'Unknown',
+      judge_names: judgeNames || 'Not scored yet',
+      average_score: averageScore,
+      score_count: scores.length
+    }
+  }) || []
+}
 
 export async function approveSubmission(submissionId: string) {
   const { data, error } = await supabase
@@ -216,19 +403,74 @@ export async function publishWinners(
   return data
 }
 
-export async function fetchWinners(challengeId: string): Promise<Winner[]> {
-  const { data, error } = await supabase
+export async function fetchWinners(challengeId?: string) {
+  let query = supabase
     .from('winners')
-    .select('*')
-    .eq('challenge_id', challengeId)
-    .order('rank', { ascending: true })
+    .select(`
+      *,
+      challenges (
+        id,
+        title,
+        prize_pool
+      ),
+      submissions (
+        id,
+        developer_name,
+        project_title,
+        email
+      )
+    `)
+    .order('announced_at', { ascending: false })
+
+  if (challengeId) {
+    query = query.eq('challenge_id', challengeId)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     console.error('Error fetching winners:', error)
-    throw new Error('Failed to fetch winners')
+    throw error
   }
 
-  return data || []
+  return data?.map((winner: any) => ({
+    ...winner,
+    challenge_name: winner.challenges?.title || 'Unknown',
+    developer_name: winner.submissions?.developer_name || 'Unknown',
+    project_title: winner.submissions?.project_title || 'Unknown',
+  })) || []
+}
+
+export async function announceWinner(data: {
+  challengeId: string
+  submissionId: string
+  rank: number
+  prizeAmount?: number
+}) {
+  const { data: winner, error } = await supabase
+    .from('winners')
+    .insert([
+      {
+        challenge_id: data.challengeId,
+        submission_id: data.submissionId,
+        rank: data.rank,
+        prize_amount: data.prizeAmount,
+      },
+    ])
+    .select()
+    .single()
+
+  if (error) throw error
+  return winner
+}
+
+export async function deleteWinner(winnerId: string) {
+  const { error } = await supabase
+    .from('winners')
+    .delete()
+    .eq('id', winnerId)
+
+  if (error) throw error
 }
 
 // ============= STATISTICS =============

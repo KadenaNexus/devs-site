@@ -3,6 +3,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router'
 import { persistUserRole } from '@/services/auth'
 import { supabase } from '@/services/supabase'
 import { useAuthStore } from '@/stores/auth-store'
+import { useAdminStore } from '@/stores/admin-store'
 import {
   Card,
   CardContent,
@@ -16,8 +17,7 @@ import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn() {
   const { redirect } = useSearch({ from: '/(auth)/sign-in' })
-  // const search = useSearch({ from: '/(auth)/sign-in' })
-  //   const navigate = useNavigate()
+  const search = useSearch({ from: '/(auth)/sign-in' })
 
   //   useEffect(() => {
   //     if (!search.role) return
@@ -35,6 +35,25 @@ export function SignIn() {
   //   }, [search.role])
   const navigate = useNavigate()
   const { auth } = useAuthStore()
+  const { logout: adminLogout } = useAdminStore()
+
+  // Persist OAuth role from query (e.g., sign-in?role=judge) if user metadata missing
+  useEffect(() => {
+    const persistRoleIfNeeded = async () => {
+      if (!search.role) return
+
+      const { data } = await supabase.auth.getUser()
+      const user = data?.user
+      if (!user) return
+
+      const currentRole = user.user_metadata?.role as string | undefined
+      if (!currentRole) {
+        await persistUserRole(search.role as any)
+      }
+    }
+
+    persistRoleIfNeeded()
+  }, [search.role])
 
   useEffect(() => {
     const handleRedirect = async () => {
@@ -54,6 +73,11 @@ export function SignIn() {
       })
 
       auth.setAccessToken(session.access_token)
+
+      // If not admin, clear any lingering admin session cookies
+      if (role !== 'admin') {
+        adminLogout()
+      }
 
       // ✅ ROLE BASED REDIRECT
       if (role === 'judge') {
