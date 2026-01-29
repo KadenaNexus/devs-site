@@ -13,10 +13,12 @@ import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as pagesWinnersPageRouteImport } from './routes/(pages)/winners-page'
+import { Route as pagesTeamAndGovernanceRouteImport } from './routes/(pages)/team-and-governance'
 import { Route as pagesProjectSubmissionRouteImport } from './routes/(pages)/project-submission'
 import { Route as pagesHowItWorksRouteImport } from './routes/(pages)/how-it-works'
 import { Route as pagesHomepageRouteImport } from './routes/(pages)/homepage'
 import { Route as pagesFaqsRouteImport } from './routes/(pages)/faqs'
+import { Route as pagesContactRouteImport } from './routes/(pages)/contact'
 import { Route as pagesChallengeListRouteImport } from './routes/(pages)/challenge-list'
 import { Route as pagesChallengeDetailsRouteImport } from './routes/(pages)/challenge-details'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
@@ -84,6 +86,11 @@ const pagesWinnersPageRoute = pagesWinnersPageRouteImport.update({
   path: '/winners-page',
   getParentRoute: () => rootRouteImport,
 } as any)
+const pagesTeamAndGovernanceRoute = pagesTeamAndGovernanceRouteImport.update({
+  id: '/(pages)/team-and-governance',
+  path: '/team-and-governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const pagesProjectSubmissionRoute = pagesProjectSubmissionRouteImport.update({
   id: '/(pages)/project-submission',
   path: '/project-submission',
@@ -102,6 +109,11 @@ const pagesHomepageRoute = pagesHomepageRouteImport.update({
 const pagesFaqsRoute = pagesFaqsRouteImport.update({
   id: '/(pages)/faqs',
   path: '/faqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const pagesContactRoute = pagesContactRouteImport.update({
+  id: '/(pages)/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const pagesChallengeListRoute = pagesChallengeListRouteImport.update({
@@ -380,10 +392,12 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/challenge-details': typeof pagesChallengeDetailsRoute
   '/challenge-list': typeof pagesChallengeListRoute
+  '/contact': typeof pagesContactRoute
   '/faqs': typeof pagesFaqsRoute
   '/homepage': typeof pagesHomepageRoute
   '/how-it-works': typeof pagesHowItWorksRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
+  '/team-and-governance': typeof pagesTeamAndGovernanceRoute
   '/winners-page': typeof pagesWinnersPageRoute
   '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
@@ -433,10 +447,12 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/challenge-details': typeof pagesChallengeDetailsRoute
   '/challenge-list': typeof pagesChallengeListRoute
+  '/contact': typeof pagesContactRoute
   '/faqs': typeof pagesFaqsRoute
   '/homepage': typeof pagesHomepageRoute
   '/how-it-works': typeof pagesHowItWorksRoute
   '/project-submission': typeof pagesProjectSubmissionRoute
+  '/team-and-governance': typeof pagesTeamAndGovernanceRoute
   '/winners-page': typeof pagesWinnersPageRoute
   '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
@@ -491,10 +507,12 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/(pages)/challenge-details': typeof pagesChallengeDetailsRoute
   '/(pages)/challenge-list': typeof pagesChallengeListRoute
+  '/(pages)/contact': typeof pagesContactRoute
   '/(pages)/faqs': typeof pagesFaqsRoute
   '/(pages)/homepage': typeof pagesHomepageRoute
   '/(pages)/how-it-works': typeof pagesHowItWorksRoute
   '/(pages)/project-submission': typeof pagesProjectSubmissionRoute
+  '/(pages)/team-and-governance': typeof pagesTeamAndGovernanceRoute
   '/(pages)/winners-page': typeof pagesWinnersPageRoute
   '/_authenticated/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
@@ -547,10 +565,12 @@ export interface FileRouteTypes {
     | '/503'
     | '/challenge-details'
     | '/challenge-list'
+    | '/contact'
     | '/faqs'
     | '/homepage'
     | '/how-it-works'
     | '/project-submission'
+    | '/team-and-governance'
     | '/winners-page'
     | '/admin/challenges'
     | '/admin/dashboard'
@@ -600,10 +620,12 @@ export interface FileRouteTypes {
     | '/503'
     | '/challenge-details'
     | '/challenge-list'
+    | '/contact'
     | '/faqs'
     | '/homepage'
     | '/how-it-works'
     | '/project-submission'
+    | '/team-and-governance'
     | '/winners-page'
     | '/admin/challenges'
     | '/admin/dashboard'
@@ -657,10 +679,12 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/(pages)/challenge-details'
     | '/(pages)/challenge-list'
+    | '/(pages)/contact'
     | '/(pages)/faqs'
     | '/(pages)/homepage'
     | '/(pages)/how-it-works'
     | '/(pages)/project-submission'
+    | '/(pages)/team-and-governance'
     | '/(pages)/winners-page'
     | '/_authenticated/admin/challenges'
     | '/_authenticated/admin/dashboard'
@@ -712,10 +736,12 @@ export interface RootRouteChildren {
   errors503Route: typeof errors503Route
   pagesChallengeDetailsRoute: typeof pagesChallengeDetailsRoute
   pagesChallengeListRoute: typeof pagesChallengeListRoute
+  pagesContactRoute: typeof pagesContactRoute
   pagesFaqsRoute: typeof pagesFaqsRoute
   pagesHomepageRoute: typeof pagesHomepageRoute
   pagesHowItWorksRoute: typeof pagesHowItWorksRoute
   pagesProjectSubmissionRoute: typeof pagesProjectSubmissionRoute
+  pagesTeamAndGovernanceRoute: typeof pagesTeamAndGovernanceRoute
   pagesWinnersPageRoute: typeof pagesWinnersPageRoute
 }
 
@@ -749,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof pagesWinnersPageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(pages)/team-and-governance': {
+      id: '/(pages)/team-and-governance'
+      path: '/team-and-governance'
+      fullPath: '/team-and-governance'
+      preLoaderRoute: typeof pagesTeamAndGovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(pages)/project-submission': {
       id: '/(pages)/project-submission'
       path: '/project-submission'
@@ -775,6 +808,13 @@ declare module '@tanstack/react-router' {
       path: '/faqs'
       fullPath: '/faqs'
       preLoaderRoute: typeof pagesFaqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(pages)/contact': {
+      id: '/(pages)/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof pagesContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(pages)/challenge-list': {
@@ -1252,10 +1292,12 @@ const rootRouteChildren: RootRouteChildren = {
   errors503Route: errors503Route,
   pagesChallengeDetailsRoute: pagesChallengeDetailsRoute,
   pagesChallengeListRoute: pagesChallengeListRoute,
+  pagesContactRoute: pagesContactRoute,
   pagesFaqsRoute: pagesFaqsRoute,
   pagesHomepageRoute: pagesHomepageRoute,
   pagesHowItWorksRoute: pagesHowItWorksRoute,
   pagesProjectSubmissionRoute: pagesProjectSubmissionRoute,
+  pagesTeamAndGovernanceRoute: pagesTeamAndGovernanceRoute,
   pagesWinnersPageRoute: pagesWinnersPageRoute,
 }
 export const routeTree = rootRouteImport

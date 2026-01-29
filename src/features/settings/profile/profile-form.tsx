@@ -15,8 +15,10 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Upload } from 'lucide-react'
+import { useState } from 'react'
 
 const profileFormSchema = z.object({
   username: z
@@ -42,6 +44,8 @@ type PasswordFormValues = z.infer<typeof passwordFormSchema>
 
 export function ProfileForm() {
   const queryClient = useQueryClient()
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string>('')
 
   // Fetch current user data
   const { data: user, isLoading } = useQuery({
@@ -77,14 +81,43 @@ export function ProfileForm() {
   // Update profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (values: ProfileFormValues) => {
+      let avatarUrl = user?.user_metadata?.avatar_url
+
+      // Upload avatar if a new file is selected
+      if (avatarFile) {
+        const fileExt = avatarFile.name.split('.').pop()
+        const fileName = `avatar.${fileExt}`
+        const filePath = `${user?.id}/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(filePath, avatarFile, { upsert: true })
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError)
+          throw new Error(`Failed to upload avatar: ${uploadError.message}`)
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath)
+
+        avatarUrl = urlData.publicUrl
+      }
+
       const { data, error } = await supabase.auth.updateUser({
-        data: { username: values.username },
+        data: { 
+          username: values.username,
+          avatar_url: avatarUrl,
+        },
       })
       if (error) throw error
       return data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] })
+      setAvatarFile(null)
+      setAvatarPreview('')
       toast.success('Profile updated successfully')
     },
     onError: (error: Error) => {
@@ -127,6 +160,25 @@ export function ProfileForm() {
     )
   }
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Image size should be less than 2MB')
+        return
+      }
+      setAvatarFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const currentAvatar = avatarPreview || user?.user_metadata?.avatar_url || '/avatars/shadcn.jpg'
+  const userInitials = (user?.user_metadata?.username || user?.email?.split('@')[0] || 'U').slice(0, 2).toUpperCase()
+
   return (
     <div className='space-y-8'>
       {/* Profile Form */}
@@ -139,6 +191,38 @@ export function ProfileForm() {
         >
           <div className='space-y-4'>
             <h3 className='text-lg font-medium'>Profile Information</h3>
+
+            {/* Profile Image Upload */}
+            <div className='space-y-2'>
+              <FormLabel>Profile Picture</FormLabel>
+              <div className='flex items-center gap-4'>
+                <Avatar className='h-20 w-20'>
+                  <AvatarImage src={currentAvatar} />
+                  <AvatarFallback>{userInitials}</AvatarFallback>
+                </Avatar>
+                <div className='flex flex-col gap-2'>
+                  <Input
+                    id='avatar'
+                    type='file'
+                    accept='image/*'
+                    onChange={handleAvatarChange}
+                    className='hidden'
+                  />
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    onClick={() => document.getElementById('avatar')?.click()}
+                  >
+                    <Upload className='mr-2 h-4 w-4' />
+                    Upload Image
+                  </Button>
+                  <p className='text-xs text-muted-foreground'>
+                    JPG, PNG or GIF. Max 2MB.
+                  </p>
+                </div>
+              </div>
+            </div>
             
             <FormField
               control={profileForm.control}

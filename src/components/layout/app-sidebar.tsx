@@ -18,17 +18,19 @@ export function AppSidebar() {
   const { collapsible, variant } = useLayout()
   const { isAuthenticated: isAdmin } = useAdminStore()
 
-  // Get current user role (normalize to lowercase for safety)
-  const { data: userRole, isLoading: roleLoading } = useQuery({
-    queryKey: ['userRole'],
+  // Get current user data
+  const { data: user, isLoading: roleLoading } = useQuery({
+    queryKey: ['currentUser'],
     queryFn: async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      return (user?.user_metadata?.role as string | undefined)?.toLowerCase() || null
+      return user
     },
     staleTime: 5 * 60 * 1000,
   })
+
+  const userRole = (user?.user_metadata?.role as string | undefined)?.toLowerCase() || null
 
   // Determine which nav items to show based on role
   const navGroups = isAdmin || userRole === 'admin'
@@ -42,10 +44,21 @@ export function AppSidebar() {
   // Avoid flashing the wrong menu while role is loading
   const safeNavGroups = roleLoading && !isAdmin ? [] : navGroups
 
+  // Dynamic team name based on user role
+  const teamName = userRole === 'admin' 
+    ? 'Admin Panel' 
+    : userRole === 'judge' 
+    ? 'Judge Dashboard' 
+    : 'Challenge Platform'
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
-        <TeamSwitcher teams={sidebarData.teams} />
+        <TeamSwitcher teams={[{
+          name: teamName,
+          logo: sidebarData.teams[0].logo,
+          plan: userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1) : '',
+        }]} />
       </SidebarHeader>
       <SidebarContent>
         {safeNavGroups.map((props) => (
@@ -53,7 +66,11 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        <NavUser user={{
+          name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'User',
+          email: user?.email || '',
+          avatar: user?.user_metadata?.avatar_url || '',
+        }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

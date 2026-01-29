@@ -9,12 +9,13 @@ export default function Header() {
   const [isDark, setIsDark] = useState(false)
 
   const navItems = [
-    { name: 'Services', href: '#services' },
+    { name: 'Home', href: '/' },
     { name: 'How it Works', href: 'how-it-works' },
-    { name: 'Resume', href: '#resume' },
-    { name: 'Skills', href: '#skills' },
-    { name: 'Testimonials', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Challenges', href: 'challenge-list' },
+    { name: 'Submit Project', href: 'project-submission' },
+    { name: 'Winners & Rewards', href: 'winners-page' },
+    { name: 'Team & Governance', href: 'team-and-governance' },
+    { name: 'FAQ', href: 'faqs' },
   ]
 
   useEffect(() => {
@@ -93,10 +94,10 @@ export default function Header() {
             </button>
 
             <a
-              href='#contact'
+              href='contact'
               className='rounded-full bg-[var(--ft-primary)] px-6 py-2.5 text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'
             >
-              Hire me!
+              Contact
             </a>
           </div>
 
