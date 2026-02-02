@@ -5,7 +5,24 @@ export const strapi = axios.create({
 })
 
 export async function getHomePage() {
-  const { data } = await strapi.get('/homepage?populate=*')
+  const { data } = await strapi.get('/api/homepage', {
+    params: {
+      populate: {
+        Hero: {
+          populate: {
+            image: true,
+          },
+        },
+        statitems: '*',
+        solve_section: {
+          populate: {
+            items: '*',
+          },
+        },
+        why_challenges_items: '*',
+      },
+    },
+  })
 
   return data.data
 }

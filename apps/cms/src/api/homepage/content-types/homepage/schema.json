@@ -25,6 +25,11 @@
       "type": "component",
       "component": "solve-section.solve-section",
       "repeatable": true
+    },
+    "why_challenges_items": {
+      "type": "component",
+      "component": "why-item.why-item",
+      "repeatable": true
     }
   }
 }

@@ -8,10 +8,7 @@ export interface HeroSectionsHero extends Struct.ComponentSchema {
   };
   attributes: {
     heading: Schema.Attribute.String;
-    image: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios',
-      true
-    >;
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     primaryCtaLink: Schema.Attribute.String;
     primaryCtaText: Schema.Attribute.String;
     secondaryCtaLink: Schema.Attribute.String;

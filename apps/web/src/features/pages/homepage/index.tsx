@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { getHomePage } from '@/services/strapi'
 import { FiTarget, FiUpload, FiAward } from 'react-icons/fi'
 import {
   FiCheckCircle,
@@ -11,16 +13,14 @@ import {
   FiTrendingUp,
   FiCode,
 } from 'react-icons/fi'
-import { GiStairsGoal } from "react-icons/gi";
-import { ImUpload } from "react-icons/im";
-
+import { GiStairsGoal } from 'react-icons/gi'
+import { ImUpload } from 'react-icons/im'
+import { Link } from 'react-router-dom'
+import { iconMap } from '@/utils/iconMap.tsx'
 import Counter from '../components/Counter'
 import FillButton from '../components/FillButton'
 import StrokeButton from '../components/StrokeButton'
 import { HomeLayout } from '../home-layout'
-import { getHomePage } from '@/services/strapi'
-import { useQuery } from '@tanstack/react-query'
-
 
 export const Route = createFileRoute('/')({
   beforeLoad: ({ context }) => {
@@ -40,7 +40,7 @@ export function Homepage({ value }: { value: string }) {
   })
 
   const { data: page, isLoading } = useQuery({
-    queryKey: ["home-page"],
+    queryKey: ['home-page'],
     queryFn: getHomePage,
   })
 
@@ -48,57 +48,13 @@ export function Homepage({ value }: { value: string }) {
     setIsVisible(true)
   }, [])
 
-  if (isLoading) return null;
-  if (!page) return null;
+  if (isLoading) return null
+  if (!page) return null
 
-  const hero = page.Hero;
-const stats = page.statitems ?? [];
-const solve = page.solve_section?.[0];
-
-  
-
-  // const stats = [
-  //   { number: '4+', label: 'Active', sublabel: 'Challenges' },
-  //   { number: '20', label: 'Chain', sublabel: 'Architecture' },
-  //   { number: 'Real MVPs', label: 'Not', sublabel: 'Hackathons' },
-  //   { number: 'Pact', label: '&', sublabel: 'Chainweb Focused' },
-  // ]
-
-  const features = [
-    {
-      id: 1,
-      icon: <GiStairsGoal className='h-full w-full' />,
-      title: 'Pick a Real-World Challenge',
-      description:
-        'P2P payments, fraud detection, supply chain, or DeFi infrastructure.',
-    },
-    {
-      id: 2,
-      icon: <FiCode className='h-full w-full' />,
-      title: 'Build an MVP on Kadena',
-      description:
-        'Use Pact smart contracts with your preferred frontend stack.',
-    },
-    {
-      id: 3,
-      icon: <ImUpload className='h-full w-full' />,
-      title: 'Submit Code & Demo',
-      description: 'GitHub repository, live demo, and technical explanation.',
-    },
-    {
-      id: 4,
-      icon: <FiCheckCircle className='h-full w-full' />,
-      title: 'Get Reviewed & Ranked',
-      description: 'Transparent judging with clear evaluation criteria.',
-    },
-    {
-      id: 5,
-      icon: <FiAward className='h-full w-full' />,
-      title: 'Win Rewards & Recognition',
-      description:
-        'Cash prizes, public recognition, and potential long-term collaboration.',
-    },
-  ]
+  const hero = page.Hero
+  const stats = page.statitems ?? []
+  const solve = page.solve_section?.[0]
+  const why_challenges_items = page.why_challenges_items
 
   const challenges = [
     {
@@ -202,14 +158,19 @@ const solve = page.solve_section?.[0];
                   {hero?.heading}
                 </h1>
                 <p className='max-w-xl text-base leading-relaxed text-[var(--ft-text-gray)] md:text-lg'>
-                  Solve real problems using Pact smart contracts. <br />
-                  Build production-ready MVPs. Get rewarded and recognized.
+                  {hero?.subheading}
                 </p>
               </div>
 
               <div className='flex flex-wrap gap-4'>
-                <FillButton>Start a Challenge</FillButton>
-                <StrokeButton>Explore Challenges</StrokeButton>
+                <FillButton>
+                  <Link to={hero?.primaryCtaLink}> {hero?.primaryCtaText}</Link>
+                </FillButton>
+                <StrokeButton>
+                  <Link to={hero?.secondaryCtaLink}>
+                    {hero?.secondaryCtaText}
+                  </Link>
+                </StrokeButton>
               </div>
             </div>
 
@@ -221,7 +182,7 @@ const solve = page.solve_section?.[0];
               }`}
             >
               <img
-                src='/images/banner-right-img.png'
+                src={`${import.meta.env.VITE_STRAPI_URL}/admin${hero?.image?.url}`}
                 alt='3D Robot Illustration'
                 className='relative z-10 w-full object-contain'
               />
@@ -243,10 +204,10 @@ const solve = page.solve_section?.[0];
                 >
                   <h3 className='text-3xl font-bold text-white md:text-3xl'>
                     {isVisible &&
-                      (isNaN(parseFloat(stat.number)) ? (
-                        stat.number
+                      (isNaN(parseFloat(stat.value)) ? (
+                        stat.value
                       ) : (
-                        <Counter value={stat.number} />
+                        <Counter value={stat.value} />
                       ))}
                   </h3>
 
@@ -267,55 +228,28 @@ const solve = page.solve_section?.[0];
         <div className='mx-auto max-w-7xl px-6'>
           <div className='mb-12 text-center'>
             <h2 className='text-4xl font-bold text-green-400 text-white md:text-5xl'>
-              Solve. Build. Win.
+              {solve?.title}
             </h2>
-            <p className='mt-4 text-white'>
-              Build real Kadena use-cases with production thinking.
-            </p>
+            <p className='mt-4 text-white'>{solve.subtitle}</p>
           </div>
 
           <div className='grid gap-8 md:grid-cols-3'>
-            {[
-              {
-                title: 'Solve Challenges',
-                text: 'Build real Kadena use-cases designed for real-world deployment.',
-                icon: <FiTarget size={36} />,
-              },
-              {
-                title: 'Submit Solutions',
-                text: 'Submit Pact smart contracts, demos, and technical documentation.',
-                icon: <FiUpload size={36} />,
-              },
-              {
-                title: 'Win Rewards',
-                text: 'Earn prizes, visibility, and long-term project opportunities.',
-                icon: <FiAward size={36} />,
-              },
-            ].map((item, i) => (
+            {solve?.items?.map((item) => (
               <div
-                key={i}
+                key={item.id}
                 className='rounded-2xl border border-green-900 bg-[#0b1f0b] p-8 text-center transition hover:border-green-500'
               >
-                {/* Icon */}
                 <div className='mb-4 flex justify-center text-[var(--ft-primary)]'>
-                  {item.icon}
+                  {iconMap[item.iconKey] ?? null}
                 </div>
-
                 <h3 className='mb-3 text-xl font-semibold text-white'>
                   {item.title}
                 </h3>
                 <p className='text-sm leading-relaxed text-[var(--ft-only-gray)]'>
-                  {item.text}
+                  {item.description}
                 </p>
               </div>
             ))}
-          </div>
-
-          {/* MVP Badge */}
-          <div className='mt-16 text-center'>
-            <span className='inline-flex items-center gap-2 rounded-full border border-white bg-green-500/10 px-6 py-2 text-sm text-white'>
-              ⭐ Top projects may become official Kadena MVPs
-            </span>
           </div>
         </div>
       </section>
@@ -407,33 +341,15 @@ const solve = page.solve_section?.[0];
           </h2>
 
           <div className='grid gap-6 md:grid-cols-2'>
-            {[
-              {
-                text: 'Real problems, not toy demos',
-                icon: <FiCheckCircle />,
-              },
-              {
-                text: 'Designed for production use',
-                icon: <FiShield />,
-              },
-              {
-                text: 'No KYC, no gatekeeping',
-                icon: <FiLock />,
-              },
-              {
-                text: 'Builders keep credit for their work',
-                icon: <FiUserCheck />,
-              },
-              {
-                text: 'Potential revenue-sharing projects',
-                icon: <FiTrendingUp />,
-              },
-            ].map((item, i) => (
+            {why_challenges_items?.map((item) => (
               <div
-                key={i}
+                key={item.id}
                 className='flex items-center rounded-xl border border-green-900 bg-[#081a08] px-6 py-5 text-[var(--ft-only-gray)]'
               >
-                <span className='mr-3 text-xl text-[var(--ft-primary)]'>{item.icon}</span>
+                <span className='mr-3 text-xl text-[var(--ft-primary)]'>
+                  {iconMap[item.iconKey] ?? null}
+                </span>
+
                 {item.text}
               </div>
             ))}
