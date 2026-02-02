@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_solve_item_solve_items",
+  "info": {
+    "displayName": "solve_item"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "iconKey": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}
