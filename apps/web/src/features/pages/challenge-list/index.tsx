@@ -4,10 +4,10 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { fetchChallenges } from '@/services/challenges'
-import { HomeLayout } from '../home-layout'
-import FillButton from '../components/FillButton'
 import { truncateWords } from '@/utils/textUtils'
 import { CHALLENGE_CATEGORIES } from '@/features/challenges/data/schema'
+import FillButton from '../components/FillButton'
+import { HomeLayout } from '../home-layout'
 
 export function ChallengeList() {
   const [activeFilter, setActiveFilter] = useState('All')
@@ -49,7 +49,7 @@ export function ChallengeList() {
       <section className='serv-main other-bg relative'>
         <div className='serv-overlay overflow-hidden pt-30 pb-16'>
           <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75'>
-            <div className='serv-banner bg-[var(--ft-light)] w-full py-15 text-center'>
+            <div className='serv-banner w-full bg-[var(--ft-light)] py-15 text-center'>
               <h1 className='text-gradient text-4xl leading-tight font-bold md:text-5xl lg:text-6xl'>
                 Challenge List
               </h1>
@@ -64,14 +64,14 @@ export function ChallengeList() {
                     Challenges
                   </h2>
 
-                  <div className='flex flex-wrap gap-3 rounded-full bg-[var(--ft-light)] p-3'>
+                  <div className='flex flex-wrap gap-3 rounded-2xl bg-[var(--ft-light)] p-3'>
                     {filters.map((filter) => (
                       <button
                         key={filter}
                         onClick={() => setActiveFilter(filter)}
-                        className={`rounded-full text-white px-6 py-2 text-sm font-medium transition-colors ${
+                        className={`shrink-0 rounded-full px-5 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
                           activeFilter === filter
-                            ? 'bg-gradient-to-br from-[var(--ft-primary)] to-[#155842]'
+                            ? 'bg-gradient-to-br from-[var(--ft-primary)] to-[#155842] text-white'
                             : 'bg-[#031700] text-gray-300'
                         }`}
                       >
@@ -86,7 +86,9 @@ export function ChallengeList() {
                 {isLoading ? (
                   <div className='col-span-full py-12 text-center'>
                     <div className='mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-[var(--ft-primary)] border-t-transparent'></div>
-                    <p className='text-lg text-gray-400'>Loading challenges...</p>
+                    <p className='text-lg text-gray-400'>
+                      Loading challenges...
+                    </p>
                   </div>
                 ) : filteredChallenges.length > 0 ? (
                   filteredChallenges.map((challenge, index) => (
@@ -109,7 +111,7 @@ export function ChallengeList() {
                             </span>
                           </div>
                         )}
-                        
+
                         {/* Category Badge */}
                         {challenge.category && (
                           <div className='inline-block rounded-full bg-[var(--ft-primary)]/20 px-3 py-1'>
@@ -118,11 +120,11 @@ export function ChallengeList() {
                             </span>
                           </div>
                         )}
-                        
+
                         <h3 className='line-clamp-2 text-xl font-bold text-white'>
                           {challenge.title}
                         </h3>
-                        
+
                         <p className='text-sm leading-relaxed text-[#DDDDDD]'>
                           {truncateWords(challenge.description, 8)}
                         </p>
