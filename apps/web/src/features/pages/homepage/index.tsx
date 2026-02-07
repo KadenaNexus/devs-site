@@ -305,29 +305,6 @@ export function Homepage() {
         </div>
       </section>
 
-      <section className='relative bg-[#1f7201] py-24'>
-        <div className='mx-auto max-w-6xl px-6 text-center'>
-          <h2 className='mb-16 text-center text-4xl font-bold text-green-400 text-white md:text-5xl'>
-            Why These Challenges Matter
-          </h2>
-
-          <div className='grid gap-6 md:grid-cols-2'>
-            {why_challenges_items?.map((item: any) => (
-              <div
-                key={item.id}
-                className='flex items-center rounded-xl border border-green-900 bg-[#081a08] px-6 py-5 text-[var(--ft-only-gray)]'
-              >
-                <span className='mr-3 text-xl text-[var(--ft-primary)]'>
-                  {iconMap[item.iconKey] ?? null}
-                </span>
-
-                {item.text}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className='relative overflow-hidden bg-[var(--ft-bg-black)] py-20 lg:py-32'>
         <div className='relative z-10 mx-auto max-w-7xl px-6 lg:px-8'>
           <div className='mb-16 text-center'>
