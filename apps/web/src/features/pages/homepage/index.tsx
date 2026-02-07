@@ -147,7 +147,7 @@ export function Homepage() {
               }`}
             >
               <img
-                src={`${import.meta.env.VITE_STRAPI_URL}/admin${hero?.image?.url}`}
+                src={`${import.meta.env.VITE_STRAPI_URL}/admin${hero?.image[0]?.url}`}
                 alt='3D Robot Illustration'
                 className='relative z-10 w-full object-contain'
               />
