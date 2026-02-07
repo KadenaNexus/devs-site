@@ -3,17 +3,21 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { getHomePage } from '@/services/strapi'
 import { fetchChallenges } from '@/services/challenges'
+import { getHomePage } from '@/services/strapi'
 import { fetchApprovedSubmissions } from '@/services/submissions'
 import { Link } from 'react-router-dom'
 import { iconMap } from '@/utils/iconMap.tsx'
-import { calculateTimeRemaining, getCategoryAbbreviation, getTimeAgo } from '@/utils/timeCalculations'
+import { calculateAverageScore } from '@/utils/textUtils'
+import {
+  calculateTimeRemaining,
+  getCategoryAbbreviation,
+  getTimeAgo,
+} from '@/utils/timeCalculations'
 import Counter from '../components/Counter'
 import FillButton from '../components/FillButton'
 import StrokeButton from '../components/StrokeButton'
 import { HomeLayout } from '../home-layout'
-import { calculateAverageScore } from '@/utils/textUtils'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
@@ -23,6 +27,9 @@ export const Route = createFileRoute('/')({
 
 export function Homepage() {
   const [isVisible, setIsVisible] = useState(false)
+  const [expandedChallengeId, setExpandedChallengeId] = useState<number | null>(
+    null
+  )
 
   const { data: page, isLoading } = useQuery({
     queryKey: ['home-page'],
@@ -38,7 +45,6 @@ export function Homepage() {
     queryKey: ['approved-submissions-homepage'],
     queryFn: fetchApprovedSubmissions,
   })
-  
 
   useEffect(() => {
     setIsVisible(true)
@@ -50,7 +56,6 @@ export function Homepage() {
   const hero = page.Hero
   const stats = page.statitems ?? []
   const solve = page.solve_section?.[0]
-  const why_challenges_items = page.why_challenges_items
 
   // Filter and prepare upcoming challenges
   const upcomingChallenges = challengesData
@@ -228,79 +233,106 @@ export function Homepage() {
           </div>
 
           <div className='proj-grid mx-auto grid auto-rows-fr gap-10 md:grid-cols-2'>
-            {challenges.map((challenge, index) => (
-              <div
-                key={challenge.id}
-                className='upcoming-card relative h-full'
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className='proj-main-box relative h-full rounded-[10px] bg-[var(--ft-light)] p-9 pb-0'>
-                  <div className='proj-inner-box relative flex h-full flex-col overflow-hidden bg-[var(--background)] p-9'>
-                    <div className='mb-8 flex items-center justify-between'>
-                      <div
-                        className={`${challenge.badgeColor} badge-float rounded-lg px-4 py-4 text-xl font-bold text-[var(--ft-primary-foreground)] shadow-lg`}
-                      >
-                        {challenge.badge}
-                      </div>
+            {challenges.map((challenge, index) => {
+              const isExpanded = expandedChallengeId === challenge.id
+              const isLong = challenge.description.length > 160
 
-                      <div className='timer-pulse flex items-center gap-2 rounded-full border border-[var(--ft-primary)] bg-[var(--ft-light)] px-4 py-2'>
-                        <svg
-                          className='h-4 w-4 text-[var(--ft-primary)]'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          stroke='currentColor'
+              return (
+                <div
+                  key={challenge.id}
+                  className='upcoming-card relative h-full'
+                  style={{ animationDelay: `${index * 0.2}s` }}
+                >
+                  <div className='proj-main-box relative h-full rounded-[10px] bg-[var(--ft-light)] p-9 pb-0'>
+                    <div className='proj-inner-box relative flex h-full flex-col bg-[var(--background)] p-9'>
+                      {/* Header */}
+                      <div className='mb-8 flex items-center justify-between'>
+                        <div
+                          className={`${challenge.badgeColor} badge-float rounded-lg px-4 py-4 text-xl font-bold text-[var(--ft-primary-foreground)] shadow-lg`}
                         >
-                          <circle cx='12' cy='12' r='10' strokeWidth='2' />
-                          <path
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            d='M12 6v6l4 2'
-                          />
-                        </svg>
-                        <span className='text-sm font-medium text-[var(--ft-primary)]'>
-                          {challenge.timeLeft}
-                        </span>
+                          {challenge.badge}
+                        </div>
+
+                        <div className='timer-pulse flex items-center gap-2 rounded-full border border-[var(--ft-primary)] bg-[var(--ft-light)] px-4 py-2'>
+                          <svg
+                            className='h-4 w-4 text-[var(--ft-primary)]'
+                            fill='none'
+                            viewBox='0 0 24 24'
+                            stroke='currentColor'
+                          >
+                            <circle cx='12' cy='12' r='10' strokeWidth='2' />
+                            <path
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              d='M12 6v6l4 2'
+                            />
+                          </svg>
+                          <span className='text-sm font-medium text-[var(--ft-primary)]'>
+                            {challenge.timeLeft}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className='mb-6 flex-1 space-y-4'>
-                      <h3 className='text-2xl font-bold text-[var(--ft-text-color)] lg:text-3xl'>
-                        {challenge.title}
-                      </h3>
+                      {/* Content */}
+                      <div className='mb-6 space-y-3'>
+                        <h3 className='text-2xl font-bold text-[var(--ft-text-color)] lg:text-3xl'>
+                          {challenge.title}
+                        </h3>
 
-                      <p className='text-sm leading-relaxed text-[var(--ft-text-gray)]'>
-                        {challenge.description}
-                      </p>
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ${
+                            isExpanded ? 'max-h-[1000px]' : 'max-h-[4.5em]'
+                          }`}
+                        >
+                          <p className='text-sm leading-relaxed text-[var(--ft-text-gray)]'>
+                            {challenge.description}
+                          </p>
+                        </div>
 
-                      <div className='pt-2'>
-                        <p className='mb-1 text-xs text-[var(--ft-text-gray)]'>
-                          Prize pool
-                        </p>
-                        <p className='text-3xl font-bold text-[var(--ft-text-color)]'>
-                          {challenge.prizePool}
-                        </p>
+                        {isLong && (
+                          <button
+                            onClick={() =>
+                              setExpandedChallengeId(
+                                isExpanded ? null : challenge.id
+                              )
+                            }
+                            className='text-sm font-medium text-[var(--ft-primary)] hover:underline'
+                          >
+                            {isExpanded ? 'Read less' : 'Read more'}
+                          </button>
+                        )}
+
+                        <div className='pt-2'>
+                          <p className='mb-1 text-xs text-[var(--ft-text-gray)]'>
+                            Prize pool
+                          </p>
+                          <p className='text-3xl font-bold text-[var(--ft-text-color)]'>
+                            {challenge.prizePool}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className='proj-btn-box mt-auto flex flex-wrap gap-5'>
-                      <Link
-                        to={`/challenge/${challenge.challengeId}`}
-                        className='flex-1 rounded-full bg-[var(--ft-primary)] px-6 py-3 text-center text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'
-                      >
-                        View Details
-                      </Link>
+                      {/* Buttons */}
+                      <div className='proj-btn-box mt-auto flex flex-wrap gap-5'>
+                        <Link
+                          to={`/challenge/${challenge.challengeId}`}
+                          className='flex-1 rounded-full bg-[var(--ft-primary)] px-6 py-3 text-center text-sm font-medium text-black transition-all duration-300 hover:bg-[var(--ft-btn-hover)] hover:text-white'
+                        >
+                          View Details
+                        </Link>
 
-                      <Link
-                        to={`/challenge/${challenge.challengeId}`}
-                        className='flex-1 rounded-full border border-[var(--ft-primary)] bg-transparent px-6 py-3 text-center text-sm font-medium text-[var(--ft-primary)] transition-all duration-300 hover:text-[var(--ft-primary)]'
-                      >
-                        Join Now
-                      </Link>
+                        <Link
+                          to={`/challenge/${challenge.challengeId}`}
+                          className='flex-1 rounded-full border border-[var(--ft-primary)] bg-transparent px-6 py-3 text-center text-sm font-medium text-[var(--ft-primary)] transition-all duration-300 hover:bg-[var(--ft-primary)] hover:text-black'
+                        >
+                          Join Now
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
@@ -371,9 +403,7 @@ export function Homepage() {
                 <h3 className='text-2xl font-bold text-white'>
                   Top Submisssion
                 </h3>
-                <StrokeButton onClick={() => console.log('Join Now')}>
-                  View All
-                </StrokeButton>
+                <StrokeButton>View All</StrokeButton>
               </div>
 
               <div className='space-y-4'>
@@ -425,9 +455,11 @@ export function Homepage() {
                           </StrokeButton>
                         </a>
                       )}
-                      
+
                       {!submission.github_url && !submission.demo_url && (
-                        <p className='text-sm text-gray-400'>No links available</p>
+                        <p className='text-sm text-gray-400'>
+                          No links available
+                        </p>
                       )}
                     </div>
                   </div>
