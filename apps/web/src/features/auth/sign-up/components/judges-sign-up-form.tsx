@@ -71,58 +71,81 @@ export function JudgesSignUpForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn('grid gap-3', className)}
+        className={cn('space-y-4', className)}
         {...props}
       >
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder='name@example.com' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='confirmPassword'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder='********' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button className='mt-2' disabled={isLoading}>
-          Create Account
+        <div className='space-y-4'>
+          <FormField
+            control={form.control}
+            name='email'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className='text-sm font-medium'>Email Address</FormLabel>
+                <FormControl>
+                  <Input 
+                    type='email'
+                    placeholder='judge@example.com' 
+                    className='h-10'
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage className='text-xs' />
+              </FormItem>
+            )}
+          />
+
+          <div className='space-y-4'>
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-sm font-medium'>Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput 
+                      placeholder='Create a strong password' 
+                      className='h-10'
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage className='text-xs' />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='confirmPassword'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-sm font-medium'>Confirm Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput 
+                      placeholder='Re-enter your password' 
+                      className='h-10'
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage className='text-xs' />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <Button 
+          type='submit'
+          className='mt-6 h-10 w-full font-medium' 
+          disabled={isLoading}
+        >
+          {isLoading ? 'Creating Account...' : 'Create Judge Account'}
         </Button>
 
-        <div className='relative my-2'>
+        <div className='relative my-6'>
           <div className='absolute inset-0 flex items-center'>
             <span className='w-full border-t' />
           </div>
           <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background text-muted-foreground px-2'>
+            <span className='bg-background text-muted-foreground px-2 font-medium'>
               Or continue with
             </span>
           </div>
@@ -133,10 +156,10 @@ export function JudgesSignUpForm({
           variant='outline'
           onClick={() => signInWithGoogle('judge')}
           disabled={isLoading}
-          className='flex items-center gap-2'
+          className='h-10 w-full font-medium'
         >
-          <IconGoogle className='h-4 w-4' />
-          Continue with Google
+          <IconGoogle className='mr-2 h-4 w-4' />
+          Sign up with Google
         </Button>
       </form>
     </Form>

@@ -85,14 +85,26 @@ export function UserAuthForm({
 
       toast.success(`Welcome back, ${result.user.email}`)
 
+      // If there's a redirect URL, use it (for returning to protected pages)
+      if (redirectTo) {
+        navigate({ to: redirectTo, replace: true })
+        return
+      }
+
+      // Role-based default redirects
       if (result.role === 'judge') {
         navigate({ to: '/judge-dashboard' })
         return
       }
 
-      // 🔁 fallback redirect
+      if (result.role === 'admin') {
+        navigate({ to: '/admin' })
+        return
+      }
+
+      // Default redirect for public users
       navigate({
-        to: redirectTo ?? '/',
+        to: '/dashboard',
         replace: true,
       })
     } catch (error) {

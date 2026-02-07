@@ -66,7 +66,7 @@ export function AdminDashboard() {
         <div className='ms-auto flex items-center space-x-4'>
           <Search />
           <ThemeSwitch />
-          <ConfigDrawer />
+          {/* <ConfigDrawer /> */}
           <div className='flex items-center gap-2'>
             <span className='text-sm text-gray-600'>{user?.email}</span>
             <Button

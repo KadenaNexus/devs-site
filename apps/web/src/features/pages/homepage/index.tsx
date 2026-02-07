@@ -4,45 +4,41 @@ import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { getHomePage } from '@/services/strapi'
-import { FiTarget, FiUpload, FiAward } from 'react-icons/fi'
-import {
-  FiCheckCircle,
-  FiShield,
-  FiLock,
-  FiUserCheck,
-  FiTrendingUp,
-  FiCode,
-} from 'react-icons/fi'
-import { GiStairsGoal } from 'react-icons/gi'
-import { ImUpload } from 'react-icons/im'
+import { fetchChallenges } from '@/services/challenges'
+import { fetchApprovedSubmissions } from '@/services/submissions'
 import { Link } from 'react-router-dom'
 import { iconMap } from '@/utils/iconMap.tsx'
+import { calculateTimeRemaining, getCategoryAbbreviation, getTimeAgo } from '@/utils/timeCalculations'
 import Counter from '../components/Counter'
 import FillButton from '../components/FillButton'
 import StrokeButton from '../components/StrokeButton'
 import { HomeLayout } from '../home-layout'
+import { calculateAverageScore } from '@/utils/textUtils'
 
 export const Route = createFileRoute('/')({
-  beforeLoad: ({ context }) => {
-    if (context.auth?.user) {
-      throw redirect({ to: '/_authenticated' })
-    }
-
+  beforeLoad: () => {
     throw redirect({ to: '/homepage' })
   },
 })
 
-export function Homepage({ value }: { value: string }) {
+export function Homepage() {
   const [isVisible, setIsVisible] = useState(false)
-  const [timeLeft, setTimeLeft] = useState({
-    challenge1: { days: 1, hours: 21, minutes: 0 },
-    challenge2: { days: 1, hours: 2, minutes: 0 },
-  })
 
   const { data: page, isLoading } = useQuery({
     queryKey: ['home-page'],
     queryFn: getHomePage,
   })
+
+  const { data: challengesData = [] } = useQuery({
+    queryKey: ['challenges'],
+    queryFn: fetchChallenges,
+  })
+
+  const { data: approvedSubmissionsData = [] } = useQuery({
+    queryKey: ['approved-submissions-homepage'],
+    queryFn: fetchApprovedSubmissions,
+  })
+  
 
   useEffect(() => {
     setIsVisible(true)
@@ -56,90 +52,59 @@ export function Homepage({ value }: { value: string }) {
   const solve = page.solve_section?.[0]
   const why_challenges_items = page.why_challenges_items
 
-  const challenges = [
-    {
-      id: 1,
-      badge: 'P2P',
+  // Filter and prepare upcoming challenges
+  const upcomingChallenges = challengesData
+    .filter((challenge) => {
+      // Only show challenges that have a timeline and are upcoming or live
+      if (!challenge.timeline) return false
+      const targetDate = new Date(challenge.timeline)
+      const now = new Date()
+      // Show challenges that haven't ended yet (within 24 hours past timeline)
+      return targetDate.getTime() > now.getTime() - 24 * 60 * 60 * 1000
+    })
+    .sort((a, b) => {
+      // Sort by timeline (closest first)
+      const dateA = new Date(a.timeline!).getTime()
+      const dateB = new Date(b.timeline!).getTime()
+      return dateA - dateB
+    })
+    .slice(0, 4) // Take top 4
+    .map((challenge) => ({
+      id: challenge.id,
+      badge: getCategoryAbbreviation(challenge.category),
       badgeColor: 'bg-[var(--ft-primary)]',
-      title: 'Kadena P2P Escrow Marketplace',
-      description: '',
-      prizePool: '$300',
-      timeLeft: '1d 2h Left',
-    },
-    {
-      id: 2,
-      badge: 'KP',
-      badgeColor: 'bg-[var(--ft-primary)]',
-      title: 'Kadena Pay (Merchant Payments)',
-      description: '',
-      prizePool: '$200',
-      timeLeft: '1d 2h Left',
-    },
-    {
-      id: 3,
-      badge: 'CCF',
-      badgeColor: 'bg-[var(--ft-primary)]',
-      title: 'Cross-Chain Fraud & Scam Tracking',
-      description: '',
-      prizePool: '$300',
-      timeLeft: '1d 2h Left',
-    },
-    {
-      id: 4,
-      badge: 'SCT',
-      badgeColor: 'bg-[var(--ft-primary)]',
-      title: 'Supply Chain Tracking & Proof of Authenticity',
-      description: '',
-      prizePool: '$200',
-      timeLeft: '1d 2h Left',
-    },
-  ]
+      title: challenge.title,
+      description: challenge.description || '',
+      prizePool: challenge.prize_pool || 'TBA',
+      timeLeft: calculateTimeRemaining(challenge.timeline!),
+      challengeId: challenge.id,
+    }))
 
-  const recentWinners = [
-    {
-      id: 1,
-      name: 'LIAM BENSON',
-      timeAgo: '13 min ago',
-      avatar: '/images/avatar1.jpg',
-      approved: true,
-    },
-    {
-      id: 2,
-      name: 'SARA SUTTON',
-      timeAgo: '23 min ago',
-      avatar: '/images/avatar2.jpg',
-      approved: true,
-    },
-    {
-      id: 3,
-      name: 'MARVIN WESLEY',
-      timeAgo: '45 min ago',
-      avatar: '/images/avatar3.jpg',
-      approved: true,
-    },
-    {
-      id: 4,
-      name: 'ALLEN SINS',
-      timeAgo: '1 hr ago',
-      avatar: '/images/avatar4.jpg',
-      approved: true,
-    },
-  ]
+  const challenges = upcomingChallenges
 
-  const topSubmissions = [
-    {
-      id: 1,
-      badge: 'W3',
-      title: 'Web3 Wallet MVP By ChainGuru',
-      score: '92/100',
-    },
-    {
-      id: 2,
-      badge: 'W3',
-      title: 'Web3 Wallet MVP By ChainGuru',
-      score: '92/100',
-    },
-  ]
+  // Recent approved submissions (limited to 4)
+  const recentWinners = approvedSubmissionsData
+    .slice(0, 4)
+    .map((submission: any) => ({
+      id: submission.id,
+      name: submission.developer_name || 'Anonymous',
+      timeAgo: getTimeAgo(submission.created_at),
+      avatar: submission.profile_pic || '/images/user.jpg',
+      approved: true,
+    }))
+
+  // Top submissions with links (limited to 2)
+  const topSubmissions = approvedSubmissionsData
+    .slice(0, 2)
+    .map((submission: any) => ({
+      id: submission.id,
+      badge: getCategoryAbbreviation(submission.category),
+      title: submission.project_title || 'Untitled Project',
+      score: calculateAverageScore(submission.scores),
+      github_url: submission.github_url,
+      demo_url: submission.demo_url,
+      project_title: submission.project_title,
+    }))
 
   return (
     <HomeLayout>
@@ -197,7 +162,7 @@ export function Homepage({ value }: { value: string }) {
             }`}
           >
             <div className='grid grid-cols-2 gap-8 lg:grid-cols-4'>
-              {stats.map((stat, index) => (
+              {stats.map((stat: any, index: any) => (
                 <div
                   key={index}
                   className='stat-card space-y-1 rounded-xl bg-[var(--ft-light)] p-6 text-center backdrop-blur-sm'
@@ -234,7 +199,7 @@ export function Homepage({ value }: { value: string }) {
           </div>
 
           <div className='grid gap-8 md:grid-cols-3'>
-            {solve?.items?.map((item) => (
+            {solve?.items?.map((item: any) => (
               <div
                 key={item.id}
                 className='rounded-2xl border border-green-900 bg-[#0b1f0b] p-8 text-center transition hover:border-green-500'
@@ -318,13 +283,19 @@ export function Homepage({ value }: { value: string }) {
                     </div>
 
                     <div className='proj-btn-box mt-auto flex flex-wrap gap-5'>
-                      <button className='flex-1 rounded-full bg-[var(--ft-primary)] px-6 py-3 text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'>
+                      <Link
+                        to={`/challenge/${challenge.challengeId}`}
+                        className='flex-1 rounded-full bg-[var(--ft-primary)] px-6 py-3 text-center text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'
+                      >
                         View Details
-                      </button>
+                      </Link>
 
-                      <button className='flex-1 rounded-full border border-[var(--ft-primary)] bg-transparent px-6 py-3 text-sm font-medium text-[var(--ft-primary)] transition-all duration-300 hover:text-[var(--ft-primary)]'>
+                      <Link
+                        to={`/challenge/${challenge.challengeId}`}
+                        className='flex-1 rounded-full border border-[var(--ft-primary)] bg-transparent px-6 py-3 text-center text-sm font-medium text-[var(--ft-primary)] transition-all duration-300 hover:text-[var(--ft-primary)]'
+                      >
                         Join Now
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -341,7 +312,7 @@ export function Homepage({ value }: { value: string }) {
           </h2>
 
           <div className='grid gap-6 md:grid-cols-2'>
-            {why_challenges_items?.map((item) => (
+            {why_challenges_items?.map((item: any) => (
               <div
                 key={item.id}
                 className='flex items-center rounded-xl border border-green-900 bg-[#081a08] px-6 py-5 text-[var(--ft-only-gray)]'
@@ -452,13 +423,35 @@ export function Homepage({ value }: { value: string }) {
                     </div>
 
                     <div className='flex gap-5'>
-                      <FillButton onClick={() => console.log('View Details')}>
-                        GitHub Link
-                      </FillButton>
+                      {submission.github_url && (
+                        <a
+                          href={submission.github_url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='flex-1'
+                        >
+                          <FillButton className='w-full'>
+                            GitHub Link
+                          </FillButton>
+                        </a>
+                      )}
 
-                      <StrokeButton onClick={() => console.log('Join Now')}>
-                        Demo
-                      </StrokeButton>
+                      {submission.demo_url && (
+                        <a
+                          href={submission.demo_url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='flex-1'
+                        >
+                          <StrokeButton className='w-full'>
+                            Live Demo
+                          </StrokeButton>
+                        </a>
+                      )}
+                      
+                      {!submission.github_url && !submission.demo_url && (
+                        <p className='text-sm text-gray-400'>No links available</p>
+                      )}
                     </div>
                   </div>
                 ))}

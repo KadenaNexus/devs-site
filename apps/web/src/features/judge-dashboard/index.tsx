@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { getAssignedChallenges } from '@/services/judges'
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +25,7 @@ type Challenge = {
 }
 
 export function JudgeDashboard() {
+  const navigate = useNavigate()
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -330,7 +332,15 @@ export function JudgeDashboard() {
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <Button className='w-full'>View Submissions</Button>
+                        <Button 
+                          className='w-full'
+                          onClick={() => navigate({ 
+                            to: '/challenges/$id/submissions',
+                            params: { id: challenge.id }
+                          })}
+                        >
+                          View Submissions
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}

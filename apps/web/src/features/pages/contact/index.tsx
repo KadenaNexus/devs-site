@@ -12,11 +12,13 @@ import {
   FiPhone,
   FiClock,
   FiLinkedin,
-  FiCheck
+  FiCheck,
+  FiAlertCircle
 } from 'react-icons/fi'
 import { HomeLayout } from '../home-layout'
 import FillButton from '../components/FillButton'
 import StrokeButton from '../components/StrokeButton'
+import { sendContactEmail } from '@/services/email'
 
 export function Contact() {
   const [isVisible, setIsVisible] = useState(false)
@@ -29,6 +31,7 @@ export function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
     setIsVisible(true)
@@ -44,24 +47,35 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitError(null)
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    setIsSubmitting(false)
-    setSubmitSuccess(true)
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        category: 'general',
-        message: ''
-      })
-      setSubmitSuccess(false)
-    }, 3000)
+    try {
+      // Send email to admin (dekatediksha@gmail.com for testing)
+      const result = await sendContactEmail(formData)
+      
+      if (result.success) {
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setFormData({
+            name: '',
+            email: '',
+            subject: '',
+            category: 'general',
+            message: ''
+          })
+          setSubmitSuccess(false)
+        }, 3000)
+      } else {
+        setIsSubmitting(false)
+        setSubmitError(result.error || 'Failed to send message. Please try again.')
+      }
+    } catch (error: any) {
+      setIsSubmitting(false)
+      setSubmitError(error.message || 'An unexpected error occurred. Please try again.')
+    }
   }
 
   const contactInfo = [
@@ -227,11 +241,22 @@ export function Contact() {
                       Message Sent!
                     </h3>
                     <p className="text-[var(--ft-only-gray)]">
-                      Thanks for reaching out. We'll respond soon.
+                      Thanks for reaching out. We'll respond to <strong className="text-white">{formData.email}</strong> soon.
                     </p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    {submitError && (
+                      <div className="rounded-xl border border-red-500 bg-red-500/10 p-4">
+                        <div className="flex items-start gap-3">
+                          <FiAlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
+                          <div>
+                            <h4 className="font-semibold text-red-500">Error</h4>
+                            <p className="text-sm text-red-400">{submitError}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div>
                       <label className="mb-2 block text-sm font-medium text-white">
                         Full Name

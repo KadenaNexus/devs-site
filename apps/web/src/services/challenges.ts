@@ -59,7 +59,7 @@ export async function fetchSubmission(id: string): Promise<Submission | null> {
     .from('submissions')
     .select('*')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (error) {
     console.error('Error fetching submission:', error)

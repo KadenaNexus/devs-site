@@ -95,7 +95,7 @@ export function SubmissionForm({
         submitted_by: user.id,
         ...values,
         profile_pic: profilePicUrl,
-        status: 'submitted' as const,
+        status: 'pending' as const,
         is_public: false,
       }
 

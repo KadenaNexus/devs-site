@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import {
   fetchJudges,
   inviteJudge,
@@ -21,25 +20,15 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { type Challenge } from '@/features/challenges/data/schema'
+import { AdminJudgesTable } from './components/admin-judges-table'
 
 export function JudgesManagement() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
   const [selectedJudgeId, setSelectedJudgeId] = useState('')
@@ -49,8 +38,6 @@ export function JudgesManagement() {
     password: '',
   })
   const [selectedChallengeId, setSelectedChallengeId] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
 
   const { data: judges = [], isLoading } = useQuery({
     queryKey: ['judges'],
@@ -61,12 +48,6 @@ export function JudgesManagement() {
     queryKey: ['challenges'],
     queryFn: fetchChallenges,
   })
-
-  // Pagination logic
-  const totalPages = Math.ceil(judges.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedJudges = judges.slice(startIndex, endIndex)
 
   const inviteMutation = useMutation({
     mutationFn: (data: { email: string; name: string; password: string }) =>
@@ -160,85 +141,7 @@ export function JudgesManagement() {
                 <p className='text-muted-foreground'>No judges yet</p>
               </div>
             ) : (
-              <>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Joined</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedJudges.map((judge) => (
-                      <TableRow
-                        key={judge.id}
-                        className='hover:bg-muted/50 cursor-pointer'
-                        onClick={() => {
-                          console.log('Navigating to judge:', judge.id)
-                          navigate({
-                            to: '/admin/judges/$judgeId',
-                            params: { judgeId: judge.id },
-                          })
-                        }}
-                      >
-                        <TableCell className='font-medium'>
-                          {judge.name}
-                        </TableCell>
-                        <TableCell>{judge.email}</TableCell>
-                        <TableCell>
-                          {new Date(judge.created_at).toLocaleDateString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                {/* Pagination Controls */}
-                <div className='flex items-center justify-between px-2 py-4'>
-                  <div className='text-muted-foreground text-sm'>
-                    Showing {startIndex + 1} to{' '}
-                    {Math.min(endIndex, judges.length)} of {judges.length}{' '}
-                    judges
-                  </div>
-                  <div className='flex gap-2'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <div className='flex items-center gap-1'>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <Button
-                            key={page}
-                            variant={
-                              currentPage === page ? 'default' : 'outline'
-                            }
-                            size='sm'
-                            onClick={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </Button>
-                        )
-                      )}
-                    </div>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() =>
-                        setCurrentPage((p) => Math.min(totalPages, p + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              </>
+              <AdminJudgesTable data={judges} />
             )}
 
             <Dialog

@@ -15,7 +15,7 @@ export interface Submission {
   github_url?: string
   demo_url?: string
   smart_contract_details?: string
-  status: 'submitted' | 'approved' | 'winner' | 'rejected'
+  status: 'pending' | 'approved' | 'rejected'
   is_public: boolean
   created_at: string
   updated_at?: string
@@ -56,10 +56,9 @@ export async function fetchSubmissionByChallenge(
     .select('*')
     .eq('challenge_id', challengeId)
     .eq('submitted_by', user.id)
-    .single()
+    .maybeSingle()
 
   if (error) {
-    if (error.code === 'PGRST116') return null // No rows returned
     console.error('Error fetching submission:', error)
     return null
   }
@@ -106,7 +105,17 @@ export async function updateSubmission(
 export async function fetchApprovedSubmissions(): Promise<Submission[]> {
   const { data, error } = await supabase
     .from('submissions')
-    .select('*, challenges(title)')
+    .select(`
+      *, 
+      challenges(title),
+      scores(
+        impact,
+        execution,
+        innovation,
+        security,
+        ux_clarity
+      )
+    `)
     .in('status', ['approved', 'winner'])
     .eq('is_public', true)
     .order('created_at', { ascending: false })
@@ -120,19 +129,36 @@ export async function fetchApprovedSubmissions(): Promise<Submission[]> {
 }
 
 export async function fetchWinners(): Promise<Submission[]> {
+  // Fetch from winners table with proper joins
   const { data, error } = await supabase
-    .from('submissions')
-    .select('*, challenges(title, prize_pool)')
-    .eq('status', 'winner')
-    .eq('is_public', true)
-    .order('created_at', { ascending: false })
+    .from('winners')
+    .select(`
+      *,
+      challenges(
+        id,
+        title,
+        prize_pool,
+        description
+      ),
+      submissions(
+        *
+      )
+    `)
+    .order('announced_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching winners:', error)
     throw new Error('Failed to fetch winners')
   }
 
-  return data || []
+  // Map winners to submission format with winner data
+  return data?.map((winner: any) => ({
+    ...winner.submissions,
+    rank: winner.rank,
+    prize_amount: winner.prize_amount,
+    announced_at: winner.announced_at,
+    challenges: winner.challenges
+  })) || []
 }
 
 export async function uploadProfilePic(file: File): Promise<string> {

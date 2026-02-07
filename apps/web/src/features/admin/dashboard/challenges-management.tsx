@@ -1,16 +1,9 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  createChallenge,
-  updateChallenge,
-  deleteChallenge,
-  toggleChallengeStatus,
-} from '@/services/admin'
+import { createChallenge, updateChallenge, uploadChallengeImage } from '@/services/admin'
 import { fetchChallenges } from '@/services/challenges'
-import { Plus, Edit, Trash2, Lock, Unlock, Trophy } from 'lucide-react'
+import { Plus, Trophy, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { useAdminStore } from '@/stores/admin-store'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -23,39 +16,42 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { type Challenge } from '@/features/challenges/data/schema'
+import { type Challenge, CHALLENGE_CATEGORIES } from '@/features/challenges/data/schema'
+import { AdminChallengesTable } from './components/admin-challenges-table'
+import { DateTimePicker } from '@/components/datetime-picker'
 
 export function ChallengesManagement() {
   const queryClient = useQueryClient()
-  const { user } = useAdminStore()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [currentChallenge, setCurrentChallenge] = useState<Challenge | null>(
     null
   )
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string>('')
+  const [isUploading, setIsUploading] = useState(false)
+  const [timeline, setTimeline] = useState<Date | undefined>(undefined)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     rules: '',
-    timeline: '',
     prize_pool: '',
     evaluation_criteria: '',
     sponsor_link: '',
+    image_url: '',
+    category: '',
     status: 'draft',
   })
 
@@ -64,14 +60,8 @@ export function ChallengesManagement() {
     queryFn: fetchChallenges,
   })
 
-  // Pagination logic
-  const totalPages = Math.ceil(challenges.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedChallenges = challenges.slice(startIndex, endIndex)
-
   const createMutation = useMutation({
-    mutationFn: (data: any) => createChallenge(data), // Remove created_by, it's handled in the service
+    mutationFn: (data: any) => createChallenge(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['challenges'] })
       queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
@@ -100,98 +90,122 @@ export function ChallengesManagement() {
     },
   })
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteChallenge(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['challenges'] })
-      queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
-      toast.success('Challenge deleted successfully')
-    },
-    onError: (error) => {
-      toast.error('Failed to delete challenge')
-      console.error(error)
-    },
-  })
-
-  const toggleStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: 'open' | 'closed' }) =>
-      toggleChallengeStatus(id, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['challenges'] })
-      toast.success('Challenge status updated')
-    },
-    onError: (error) => {
-      toast.error('Failed to update challenge status')
-      console.error(error)
-    },
-  })
-
   const handleOpenDialog = (challenge?: Challenge) => {
     if (challenge) {
       setCurrentChallenge(challenge)
+      setTimeline(challenge.timeline ? new Date(challenge.timeline) : undefined)
       setFormData({
         title: challenge.title,
         description: challenge.description,
         rules: challenge.rules || '',
-        timeline: challenge.timeline || '',
         prize_pool: challenge.prize_pool || '',
         evaluation_criteria: challenge.evaluation_criteria || '',
         sponsor_link: challenge.sponsor_link || '',
+        image_url: challenge.image_url || '',
+        category: challenge.category || '',
         status: challenge.status,
       })
+      setImagePreview(challenge.image_url || '')
     } else {
       setCurrentChallenge(null)
+      setTimeline(undefined)
       setFormData({
         title: '',
         description: '',
         rules: '',
-        timeline: '',
         prize_pool: '',
         evaluation_criteria: '',
         sponsor_link: '',
+        image_url: '',
+        category: '',
         status: 'draft',
       })
+      setImagePreview('')
     }
+    setImageFile(null)
     setIsDialogOpen(true)
   }
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false)
     setCurrentChallenge(null)
+    setImageFile(null)
+    setImagePreview('')
+    setTimeline(undefined)
     setFormData({
       title: '',
       description: '',
       rules: '',
-      timeline: '',
       prize_pool: '',
       evaluation_criteria: '',
       sponsor_link: '',
+      image_url: '',
+      category: '',
       status: 'draft',
     })
   }
 
-  const handleSubmit = () => {
-    if (currentChallenge) {
-      updateMutation.mutate({ id: currentChallenge.id, data: formData })
-    } else {
-      createMutation.mutate(formData)
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<
-      string,
-      'default' | 'secondary' | 'destructive' | 'outline'
-    > = {
-      open: 'default',
-      closed: 'secondary',
-      draft: 'outline',
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview('')
+    setFormData({ ...formData, image_url: '' })
+  }
+
+  const handleSubmit = async () => {
+    try {
+      setIsUploading(true)
+      let imageUrl = formData.image_url
+
+      // Upload image if a new file is selected
+      if (imageFile) {
+        imageUrl = await uploadChallengeImage(imageFile)
+      }
+
+      const dataToSubmit = {
+        ...formData,
+        image_url: imageUrl,
+        timeline: timeline ? timeline.toISOString() : null,
+      }
+
+      if (currentChallenge) {
+        updateMutation.mutate({ id: currentChallenge.id, data: dataToSubmit })
+      } else {
+        createMutation.mutate(dataToSubmit)
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to upload image')
+    } finally {
+      setIsUploading(false)
     }
-    return (
-      <Badge variant={variants[status] || 'outline'}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    )
+  }
+
+  const handleEdit = (challenge: Challenge) => {
+    setCurrentChallenge(challenge)
+    setTimeline(challenge.timeline ? new Date(challenge.timeline) : undefined)
+    setFormData({
+      title: challenge.title,
+      description: challenge.description,
+      rules: challenge.rules || '',
+      prize_pool: challenge.prize_pool || '',
+      evaluation_criteria: challenge.evaluation_criteria || '',
+      sponsor_link: challenge.sponsor_link || '',
+      image_url: challenge.image_url || '',
+      category: challenge.category || '',
+      status: challenge.status,
+    })
+    setIsDialogOpen(true)
   }
 
   return (
@@ -228,130 +242,7 @@ export function ChallengesManagement() {
                 <p className='text-muted-foreground'>No challenges yet</p>
               </div>
             ) : (
-              <>
-                <div className='overflow-x-auto'>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Prize Pool</TableHead>
-                        <TableHead>Created At</TableHead>
-                        <TableHead className='text-right'>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {paginatedChallenges.map((challenge) => (
-                        <TableRow key={challenge.id}>
-                          <TableCell className='font-medium'>
-                            {challenge.title}
-                          </TableCell>
-                          <TableCell>
-                            {getStatusBadge(challenge.status)}
-                          </TableCell>
-                          <TableCell>{challenge.prize_pool || 'N/A'}</TableCell>
-                          <TableCell>
-                            {new Date(
-                              challenge.created_at
-                            ).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell className='text-right'>
-                            <div className='flex justify-end gap-2'>
-                              <Button
-                                variant='ghost'
-                                size='sm'
-                                onClick={() => handleOpenDialog(challenge)}
-                              >
-                                <Edit className='h-4 w-4' />
-                              </Button>
-                              <Button
-                                variant='ghost'
-                                size='sm'
-                                onClick={() => {
-                                  const newStatus =
-                                    challenge.status === 'open'
-                                      ? 'closed'
-                                      : 'open'
-                                  toggleStatusMutation.mutate({
-                                    id: challenge.id,
-                                    status: newStatus,
-                                  })
-                                }}
-                              >
-                                {challenge.status === 'open' ? (
-                                  <Lock className='h-4 w-4' />
-                                ) : (
-                                  <Unlock className='h-4 w-4' />
-                                )}
-                              </Button>
-                              <Button
-                                variant='ghost'
-                                size='sm'
-                                onClick={() => {
-                                  if (
-                                    confirm(
-                                      'Are you sure you want to delete this challenge?'
-                                    )
-                                  ) {
-                                    deleteMutation.mutate(challenge.id)
-                                  }
-                                }}
-                              >
-                                <Trash2 className='h-4 w-4' />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-
-                {/* Pagination Controls */}
-                <div className='flex items-center justify-between px-2 py-4'>
-                  <div className='text-muted-foreground text-sm'>
-                    Showing {startIndex + 1} to{' '}
-                    {Math.min(endIndex, challenges.length)} of{' '}
-                    {challenges.length} challenges
-                  </div>
-                  <div className='flex gap-2'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <div className='flex items-center gap-1'>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <Button
-                            key={page}
-                            variant={
-                              currentPage === page ? 'default' : 'outline'
-                            }
-                            size='sm'
-                            onClick={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </Button>
-                        )
-                      )}
-                    </div>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() =>
-                        setCurrentPage((p) => Math.min(totalPages, p + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              </>
+              <AdminChallengesTable data={challenges} onEdit={handleEdit} />
             )}
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -393,6 +284,61 @@ export function ChallengesManagement() {
                       rows={4}
                     />
                   </div>
+                  <div className='grid gap-4 sm:grid-cols-2'>
+                    <div>
+                      <Label htmlFor='category'>Category</Label>
+                      <Select
+                        value={formData.category}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, category: value })
+                        }
+                      >
+                        <SelectTrigger id='category'>
+                          <SelectValue placeholder='Select category' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CHALLENGE_CATEGORIES.map((cat) => (
+                            <SelectItem key={cat.value} value={cat.value}>
+                              {cat.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor='image'>Challenge Image</Label>
+                      <div className='space-y-2'>
+                        {(imagePreview || formData.image_url) && (
+                          <div className='relative'>
+                            <img
+                              src={imagePreview || formData.image_url}
+                              alt='Preview'
+                              className='h-24 w-full rounded-md object-cover'
+                            />
+                            <Button
+                              type='button'
+                              variant='destructive'
+                              size='icon'
+                              className='absolute right-1 top-1 h-6 w-6'
+                              onClick={handleRemoveImage}
+                            >
+                              <X className='h-4 w-4' />
+                            </Button>
+                          </div>
+                        )}
+                        <div className='flex items-center gap-2'>
+                          <Input
+                            id='image'
+                            type='file'
+                            accept='image/*'
+                            onChange={handleImageChange}
+                            className='cursor-pointer'
+                          />
+                          <Upload className='h-4 w-4 text-muted-foreground' />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div>
                     <Label htmlFor='rules'>Rules</Label>
                     <Textarea
@@ -406,14 +352,12 @@ export function ChallengesManagement() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor='timeline'>Timeline</Label>
-                    <Input
-                      id='timeline'
-                      value={formData.timeline}
-                      onChange={(e) =>
-                        setFormData({ ...formData, timeline: e.target.value })
-                      }
-                      placeholder='e.g., 2 weeks, Jan 1 - Jan 15'
+                    <Label htmlFor='timeline'>Publish Date & Time</Label>
+                    <DateTimePicker
+                      selected={timeline}
+                      onSelect={setTimeline}
+                      placeholder='Select publish date and time'
+                      disabled={(date: Date) => date < new Date()}
                     />
                   </div>
                   <div>

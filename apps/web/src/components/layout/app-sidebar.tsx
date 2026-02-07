@@ -33,13 +33,12 @@ export function AppSidebar() {
   const userRole = (user?.user_metadata?.role as string | undefined)?.toLowerCase() || null
 
   // Determine which nav items to show based on role
+  // Default to public navigation for regular users
   const navGroups = isAdmin || userRole === 'admin'
     ? adminNavItems
     : userRole === 'judge'
     ? judgeNavItems
-    : userRole === 'public'
-    ? publicNavItems
-    : sidebarData.navGroups
+    : publicNavItems
 
   // Avoid flashing the wrong menu while role is loading
   const safeNavGroups = roleLoading && !isAdmin ? [] : navGroups

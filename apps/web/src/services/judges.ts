@@ -40,7 +40,7 @@ export const getAssignedChallenges = async (): Promise<Challenge[]> => {
       )
     `
     )
-    .eq('judge_user_id', user.id)
+    .eq('judge_id', user.id)
 
   if (error) throw error
 

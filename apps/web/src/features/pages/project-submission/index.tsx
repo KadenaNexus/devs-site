@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import {
   PersonIcon,
   EnvelopeClosedIcon,
@@ -12,11 +14,16 @@ import {
   CrossCircledIcon,
   ExclamationTriangleIcon,
 } from '@radix-ui/react-icons'
+import { Loader2, LogIn } from 'lucide-react'
 import FillButton from '../components/FillButton'
 import StrokeButton from '../components/StrokeButton'
 import { HomeLayout } from '../home-layout'
+import { supabase } from '@/services/supabase'
+import { fetchChallenges } from '@/services/challenges'
+import { createSubmission } from '@/services/submissions'
 
 interface ProjectSubmissionFormData {
+  challengeId: string
   developerName: string
   email: string
   discord: string
@@ -34,7 +41,12 @@ interface FormErrors {
 }
 
 export function ProjectSubmission() {
+  const navigate = useNavigate()
+  const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  
   const [formData, setFormData] = useState<ProjectSubmissionFormData>({
+    challengeId: '',
     developerName: '',
     email: '',
     discord: '',
@@ -51,8 +63,88 @@ export function ProjectSubmission() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
 
+  // Fetch challenges for dropdown
+  const { data: challenges = [], isLoading: challengesLoading } = useQuery({
+    queryKey: ['challenges'],
+    queryFn: fetchChallenges,
+  })
+
+  // Check authentication
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser()
+      
+      setUser(currentUser)
+      setIsLoading(false)
+
+      // Pre-fill email if user is logged in
+      if (currentUser?.email) {
+        setFormData((prev) => ({
+          ...prev,
+          email: currentUser.email || '',
+        }))
+      }
+    }
+
+    checkUser()
+
+    // Subscribe to auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user?.email) {
+        setFormData((prev) => ({
+          ...prev,
+          email: session.user.email || '',
+        }))
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Mutation for submitting form
+  const submitMutation = useMutation({
+    mutationFn: async (data: ProjectSubmissionFormData) => {
+      if (!user) throw new Error('User not authenticated')
+      
+      return createSubmission({
+        challenge_id: data.challengeId,
+        submitted_by: user.id,
+        developer_name: data.developerName,
+        email: data.email,
+        discord: data.discord || undefined,
+        telegram: data.telegram || undefined,
+        project_title: data.projectTitle,
+        problem_statement: data.problemStatement || undefined,
+        solution_description: data.solutionDescription || undefined,
+        github_url: data.githubLink || undefined,
+        demo_url: data.demoLink || undefined,
+        smart_contract_details: data.contractDetails || undefined,
+        status: 'pending',
+        is_public: true,
+      })
+    },
+    onSuccess: () => {
+      setIsSubmitted(true)
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        navigate({ to: '/challenge-list' })
+      }, 2000)
+    },
+    onError: (error) => {
+      console.error('Submission error:', error)
+      alert('Failed to submit. Please try again.')
+    },
+  })
+
   const validateField = (name: string, value: string): string => {
     switch (name) {
+      case 'challengeId':
+        return value.trim() === '' ? 'Please select a challenge' : ''
       case 'developerName':
         return value.trim() === '' ? 'Developer/Team name is required' : ''
       case 'email':
@@ -88,7 +180,7 @@ export function ProjectSubmission() {
   }
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
 
@@ -120,6 +212,7 @@ export function ProjectSubmission() {
 
   const isFormValid = (): boolean => {
     const requiredFields: (keyof ProjectSubmissionFormData)[] = [
+      'challengeId',
       'developerName',
       'email',
       'discord',
@@ -135,6 +228,11 @@ export function ProjectSubmission() {
   }
 
   const handleSubmit = () => {
+    if (!user) {
+      alert('Please log in to submit your project')
+      return
+    }
+
     const allTouched = Object.keys(formData).reduce(
       (acc, key) => ({
         ...acc,
@@ -156,9 +254,65 @@ export function ProjectSubmission() {
     setErrors(newErrors)
 
     if (Object.keys(newErrors).length === 0 && isFormValid()) {
-      setIsSubmitted(true)
-      console.log('Form submitted:', formData)
+      submitMutation.mutate(formData)
     }
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <HomeLayout>
+        <div className='flex min-h-screen items-center justify-center'>
+          <Loader2 className='h-8 w-8 animate-spin text-[var(--ft-primary)]' />
+        </div>
+      </HomeLayout>
+    )
+  }
+
+  // Show login required message
+  if (!user) {
+    return (
+      <HomeLayout>
+        <div className='serv-main other-bg relative'>
+          <section className='serv-overlay overflow-hidden pt-30 pb-16'>
+            <div className='absolute inset-0 via-transparent to-transparent'></div>
+
+            <section className='relative z-10 mx-auto flex max-w-[1296px] px-3.75'>
+              <div className='serv-banner w-full bg-[var(--ft-light)] py-15 text-center'>
+                <h1 className='text-gradient text-4xl leading-tight font-bold md:text-5xl lg:text-6xl'>
+                  Project Submission
+                </h1>
+              </div>
+            </section>
+
+            <section className='relative mt-16 overflow-hidden'>
+              <div className='mx-auto max-w-[1296px] px-[15px]'>
+                <div className='relative z-10'>
+                  <div className='form-main rounded-3xl border border-[var(--ft-primary)] bg-[var(--ft-light)] p-8 shadow-2xl backdrop-blur-md lg:p-12'>
+                    <div className='flex flex-col items-center justify-center space-y-6 py-20'>
+                      <LogIn className='h-16 w-16 text-[var(--ft-primary)]' />
+                      <h2 className='text-3xl font-bold text-white'>
+                        Authentication Required
+                      </h2>
+                      <p className='max-w-md text-center text-[var(--ft-only-gray)]'>
+                        You need to be logged in to submit your project. Please
+                        sign in to continue.
+                      </p>
+                      <button
+                        onClick={() => navigate({ to: '/sign-in' })}
+                        className='rounded-full bg-[var(--ft-primary)] px-8 py-3 font-bold text-black transition-all hover:scale-105 hover:shadow-lg'
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+        </div>
+      </HomeLayout>
+    )
   }
 
   return (
@@ -178,7 +332,7 @@ export function ProjectSubmission() {
           <section className='relative mt-16 overflow-hidden'>
             <div className='mx-auto max-w-[1296px] px-[15px]'>
               <div className='relative z-10'>
-                <div className='form-main rounded-3xl border-1 border-[var(--ft-primary)] bg-[var(--ft-light)] p-8 shadow-2xl backdrop-blur-[4px] backdrop-blur-md lg:p-12'>
+                <div className='form-main rounded-3xl border border-[var(--ft-primary)] bg-[var(--ft-light)] p-8 shadow-2xl backdrop-blur-md lg:p-12'>
                   <div className='flex justify-center'>
                     <h2 className='text-gradient mb-12 bg-clip-text text-center text-3xl font-bold text-transparent md:text-4xl lg:text-5xl'>
                       SUBMIT YOUR BUILD
@@ -186,6 +340,48 @@ export function ProjectSubmission() {
                   </div>
 
                   <div className='space-y-6'>
+                    {/* Challenge Selection */}
+                    <div>
+                      <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
+                        Select Challenge <span className='text-red-400'>*</span>
+                      </label>
+                      <select
+                        name='challengeId'
+                        value={formData.challengeId}
+                        onChange={handleChange}
+                        onBlur={() => handleBlur('challengeId')}
+                        disabled={challengesLoading}
+                        className={`w-full rounded-xl border ${
+                          errors.challengeId && touched.challengeId
+                            ? 'border-red-500/50'
+                            : 'border-[var(--ft-primary)]'
+                        } bg-gray-900/50 px-4 py-3 text-white placeholder-[var(--ft-only-gray)] transition-colors focus:border-[var(--ft-primary)] focus:outline-none`}
+                      >
+                        <option value='' className='bg-gray-900'>
+                          {challengesLoading
+                            ? 'Loading challenges...'
+                            : 'Select a challenge'}
+                        </option>
+                        {challenges
+                          .filter((c) => c.status === 'open')
+                          .map((challenge) => (
+                            <option
+                              key={challenge.id}
+                              value={challenge.id}
+                              className='bg-gray-900'
+                            >
+                              {challenge.title}
+                            </option>
+                          ))}
+                      </select>
+                      {errors.challengeId && touched.challengeId && (
+                        <p className='mt-1 flex items-center gap-1 text-xs text-red-400'>
+                          <ExclamationTriangleIcon className='h-3 w-3' />
+                          {errors.challengeId}
+                        </p>
+                      )}
+                    </div>
+
                     <div className='grid gap-6 md:grid-cols-3'>
                       <div>
                         <label className='mb-2 block text-sm text-[var(--ft-only-gray)]'>
@@ -517,14 +713,23 @@ export function ProjectSubmission() {
                     <div className='flex justify-center pt-6'>
                       <button
                         onClick={handleSubmit}
-                        disabled={!isFormValid() || isSubmitted}
+                        disabled={!isFormValid() || isSubmitted || submitMutation.isPending}
                         className={`transform rounded-full px-12 py-4 text-lg font-bold text-black transition-all duration-300 ${
-                          isFormValid() && !isSubmitted
+                          isFormValid() && !isSubmitted && !submitMutation.isPending
                             ? 'cursor-pointer bg-[var(--ft-primary)] shadow-lg hover:scale-105 hover:from-emerald-600 hover:to-cyan-600 hover:shadow-[var(--ft-primary)]'
                             : 'cursor-not-allowed bg-gray-600 opacity-50'
                         }`}
                       >
-                        {isSubmitted ? 'SUBMITTED ✓' : 'CONFIRM SUBMISSION'}
+                        {submitMutation.isPending ? (
+                          <span className='flex items-center gap-2'>
+                            <Loader2 className='h-5 w-5 animate-spin' />
+                            SUBMITTING...
+                          </span>
+                        ) : isSubmitted ? (
+                          'SUBMITTED ✓'
+                        ) : (
+                          'CONFIRM SUBMISSION'
+                        )}
                       </button>
                     </div>
                   </div>

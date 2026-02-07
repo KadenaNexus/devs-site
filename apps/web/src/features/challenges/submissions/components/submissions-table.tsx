@@ -25,6 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type Submission } from '../../data/submissions-schema'
 import { submissionsColumns as columns } from '../components/submissions-columns'
 import { submissionStatuses } from '../data/data'
+import { DataTableBulkActions } from './submissions-bulk-actions'
 
 const route = getRouteApi('/_authenticated/challenges/$id/submissions/')
 
@@ -160,6 +161,7 @@ export function SubmissionsTable({ data }: DataTableProps) {
         </Table>
       </div>
       <DataTablePagination table={table} />
+      <DataTableBulkActions table={table} />
     </div>
   )
 }

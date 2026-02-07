@@ -1,12 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { WinnersManagement } from '@/features/admin/dashboard/winners-management'
-import { useAdminStore } from '@/stores/admin-store'
+import { supabase } from '@/services/supabase'
 
-export const Route = createFileRoute('/_authenticated/admin/winners')({
-  beforeLoad: () => {
-    const { isAuthenticated } = useAdminStore.getState()
-    if (!isAuthenticated) {
-      throw new Error('Unauthorized')
+export const Route = createFileRoute('/_authenticated/admin/winners')({  
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const role = user?.user_metadata?.role?.toLowerCase()
+    
+    if (role !== 'admin') {
+      throw redirect({ to: '/dashboard' })
     }
   },
   component: WinnersManagement,

@@ -1,57 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { fetchChallenges } from '@/services/challenges'
 import { HomeLayout } from '../home-layout'
 import FillButton from '../components/FillButton'
+import { truncateWords } from '@/utils/textUtils'
+import { CHALLENGE_CATEGORIES } from '@/features/challenges/data/schema'
 
 export function ChallengeList() {
   const [activeFilter, setActiveFilter] = useState('All')
 
-  const filters = ['All', 'Apps', 'NFT', 'AI', 'UX/UI']
+  const { data: challengesData = [], isLoading } = useQuery({
+    queryKey: ['challenges'],
+    queryFn: fetchChallenges,
+  })
 
-  const challenges = [
-    {
-      id: 1,
-      title: 'DeFi Protocol Builder',
-      description:
-        'Build protocol builder, in protocol and contact anbmissions.',
-      prizePool: '$300',
-      category: 'Apps',
-      image: '/images/proj-img.jpg',
-    },
-    {
-      id: 2,
-      title: 'NFT Marketplace Creator',
-      description:
-        'Build protocol builder, in protocol and contact anbmissions.',
-      prizePool: '$500',
-      category: 'NFT',
-      image: '/images/proj-img.jpg',
-    },
-    {
-      id: 3,
-      title: 'AI Smart Contract Auditor',
-      description:
-        'Build protocol builder, in protocol and contact anbmissions.',
-      prizePool: '$800',
-      category: 'AI',
-      image: '/images/proj-img.jpg',
-    },
-    {
-      id: 4,
-      title: 'Web3 Dashboard Design',
-      description:
-        'Build protocol builder, in protocol and contact anbmissions.',
-      prizePool: '$400',
-      category: 'UX/UI',
-      image: '/images/proj-img.jpg',
-    },
-  ]
+  // Extract unique categories from challenges and add predefined categories
+  const filters = useMemo(() => {
+    const categoriesFromData = challengesData
+      .map((c) => c.category)
+      .filter((cat): cat is string => !!cat)
+      .filter((cat, index, self) => self.indexOf(cat) === index)
 
-  const filteredChallenges =
-    activeFilter === 'All'
-      ? challenges
-      : challenges.filter((challenge) => challenge.category === activeFilter)
+    // Combine with predefined categories from schema
+    const allCategories = [
+      ...new Set([
+        ...CHALLENGE_CATEGORIES.map((c) => c.value),
+        ...categoriesFromData,
+      ]),
+    ]
+
+    return ['All', ...allCategories]
+  }, [challengesData])
+
+  const filteredChallenges = useMemo(() => {
+    if (activeFilter === 'All') {
+      return challengesData
+    }
+    return challengesData.filter(
+      (challenge) => challenge.category === activeFilter
+    )
+  }, [challengesData, activeFilter])
 
   return (
     <HomeLayout>
@@ -92,7 +83,12 @@ export function ChallengeList() {
               </div>
 
               <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
-                {filteredChallenges.length > 0 ? (
+                {isLoading ? (
+                  <div className='col-span-full py-12 text-center'>
+                    <div className='mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-[var(--ft-primary)] border-t-transparent'></div>
+                    <p className='text-lg text-gray-400'>Loading challenges...</p>
+                  </div>
+                ) : filteredChallenges.length > 0 ? (
                   filteredChallenges.map((challenge, index) => (
                     <div
                       key={challenge.id}
@@ -100,29 +96,49 @@ export function ChallengeList() {
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className='space-y-4 p-4'>
-                        <img
-                          src={challenge.image}
-                          alt={challenge.title}
-                          className='h-full w-full rounded-lg object-cover'
-                        />
-                        <h3 className='text-xl font-bold text-white'>
+                        {challenge.image_url ? (
+                          <img
+                            src={challenge.image_url}
+                            alt={challenge.title}
+                            className='h-48 w-full rounded-lg object-cover'
+                          />
+                        ) : (
+                          <div className='flex h-48 w-full items-center justify-center rounded-lg bg-[#031700]'>
+                            <span className='text-4xl font-bold text-[var(--ft-primary)]/30'>
+                              {challenge.title.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Category Badge */}
+                        {challenge.category && (
+                          <div className='inline-block rounded-full bg-[var(--ft-primary)]/20 px-3 py-1'>
+                            <span className='text-xs font-medium text-[var(--ft-primary)]'>
+                              {challenge.category}
+                            </span>
+                          </div>
+                        )}
+                        
+                        <h3 className='line-clamp-2 text-xl font-bold text-white'>
                           {challenge.title}
                         </h3>
+                        
                         <p className='text-sm leading-relaxed text-[#DDDDDD]'>
-                          {challenge.description}
+                          {truncateWords(challenge.description, 8)}
                         </p>
 
                         <div className='pt-2'>
                           <p className='mb-1 text-xs text-white'>Prize pool</p>
                           <p className='text-2xl font-bold text-white'>
-                            {challenge.prizePool}
+                            {challenge.prize_pool || 'TBA'}
                           </p>
                         </div>
 
-                        <FillButton className='w-full'>
-                           View Details
-                        </FillButton>
-                        
+                        <Link to={`/challenge/${challenge.id}`}>
+                          <FillButton className='w-full'>
+                            View Details
+                          </FillButton>
+                        </Link>
                       </div>
                     </div>
                   ))

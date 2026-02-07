@@ -430,6 +430,52 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFaqFaq extends Struct.SingleTypeSchema {
+  collectionName: 'faqs';
+  info: {
+    displayName: 'FAQ';
+    pluralName: 'faqs';
+    singularName: 'faq';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faq_contact: Schema.Attribute.Component<'hero.sections-hero', false>;
+    getting_started: Schema.Attribute.Component<
+      'solve-section.solve-section',
+      false
+    >;
+    hero: Schema.Attribute.Component<'hero.sections-hero', false>;
+    judge_and_prizes: Schema.Attribute.Component<
+      'solve-section.solve-section',
+      false
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::faq.faq'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    rules_and_policies: Schema.Attribute.Component<
+      'solve-section.solve-section',
+      false
+    >;
+    submission_process: Schema.Attribute.Component<
+      'solve-section.solve-section',
+      false
+    >;
+    techincal_support: Schema.Attribute.Component<
+      'solve-section.solve-section',
+      false
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
   collectionName: 'homepages';
   info: {
@@ -464,6 +510,45 @@ export interface ApiHomepageHomepage extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiHowItWorkHowItWork extends Struct.SingleTypeSchema {
+  collectionName: 'how_it_works';
+  info: {
+    displayName: 'How It Work';
+    pluralName: 'how-it-works';
+    singularName: 'how-it-work';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    challenges_matters: Schema.Attribute.Component<
+      'solve-progress.solve-progress',
+      false
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Hero: Schema.Attribute.Component<'hero.sections-hero', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::how-it-work.how-it-work'
+    > &
+      Schema.Attribute.Private;
+    need_more_info: Schema.Attribute.Component<'hero.sections-hero', false>;
+    publishedAt: Schema.Attribute.DateTime;
+    solve_progress: Schema.Attribute.Component<
+      'solve-progress.solve-progress',
+      false
+    >;
+    start_building: Schema.Attribute.Component<'hero.sections-hero', false>;
+    statitems: Schema.Attribute.Component<'stat-item.stat-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
@@ -484,6 +569,38 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamAndGovernanceTeamAndGovernance
+  extends Struct.SingleTypeSchema {
+  collectionName: 'team_and_governances';
+  info: {
+    displayName: 'Team and Governance';
+    pluralName: 'team-and-governances';
+    singularName: 'team-and-governance';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    core_team: Schema.Attribute.Component<'team.team', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    founder: Schema.Attribute.Component<'team.team', false>;
+    hero: Schema.Attribute.Component<'hero.sections-hero', false>;
+    join_our_team: Schema.Attribute.Component<'hero.sections-hero', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::team-and-governance.team-and-governance'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1000,8 +1117,11 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::faq.faq': ApiFaqFaq;
       'api::homepage.homepage': ApiHomepageHomepage;
+      'api::how-it-work.how-it-work': ApiHowItWorkHowItWork;
       'api::page.page': ApiPagePage;
+      'api::team-and-governance.team-and-governance': ApiTeamAndGovernanceTeamAndGovernance;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

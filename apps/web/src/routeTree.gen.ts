@@ -62,6 +62,8 @@ import { Route as AuthenticatedAdminWinnersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminSubmissionsRouteImport } from './routes/_authenticated/admin/submissions'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
 import { Route as AuthenticatedAdminChallengesRouteImport } from './routes/_authenticated/admin/challenges'
+import { Route as pagesChallengeChallengeIdRouteImport } from './routes/(pages)/challenge/$challengeId'
+import { Route as adminAdminContactMessagesRouteImport } from './routes/(admin)/admin/contact-messages'
 import { Route as AuthenticatedPublicChallengesIdIndexRouteImport } from './routes/_authenticated/public-challenges/$id/index'
 import { Route as AuthenticatedAdminPagesIndexRouteImport } from './routes/_authenticated/admin/pages/index'
 import { Route as AuthenticatedAdminJudgesIndexRouteImport } from './routes/_authenticated/admin/judges/index'
@@ -352,6 +354,18 @@ const AuthenticatedAdminChallengesRoute =
     path: '/admin/challenges',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const pagesChallengeChallengeIdRoute =
+  pagesChallengeChallengeIdRouteImport.update({
+    id: '/(pages)/challenge/$challengeId',
+    path: '/challenge/$challengeId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const adminAdminContactMessagesRoute =
+  adminAdminContactMessagesRouteImport.update({
+    id: '/(admin)/admin/contact-messages',
+    path: '/admin/contact-messages',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedPublicChallengesIdIndexRoute =
   AuthenticatedPublicChallengesIdIndexRouteImport.update({
     id: '/public-challenges/$id/',
@@ -420,6 +434,8 @@ export interface FileRoutesByFullPath {
   '/project-submission': typeof pagesProjectSubmissionRoute
   '/team-and-governance': typeof pagesTeamAndGovernanceRoute
   '/winners-page': typeof pagesWinnersPageRoute
+  '/admin/contact-messages': typeof adminAdminContactMessagesRoute
+  '/challenge/$challengeId': typeof pagesChallengeChallengeIdRoute
   '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/submissions': typeof AuthenticatedAdminSubmissionsRoute
@@ -478,6 +494,8 @@ export interface FileRoutesByTo {
   '/project-submission': typeof pagesProjectSubmissionRoute
   '/team-and-governance': typeof pagesTeamAndGovernanceRoute
   '/winners-page': typeof pagesWinnersPageRoute
+  '/admin/contact-messages': typeof adminAdminContactMessagesRoute
+  '/challenge/$challengeId': typeof pagesChallengeChallengeIdRoute
   '/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/submissions': typeof AuthenticatedAdminSubmissionsRoute
@@ -541,6 +559,8 @@ export interface FileRoutesById {
   '/(pages)/project-submission': typeof pagesProjectSubmissionRoute
   '/(pages)/team-and-governance': typeof pagesTeamAndGovernanceRoute
   '/(pages)/winners-page': typeof pagesWinnersPageRoute
+  '/(admin)/admin/contact-messages': typeof adminAdminContactMessagesRoute
+  '/(pages)/challenge/$challengeId': typeof pagesChallengeChallengeIdRoute
   '/_authenticated/admin/challenges': typeof AuthenticatedAdminChallengesRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/submissions': typeof AuthenticatedAdminSubmissionsRoute
@@ -602,6 +622,8 @@ export interface FileRouteTypes {
     | '/project-submission'
     | '/team-and-governance'
     | '/winners-page'
+    | '/admin/contact-messages'
+    | '/challenge/$challengeId'
     | '/admin/challenges'
     | '/admin/dashboard'
     | '/admin/submissions'
@@ -660,6 +682,8 @@ export interface FileRouteTypes {
     | '/project-submission'
     | '/team-and-governance'
     | '/winners-page'
+    | '/admin/contact-messages'
+    | '/challenge/$challengeId'
     | '/admin/challenges'
     | '/admin/dashboard'
     | '/admin/submissions'
@@ -722,6 +746,8 @@ export interface FileRouteTypes {
     | '/(pages)/project-submission'
     | '/(pages)/team-and-governance'
     | '/(pages)/winners-page'
+    | '/(admin)/admin/contact-messages'
+    | '/(pages)/challenge/$challengeId'
     | '/_authenticated/admin/challenges'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/submissions'
@@ -782,6 +808,8 @@ export interface RootRouteChildren {
   pagesProjectSubmissionRoute: typeof pagesProjectSubmissionRoute
   pagesTeamAndGovernanceRoute: typeof pagesTeamAndGovernanceRoute
   pagesWinnersPageRoute: typeof pagesWinnersPageRoute
+  adminAdminContactMessagesRoute: typeof adminAdminContactMessagesRoute
+  pagesChallengeChallengeIdRoute: typeof pagesChallengeChallengeIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1157,6 +1185,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminChallengesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/(pages)/challenge/$challengeId': {
+      id: '/(pages)/challenge/$challengeId'
+      path: '/challenge/$challengeId'
+      fullPath: '/challenge/$challengeId'
+      preLoaderRoute: typeof pagesChallengeChallengeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(admin)/admin/contact-messages': {
+      id: '/(admin)/admin/contact-messages'
+      path: '/admin/contact-messages'
+      fullPath: '/admin/contact-messages'
+      preLoaderRoute: typeof adminAdminContactMessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/public-challenges/$id/': {
       id: '/_authenticated/public-challenges/$id/'
       path: '/public-challenges/$id'
@@ -1365,6 +1407,8 @@ const rootRouteChildren: RootRouteChildren = {
   pagesProjectSubmissionRoute: pagesProjectSubmissionRoute,
   pagesTeamAndGovernanceRoute: pagesTeamAndGovernanceRoute,
   pagesWinnersPageRoute: pagesWinnersPageRoute,
+  adminAdminContactMessagesRoute: adminAdminContactMessagesRoute,
+  pagesChallengeChallengeIdRoute: pagesChallengeChallengeIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

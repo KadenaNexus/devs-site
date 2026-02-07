@@ -79,6 +79,12 @@ export function SignIn() {
         adminLogout()
       }
 
+      // If there's a redirect URL from protected route, use it
+      if (redirect) {
+        navigate({ to: redirect, replace: true })
+        return
+      }
+
       // ✅ ROLE BASED REDIRECT
       if (role === 'judge') {
         navigate({ to: '/judge-dashboard', replace: true })
@@ -88,7 +94,7 @@ export function SignIn() {
     }
 
     handleRedirect()
-  }, [auth, navigate])
+  }, [auth, navigate, redirect])
 
   return (
     <AuthLayout>

@@ -1,98 +1,77 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { fetchWinners, fetchApprovedSubmissions } from '@/services/submissions'
 import { HomeLayout } from '../home-layout'
 
 export function WinnersPage() {
   const [isVisible, setIsVisible] = useState(false)
 
+  const { data: winnersData = [], isLoading: winnersLoading } = useQuery({
+    queryKey: ['winners'],
+    queryFn: fetchWinners,
+  })
+
+  const { data: approvedData = [], isLoading: approvedLoading } = useQuery({
+    queryKey: ['approved-submissions'],
+    queryFn: fetchApprovedSubmissions,
+  })
+
   useEffect(() => {
     setIsVisible(true)
   }, [])
 
-  const topWinners = [
-    {
-      id: 1,
-      place: '1ST PLACE:',
-      project: 'PROJECT AEGIS',
-      category: 'DEFI',
-      prize: '$25k',
-      image: '/images/user.jpg',
-      borderColor: 'border-[#FFD700]',
-      gradientFrom: 'from-[#FFD700]/20',
-      gradientTo: 'to-[#FFA500]/5',
-      glowColor: 'shadow-[0_0_30px_rgba(255,215,0,0.3)]',
-    },
-    {
-      id: 2,
-      place: '2ND PLACE:',
-      project: 'NEBULA BRIDGE',
-      category: 'CROSS-CHAIN',
-      prize: '$15k',
-      image: '/images/user.jpg',
-      borderColor: 'border-[#C0C0C0]',
-      gradientFrom: 'from-[#C0C0C0]/20',
-      gradientTo: 'to-[#808080]/5',
-      glowColor: 'shadow-[0_0_30px_rgba(192,192,192,0.3)]',
-    },
-    {
-      id: 3,
-      place: '3RD PLACE:',
-      project: 'ECO-CHAIN',
-      category: 'SUSTAINABLE',
-      prize: '$10k',
-      image: '/images/user.jpg',
-      borderColor: 'border-[#CD7F32]',
-      gradientFrom: 'from-[#CD7F32]/20',
-      gradientTo: 'to-[#8B4513]/5',
-      glowColor: 'shadow-[0_0_30px_rgba(205,127,50,0.3)]',
-    },
-  ]
+  // Helper function to get styling based on rank
+  const getRankStyling = (rank: number) => {
+    const styles: Record<number, any> = {
+      1: {
+        borderColor: 'border-[#FFD700]',
+        glowColor: 'shadow-[0_0_30px_rgba(255,215,0,0.3)]',
+        place: '1ST PLACE:',
+      },
+      2: {
+        borderColor: 'border-[#C0C0C0]',
+        glowColor: 'shadow-[0_0_30px_rgba(192,192,192,0.3)]',
+        place: '2ND PLACE:',
+      },
+      3: {
+        borderColor: 'border-[#CD7F32]',
+        glowColor: 'shadow-[0_0_30px_rgba(205,127,50,0.3)]',
+        place: '3RD PLACE:',
+      },
+    }
+    return (
+      styles[rank] || {
+        borderColor: 'border-[var(--ft-primary)]',
+        glowColor: 'shadow-[0_0_20px_rgba(76,175,80,0.3)]',
+        place: `${rank}TH PLACE:`,
+      }
+    )
+  }
 
-  const approvedSubmissions = [
-    {
-      id: 1,
-      title: 'Decentralised Identity',
-      category: 'IDENTITY',
-      image: '/images/user.jpg',
-      author: 'Alex Chen',
-    },
-    {
-      id: 2,
-      title: 'Cross-Chain Bridge',
-      category: 'CROSS-CHAIN',
-      image: '/images/user.jpg',
-      author: 'Sarah Kim',
-    },
-    {
-      id: 3,
-      title: 'Sustainable Blockchain',
-      category: 'SUSTAINABLE',
-      image: '/images/user.jpg',
-      author: 'Mike Johnson',
-    },
-    {
-      id: 4,
-      title: 'NFT Marketplace',
-      category: 'NFT',
-      image: '/images/user.jpg',
-      author: 'Emma Davis',
-    },
-    {
-      id: 5,
-      title: 'DeFi Aggregator',
-      category: 'DEFI',
-      image: '/images/user.jpg',
-      author: 'James Wilson',
-    },
-    {
-      id: 6,
-      title: 'Gaming Protocol',
-      category: 'GAMING',
-      image: '/images/user.jpg',
-      author: 'Lisa Brown',
-    },
-  ]
+  // Get top 3 winners
+  const topWinners = winnersData
+    .filter((w: any) => w.rank <= 3)
+    .sort((a: any, b: any) => a.rank - b.rank)
+    .map((winner: any) => ({
+      id: winner.id,
+      rank: winner.rank,
+      ...getRankStyling(winner.rank),
+      project: winner.project_name || winner.title || 'Untitled Project',
+      category: winner.challenges?.title || winner.category || 'General',
+      prize: winner.prize_amount ? `$${winner.prize_amount}` : winner.challenges?.prize_pool || 'TBA',
+      image: winner.profile_pic || '/images/user.jpg',
+      author: winner.public_name || winner.user_name || 'Anonymous',
+    }))
+
+  const approvedSubmissions = approvedData.map((submission: any) => ({
+    id: submission.id,
+    title: submission.challenges?.title || 'Challenge Title N/A',
+    category: submission.category || 'General',
+    image: submission.profile_pic || '/images/user.jpg',
+    author: submission.developer_name || submission.public_name || submission.user_name || 'Anonymous',
+  }))
 
   return (
     <HomeLayout>
@@ -108,6 +87,16 @@ export function WinnersPage() {
 
           <section className='py-12 lg:py-16'>
             <div className='mx-auto max-w-[1296px] px-[15px]'>
+              {winnersLoading ? (
+                <div className='py-12 text-center'>
+                  <div className='mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-[var(--ft-primary)] border-t-transparent'></div>
+                  <p className='text-lg text-gray-400'>Loading winners...</p>
+                </div>
+              ) : topWinners.length === 0 ? (
+                <div className='py-12 text-center'>
+                  <p className='text-lg text-gray-400'>No winners announced yet.</p>
+                </div>
+              ) : (
               <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
                 {topWinners.map((winner, index) => (
                   <div
@@ -143,6 +132,7 @@ export function WinnersPage() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
           </section>
 
@@ -152,6 +142,16 @@ export function WinnersPage() {
                 APPROVED SUBMISSIONS
               </h2>
 
+              {approvedLoading ? (
+                <div className='py-12 text-center'>
+                  <div className='mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-[var(--ft-primary)] border-t-transparent'></div>
+                  <p className='text-lg text-gray-400'>Loading submissions...</p>
+                </div>
+              ) : approvedSubmissions.length === 0 ? (
+                <div className='py-12 text-center'>
+                  <p className='text-lg text-gray-400'>No approved submissions yet.</p>
+                </div>
+              ) : (
               <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
                 {approvedSubmissions.map((submission, index) => (
                   <div
@@ -188,6 +188,7 @@ export function WinnersPage() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
           </section>
         </div>

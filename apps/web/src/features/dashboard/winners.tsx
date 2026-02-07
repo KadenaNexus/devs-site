@@ -30,7 +30,7 @@ export function Winners() {
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
-          <ConfigDrawer />
+          {/* <ConfigDrawer /> */}
           <ProfileDropdown />
         </div>
       </Header>
@@ -62,7 +62,7 @@ export function Winners() {
           </Card>
         ) : (
           <div className='space-y-8'>
-            {winners.map((winner: any, index: number) => (
+            {winners.map((winner: any) => (
               <Card
                 key={winner.id}
                 className='overflow-hidden border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-white dark:from-yellow-950/10 dark:to-background'
@@ -76,16 +76,16 @@ export function Winners() {
                       <Avatar className='h-20 w-20 border-4 border-yellow-500/50'>
                         <AvatarImage src={winner.profile_pic} />
                         <AvatarFallback className='text-2xl'>
-                          {winner.developer_name.charAt(0)}
+                          {winner.developer_name?.charAt(0) || '?'}
                         </AvatarFallback>
                       </Avatar>
                       <div className='absolute -bottom-2 -right-2 bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm'>
-                        #{index + 1}
+                        #{winner.rank || 1}
                       </div>
                     </div>
                     <div className='flex-1'>
                       <Badge className='mb-2 bg-yellow-500 hover:bg-yellow-600'>
-                        🏆 Winner
+                        🏆 {winner.rank === 1 ? 'First Place' : winner.rank === 2 ? 'Second Place' : winner.rank === 3 ? 'Third Place' : `Rank ${winner.rank}`}
                       </Badge>
                       <CardTitle className='text-2xl mb-1'>
                         {winner.project_title}
@@ -98,10 +98,10 @@ export function Winners() {
                           <Badge variant='outline'>
                             {winner.challenges.title}
                           </Badge>
-                          {winner.challenges.prize_pool && (
+                          {winner.prize_amount && (
                             <div className='flex items-center gap-2 text-yellow-600 dark:text-yellow-500 font-semibold'>
                               <Trophy className='h-4 w-4' />
-                              {winner.challenges.prize_pool}
+                              ${parseFloat(winner.prize_amount).toLocaleString()}
                             </div>
                           )}
                         </div>
@@ -187,7 +187,7 @@ export function Winners() {
                       )}
                     </div>
                     <span>
-                      Won on {new Date(winner.created_at).toLocaleDateString()}
+                      Won on {new Date(winner.announced_at || winner.created_at).toLocaleDateString()}
                     </span>
                   </div>
                 </CardContent>

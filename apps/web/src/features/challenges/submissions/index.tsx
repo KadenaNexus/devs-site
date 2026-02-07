@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
+import { useParams, useNavigate } from '@tanstack/react-router'
 import { fetchChallenge, fetchSubmissions } from '@/services/challenges'
+import { isJudgeAssignedToChallenge, getUserRole } from '@/services/authorization'
 import { supabase } from '@/services/supabase'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
@@ -12,37 +13,121 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { SubmissionsDialogs } from './components/submissions-dialogs'
 import { SubmissionsProvider } from './components/submissions-provider'
 import { SubmissionsTable } from './components/submissions-table'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export function ChallengeSubmissions() {
+  const navigate = useNavigate()
   const { id } = useParams({
     from: '/_authenticated/challenges/$id/submissions/',
   })
   const [userId, setUserId] = useState<string | null>(null)
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (user?.id) {
-        setUserId(user.id)
+    const checkAuthorization = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        
+        if (user?.id) {
+          setUserId(user.id)
+        }
+
+        const role = await getUserRole()
+
+        // Check authorization based on role
+        if (role === 'admin') {
+          setIsAuthorized(true)
+        } else if (role === 'judge') {
+          const assigned = await isJudgeAssignedToChallenge(id)
+          if (!assigned) {
+            setAuthError('You are not assigned to this challenge')
+            setIsAuthorized(false)
+            // Redirect after a short delay
+            setTimeout(() => {
+              navigate({ to: '/judge-dashboard' })
+            }, 2000)
+          } else {
+            setIsAuthorized(true)
+          }
+        } else if (role === 'public') {
+          setAuthError('You do not have permission to view challenge submissions')
+          setIsAuthorized(false)
+          setTimeout(() => {
+            navigate({ to: '/dashboard' })
+          }, 2000)
+        } else {
+          setIsAuthorized(false)
+        }
+      } catch (error) {
+        console.error('Authorization check failed:', error)
+        setIsAuthorized(false)
       }
     }
-    getUser()
-  }, [])
+
+    checkAuthorization()
+  }, [id, navigate])
 
   const { data: challenge, isLoading: challengeLoading } = useQuery({
     queryKey: ['challenges', id],
     queryFn: () => fetchChallenge(id),
+    enabled: isAuthorized === true,
   })
 
   const { data: submissions = [], isLoading: submissionsLoading } = useQuery({
     queryKey: ['submissions', id],
     queryFn: () => fetchSubmissions(id),
     staleTime: 1000 * 60 * 5,
+    enabled: isAuthorized === true,
   })
 
   const isLoading = challengeLoading || submissionsLoading
+
+  // Show authorization check loading
+  if (isAuthorized === null) {
+    return (
+      <SubmissionsProvider userId={userId}>
+        <Header fixed>
+          <Search />
+          <div className='ms-auto flex items-center space-x-4'>
+            <ThemeSwitch />
+            {/* <ConfigDrawer /> */}
+            <ProfileDropdown />
+          </div>
+        </Header>
+        <Main>
+          <div className='flex h-96 items-center justify-center'>
+            <p className='text-muted-foreground'>Checking authorization...</p>
+          </div>
+        </Main>
+      </SubmissionsProvider>
+    )
+  }
+
+  // Show error if not authorized
+  if (isAuthorized === false) {
+    return (
+      <SubmissionsProvider userId={userId}>
+        <Header fixed>
+          <Search />
+          <div className='ms-auto flex items-center space-x-4'>
+            <ThemeSwitch />
+            {/* <ConfigDrawer /> */}
+            <ProfileDropdown />
+          </div>
+        </Header>
+        <Main>
+          <Alert variant='destructive' className='max-w-2xl mx-auto mt-8'>
+            <AlertDescription>
+              {authError || 'You do not have permission to access this challenge.'}
+            </AlertDescription>
+          </Alert>
+        </Main>
+      </SubmissionsProvider>
+    )
+  }
 
   return (
     <SubmissionsProvider userId={userId}>
@@ -50,7 +135,7 @@ export function ChallengeSubmissions() {
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
-          <ConfigDrawer />
+          {/* <ConfigDrawer /> */}
           <ProfileDropdown />
         </div>
       </Header>

@@ -44,7 +44,7 @@ export function ChallengeDetail() {
           {/* <Search /> */}
           <div className='ms-auto flex items-center space-x-4'>
             <ThemeSwitch />
-            <ConfigDrawer />
+            {/* <ConfigDrawer /> */}
             <ProfileDropdown />
           </div>
         </Header>
@@ -64,7 +64,7 @@ export function ChallengeDetail() {
           {/* <Search /> */}
           <div className='ms-auto flex items-center space-x-4'>
             <ThemeSwitch />
-            <ConfigDrawer />
+            {/* <ConfigDrawer /> */}
             <ProfileDropdown />
           </div>
         </Header>
@@ -95,7 +95,7 @@ export function ChallengeDetail() {
         {/* <Search /> */}
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
-          <ConfigDrawer />
+          {/* <ConfigDrawer /> */}
           <ProfileDropdown />
         </div>
       </Header>

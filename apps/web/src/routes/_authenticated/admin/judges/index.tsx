@@ -1,12 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { JudgesManagement } from '@/features/admin/dashboard/judges-management'
-import { useAdminStore } from '@/stores/admin-store'
+import { supabase } from '@/services/supabase'
 
-export const Route = createFileRoute('/_authenticated/admin/judges/')({
-  beforeLoad: () => {
-    const { isAuthenticated } = useAdminStore.getState()
-    if (!isAuthenticated) {
-      throw new Error('Unauthorized')
+export const Route = createFileRoute('/_authenticated/admin/judges/')({  
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    const role = user?.user_metadata?.role?.toLowerCase()
+    
+    if (role !== 'admin') {
+      throw redirect({ to: '/dashboard' })
     }
   },
   component: JudgesManagement,

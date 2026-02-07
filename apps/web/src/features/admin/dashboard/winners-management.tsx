@@ -3,13 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   fetchWinners,
   announceWinner,
-  deleteWinner,
   fetchSubmissionsWithDetails,
 } from '@/services/admin'
 import { fetchChallenges } from '@/services/challenges'
-import { Trophy, Trash2 } from 'lucide-react'
+import { Trophy } from 'lucide-react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -22,27 +20,16 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Textarea } from '@/components/ui/textarea'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { type Challenge } from '@/features/challenges/data/schema'
+import { AdminWinnersTable } from './components/admin-winners-table'
 export function WinnersManagement() {
   const queryClient = useQueryClient()
   const [selectedChallengeId, setSelectedChallengeId] = useState<string>('all')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
   const [formData, setFormData] = useState({
     challengeId: '',
     submissionId: '',
@@ -72,12 +59,6 @@ export function WinnersManagement() {
     enabled: !!formData.challengeId,
   })
 
-  // Pagination logic
-  const totalPages = Math.ceil(winners.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedWinners = winners.slice(startIndex, endIndex)
-
   const announceMutation = useMutation({
     mutationFn: (data: {
       challengeId: string
@@ -102,18 +83,6 @@ export function WinnersManagement() {
     },
   })
 
-  const deleteMutation = useMutation({
-    mutationFn: (winnerId: string) => deleteWinner(winnerId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['winners'] })
-      toast.success('Winner removed successfully')
-    },
-    onError: (error) => {
-      toast.error('Failed to remove winner')
-      console.error(error)
-    },
-  })
-
   const handleAnnounceWinner = () => {
     if (!formData.challengeId || !formData.submissionId || !formData.rank) {
       toast.error('Please fill in all required fields')
@@ -128,23 +97,6 @@ export function WinnersManagement() {
         ? parseFloat(formData.prizeAmount)
         : undefined,
     })
-  }
-
-  const getRankBadge = (rank: number) => {
-    const config: Record<
-      number,
-      { label: string; variant: 'default' | 'secondary' | 'outline' }
-    > = {
-      1: { label: '🥇 1st Place', variant: 'default' },
-      2: { label: '🥈 2nd Place', variant: 'secondary' },
-      3: { label: '🥉 3rd Place', variant: 'outline' },
-    }
-
-    if (rank <= 3) {
-      return <Badge variant={config[rank].variant}>{config[rank].label}</Badge>
-    }
-
-    return <Badge variant='outline'>{rank}th Place</Badge>
   }
 
   return (
@@ -197,90 +149,7 @@ export function WinnersManagement() {
                 </p>
               </div>
             ) : (
-              <>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Challenge Name</TableHead>
-                      <TableHead>Developer Name</TableHead>
-                      <TableHead>Rank</TableHead>
-                      <TableHead>Prize</TableHead>
-                      <TableHead className='text-right'>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedWinners.map((winner: any) => (
-                      <TableRow key={winner.id}>
-                        <TableCell className='font-medium'>
-                          {winner.challenge_name}
-                        </TableCell>
-                        <TableCell>{winner.developer_name}</TableCell>
-                        <TableCell>{getRankBadge(winner.rank)}</TableCell>
-                        <TableCell>
-                          {winner.prize_amount
-                            ? `$${parseFloat(winner.prize_amount).toLocaleString()}`
-                            : 'N/A'}
-                        </TableCell>
-                        <TableCell className='text-right'>
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            onClick={() => deleteMutation.mutate(winner.id)}
-                            title='Remove Winner'
-                          >
-                            <Trash2 className='h-4 w-4 text-red-600' />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                {/* Pagination Controls */}
-                <div className='flex items-center justify-between px-2 py-4'>
-                  <div className='text-muted-foreground text-sm'>
-                    Showing {startIndex + 1} to{' '}
-                    {Math.min(endIndex, winners.length)} of {winners.length}{' '}
-                    winners
-                  </div>
-                  <div className='flex gap-2'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <div className='flex items-center gap-1'>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <Button
-                            key={page}
-                            variant={
-                              currentPage === page ? 'default' : 'outline'
-                            }
-                            size='sm'
-                            onClick={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </Button>
-                        )
-                      )}
-                    </div>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() =>
-                        setCurrentPage((p) => Math.min(totalPages, p + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              </>
+              <AdminWinnersTable data={winners} />
             )}
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

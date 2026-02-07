@@ -1,6 +1,28 @@
 import { supabase } from './supabase'
 import { type Challenge } from '@/features/challenges/data/schema'
 
+// ============= IMAGE UPLOAD =============
+
+export async function uploadChallengeImage(file: File): Promise<string> {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`
+  const filePath = `challenges/${fileName}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('challenge-images')
+    .upload(filePath, file)
+
+  if (uploadError) {
+    throw uploadError
+  }
+
+  const { data } = supabase.storage
+    .from('challenge-images')
+    .getPublicUrl(filePath)
+
+  return data.publicUrl
+}
+
 // ============= CHALLENGES =============
 
 export async function createChallenge(data: Partial<Challenge>) {
@@ -9,6 +31,12 @@ export async function createChallenge(data: Partial<Challenge>) {
   
   if (!user) {
     throw new Error('User not authenticated')
+  }
+
+  // Check if user is admin
+  const userRole = user.user_metadata?.role || user.app_metadata?.role
+  if (userRole !== 'admin') {
+    throw new Error('Only admins can create challenges')
   }
 
   const { data: result, error } = await supabase
@@ -22,6 +50,8 @@ export async function createChallenge(data: Partial<Challenge>) {
         prize_pool: data.prize_pool || null,
         evaluation_criteria: data.evaluation_criteria || null,
         sponsor_link: data.sponsor_link || null,
+        image_url: data.image_url || null,
+        category: data.category || null,
         status: data.status || 'draft',
         created_by: user.id, // Use authenticated user ID
       },
@@ -46,6 +76,16 @@ export async function updateChallenge(id: string, data: Partial<Challenge>) {
   const { data: { user } } = await supabase.auth.getUser()
   console.log('Current user:', user?.id, user?.email)
   console.log('User role:', user?.user_metadata?.role)
+
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  // Check if user is admin
+  const userRole = user.user_metadata?.role || user.app_metadata?.role
+  if (userRole !== 'admin') {
+    throw new Error('Only admins can update challenges')
+  }
   
   // First check if the challenge exists and is visible
   const { data: existing, error: selectError } = await supabase
@@ -75,6 +115,8 @@ export async function updateChallenge(id: string, data: Partial<Challenge>) {
     prize_pool: data.prize_pool || null,
     evaluation_criteria: data.evaluation_criteria || null,
     sponsor_link: data.sponsor_link || null,
+    image_url: data.image_url || null,
+    category: data.category || null,
     status: data.status,
   }
   
@@ -104,6 +146,19 @@ export async function updateChallenge(id: string, data: Partial<Challenge>) {
 }
 
 export async function deleteChallenge(id: string) {
+  // Get current user to verify authentication
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  // Check if user is admin
+  const userRole = user.user_metadata?.role || user.app_metadata?.role
+  if (userRole !== 'admin') {
+    throw new Error('Only admins can delete challenges')
+  }
+
   const { error } = await supabase.from('challenges').delete().eq('id', id)
 
   if (error) throw error
@@ -156,7 +211,7 @@ export async function fetchJudgeAssignedChallenges(judgeId: string) {
     .from('challenge_judges')
     .select(`
       challenge_id,
-      assigned_at,
+      created_at,
       challenges (
         id,
         title,
@@ -166,7 +221,7 @@ export async function fetchJudgeAssignedChallenges(judgeId: string) {
         created_at
       )
     `)
-    .eq('judge_user_id', judgeId)
+    .eq('judge_id', judgeId)
 
   if (error) {
     console.error('Error fetching judge challenges:', error)
@@ -174,7 +229,7 @@ export async function fetchJudgeAssignedChallenges(judgeId: string) {
   }
 
   return data?.map(item => ({
-    assignedAt: item.assigned_at,
+    assignedAt: item.created_at,
     ...item.challenges
   })) || []
 }
@@ -187,7 +242,7 @@ export async function assignJudgeToChallenge(
     .from('challenge_judges')
     .insert([
       {
-        judge_user_id: judgeId,
+        judge_id: judgeId,
         challenge_id: challengeId,
       },
     ])
@@ -205,7 +260,7 @@ export async function removeJudgeFromChallenge(
   const { error } = await supabase
     .from('challenge_judges')
     .delete()
-    .eq('judge_user_id', judgeId)
+    .eq('judge_id', judgeId)
     .eq('challenge_id', challengeId)
 
   if (error) throw error
@@ -366,6 +421,28 @@ export async function toggleSubmissionVisibility(
 
   if (error) throw error
   return data
+}
+
+// Fetch individual scores for a submission with judge names
+export async function fetchSubmissionScores(submissionId: string) {
+  const { data: scores, error } = await supabase
+    .from('scores')
+    .select('*')
+    .eq('submission_id', submissionId)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+
+  // Fetch judges data
+  const judges = await fetchJudges()
+  const judgesMap = new Map(judges.map(j => [j.id, j]))
+
+  // Map scores with judge names and calculate totals
+  return scores?.map(score => ({
+    ...score,
+    judge_name: judgesMap.get(score.judge_user_id)?.name || 'Unknown Judge',
+    total: score.impact + score.execution + score.innovation + score.security + score.ux_clarity
+  })) || []
 }
 
 // ============= WINNERS =============
