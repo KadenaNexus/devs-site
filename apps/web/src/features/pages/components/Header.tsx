@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { Menu, X, Sun, Moon } from 'lucide-react'
+import { SupportDonationDialog } from '@/components/support-donation-dialog'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isDark, setIsDark] = useState(false)
+  const [isSupportOpen, setIsSupportOpen] = useState(false)
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -46,6 +48,7 @@ export default function Header() {
   }
 
   return (
+  <>
     <header
       className={`fixed top-0 right-0 left-0 z-50 py-[15px] transition-all duration-300 ${
         isScrolled
@@ -99,6 +102,13 @@ export default function Header() {
             >
               Contact
             </a>
+
+            <button
+              onClick={() => setIsSupportOpen(true)}
+              className='rounded-full bg-[var(--ft-primary)] px-6 py-2.5 text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'
+            >
+              Sponsor a challenge
+            </button>
           </div>
 
           <button
@@ -133,17 +143,16 @@ export default function Header() {
                 {item.name}
               </a>
             ))}
-
-            <a
-              href='#contact'
-              className='mt-4 block rounded-full bg-[var(--ft-primary)] px-6 py-2.5 text-center text-sm font-medium text-black hover:bg-[var(--ft-btn-hover)] hover:text-white'
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Hire me!
-            </a>
           </div>
         </div>
       )}
     </header>
-  )
+
+    <SupportDonationDialog
+      open={isSupportOpen}
+      onOpenChange={setIsSupportOpen}
+    />
+  </>
+)
+
 }
