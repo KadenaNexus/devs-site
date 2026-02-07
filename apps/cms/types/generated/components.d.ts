@@ -20,6 +20,19 @@ export interface HeroSectionsHero extends Struct.ComponentSchema {
   };
 }
 
+export interface SocialLinkSharedSocialLink extends Struct.ComponentSchema {
+  collectionName: 'components_social_link_shared_social_links';
+  info: {
+    displayName: 'shared.social_link';
+    icon: 'link';
+  };
+  attributes: {
+    icon: Schema.Attribute.String;
+    label: Schema.Attribute.String;
+    url: Schema.Attribute.String;
+  };
+}
+
 export interface SocialMediaSocialMedia extends Struct.ComponentSchema {
   collectionName: 'components_social_media_social_medias';
   info: {
@@ -137,6 +150,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'hero.sections-hero': HeroSectionsHero;
+      'social-link.shared-social-link': SocialLinkSharedSocialLink;
       'social-media.social-media': SocialMediaSocialMedia;
       'solve-item.solve-item': SolveItemSolveItem;
       'solve-progress.solve-progress': SolveProgressSolveProgress;
