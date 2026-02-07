@@ -1,5 +1,6 @@
 import { FiGithub, FiTwitter } from 'react-icons/fi'
 import { FaDiscord } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
   return (
@@ -25,7 +26,9 @@ const Footer = () => {
                 className='flex items-center gap-2 transition hover:text-[var(--ft-primary)]'
               >
                 <FiGithub className='h-4 w-4' />
+                <Link to='https://github.com/Kadena nexus' target='_blank' rel='noopener noreferrer'>
                 GitHub Repository
+                </Link>
               </a>
             </li>
 
@@ -35,7 +38,9 @@ const Footer = () => {
                 className='flex items-center gap-2 transition hover:text-[var(--ft-primary)]'
               >
                 <FaDiscord className='h-4 w-4' />
+                <Link to='https://discord.gg/tatJn5bCP' target='_blank' rel='noopener noreferrer'>
                 Discord Community
+                </Link>
               </a>
             </li>
 
@@ -45,7 +50,9 @@ const Footer = () => {
                 className='flex items-center gap-2 transition hover:text-[var(--ft-primary)]'
               >
                 <FiTwitter className='h-4 w-4' />
+                <Link to='https://twitter.com/kadenaSaudi' target='_blank' rel='noopener noreferrer'>
                 X (Twitter)
+                </Link>
               </a>
             </li>
           </ul>
