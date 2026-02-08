@@ -107,7 +107,7 @@ export default function Header() {
                 onClick={() => setIsSupportOpen(true)}
                 className='rounded-full bg-[var(--ft-primary)] px-6 py-2.5 text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'
               >
-                Sponsor a challenge
+                Become a Sponsor
               </button>
             </div>
 
@@ -152,7 +152,7 @@ export default function Header() {
                   }}
                   className='w-full rounded-full bg-[var(--ft-primary)] px-6 py-2.5 text-sm font-medium text-black hover:bg-[var(--ft-btn-hover)] hover:text-white'
                 >
-                  Sponsor a challenge
+                  Become a Sponsor
                 </button>
 
                 <a
