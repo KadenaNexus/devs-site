@@ -36,7 +36,7 @@ export function SupportDonationDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='overflow-hidden sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>Fuel Innovation in the Dev Community</DialogTitle>
+          <DialogTitle>Fuel Innovation in the Dev Community Now </DialogTitle>
         </DialogHeader>
 
         <p className='text-muted-foreground text-sm'>
