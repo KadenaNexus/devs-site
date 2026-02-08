@@ -98,7 +98,7 @@ export default function Header() {
 
               <a
                 href='contact'
-                className='rounded-full bg-[var(--ft-primary)] px-6 py-2.5 text-sm font-medium text-black transition-all duration-600 hover:bg-[var(--ft-btn-hover)] hover:text-white'
+                className='text-sm font-medium text-[var(--foreground)] transition-colors hover:text-[var(--ft-primary)]'
               >
                 Contact
               </a>
