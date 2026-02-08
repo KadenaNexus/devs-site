@@ -26,7 +26,7 @@ const Footer = () => {
                 className='flex items-center gap-2 transition hover:text-[var(--ft-primary)]'
               >
                 <FiGithub className='h-4 w-4' />
-                <Link to='https://github.com/Kadena nexus' target='_blank' rel='noopener noreferrer'>
+                <Link to='https://github.com/KadenaSaudi/' target='_blank' rel='noopener noreferrer'>
                 GitHub Repository
                 </Link>
               </a>
