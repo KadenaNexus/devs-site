@@ -26,8 +26,7 @@ export function HowItWorks() {
   const stats = page.statitems ?? []
   const solveSection = page.solve_progress
   const processSteps =
-  page?.solve_progress?.solve_sub_steps?.map(
-    (step: any, index: number) => ({
+    page?.solve_progress?.solve_sub_steps?.map((step: any, index: number) => ({
       id: step.id,
       step: index + 1,
       title: step.label,
@@ -36,19 +35,21 @@ export function HowItWorks() {
         step.solve_sub_progress_list?.map(
           (item: any) => item.solve_sub_progress_list
         ) ?? [],
-    })
-  ) ?? []
+    })) ?? []
   const challengeSection = page.challenges_matters
   const startBuilding = page.start_building
   const needMoreInfo = page.need_more_info
 
   return (
     <HomeLayout>
+
+      {/* HERO */}
       <section className='relative overflow-hidden bg-[var(--ft-dark)] pt-30 pb-16 lg:pt-32 lg:pb-20 border border-b-[var(--ft-light)]'>
         <div className='absolute inset-0 overflow-hidden'>
           <div className='absolute -top-1/2 -right-1/4 h-96 w-96 rounded-full bg-[var(--ft-primary)] opacity-10 blur-3xl'></div>
           <div className='absolute -bottom-1/2 -left-1/4 h-96 w-96 rounded-full bg-[var(--ft-primary)] opacity-10 blur-3xl'></div>
         </div>
+
         <div className='relative z-10 mx-auto max-w-7xl px-6 text-center'>
           <div
             className={`transition-all duration-1000 ${
@@ -57,14 +58,16 @@ export function HowItWorks() {
                 : 'translate-y-10 opacity-0'
             }`}
           >
-            <h1 className='text-gradient mb-6 text-4xl font-bold md:text-5xl lg:text-6xl'>
+            <h1 className='text-gradient mb-6 break-words text-4xl font-bold md:text-5xl lg:text-6xl'>
               {hero?.heading}
             </h1>
-            <p className='mx-auto max-w-3xl text-lg text-[var(--ft-text-color)] md:text-xl'>
+
+            <p className='mx-auto max-w-3xl break-words text-lg text-[var(--ft-text-color)] md:text-xl'>
               {hero?.subheading}
             </p>
           </div>
 
+          {/* STATS */}
           <div
             className={`mt-16 transition-all delay-300 duration-1000 ${
               isVisible
@@ -72,17 +75,19 @@ export function HowItWorks() {
                 : 'translate-y-10 opacity-0'
             }`}
           >
-            <div className='grid grid-cols-2 gap-6 lg:grid-cols-4 lg:gap-8'>
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8'>
               {stats.map((stat: any, index: any) => (
                 <div
                   key={index}
-                  className='stat-card rounded-2xl border border-green-900 bg-[#0b1f0b] p-6 backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-[var(--ft-primary)]'
+                  className='stat-card rounded-2xl border border-green-900 bg-[#0b1f0b] p-6 text-center backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-[var(--ft-primary)]'
                 >
-                  <h3 className='mb-1 text-3xl font-bold text-[var(--ft-primary)]'>
+                  <h3 className='mb-1 break-words text-3xl font-bold text-[var(--ft-primary)]'>
                     {stat.value}
                   </h3>
-                  <p className='text-sm font-medium text-white'>{stat.label}</p>
-                  <p className='text-xs text-[var(--ft-only-gray)]'>
+                  <p className='break-words text-sm font-medium text-white'>
+                    {stat.label}
+                  </p>
+                  <p className='break-words text-xs text-[var(--ft-only-gray)]'>
                     {stat.sublabel}
                   </p>
                 </div>
@@ -92,6 +97,7 @@ export function HowItWorks() {
         </div>
       </section>
 
+      {/* PROCESS */}
       <section className='relative overflow-hidden bg-[var(--ft-dark-bg)] py-16 lg:py-20'>
         <div className='relative z-10 mx-auto max-w-7xl px-6 lg:px-8'>
           <div className='mb-16 text-center'>
@@ -105,46 +111,35 @@ export function HowItWorks() {
 
           <div className='space-y-12'>
             {processSteps.map((step: any, index: number) => (
-              <div
-                key={step.id}
-                className='animate-fadeInUp'
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
+              <div key={step.id}>
                 <div className='feature-card group relative overflow-hidden rounded-3xl bg-[var(--ft-light)] p-8 lg:p-12'>
                   <div className='relative flex flex-col gap-8 lg:flex-row lg:items-start'>
-                    <div className='flex-shrink-0'>
-                      <div className='relative'>
-                        <div className='absolute inset-0 rounded-full bg-[var(--ft-primary)] opacity-20 blur-xl'></div>
-                      </div>
-                    </div>
 
-                    <div className='flex-1'>
+                    <div className='flex-1 min-w-0'>
                       <div className='mb-2 inline-block rounded-full bg-[var(--ft-primary)] px-4 py-1 text-sm font-bold text-black'>
                         Step {step.step}
                       </div>
 
-                      <h3 className='mb-4 text-2xl font-bold text-white lg:text-3xl'>
+                      <h3 className='mb-4 break-words text-2xl font-bold text-white lg:text-3xl'>
                         {step.title}
                       </h3>
 
-                      <p className='mb-6 text-base leading-relaxed text-[var(--ft-only-gray)] lg:text-lg'>
+                      <p className='mb-6 break-words text-base leading-relaxed text-[var(--ft-only-gray)] lg:text-lg'>
                         {step.description}
                       </p>
 
                       <div className='grid gap-3 sm:grid-cols-2'>
                         {step.details.map((detail, idx) => (
                           <div key={idx} className='flex items-start gap-2'>
-                            <FiCheck
-                              className='mt-1 flex-shrink-0 text-[var(--ft-primary)]'
-                              size={16}
-                            />
-                            <span className='text-sm text-[var(--ft-only-gray)]'>
+                            <FiCheck className='mt-1 flex-shrink-0 text-[var(--ft-primary)]' size={16} />
+                            <span className='text-sm text-[var(--ft-only-gray)] break-words'>
                               {detail}
                             </span>
                           </div>
                         ))}
                       </div>
                     </div>
+
                   </div>
 
                   {index < processSteps.length - 1 && (
@@ -161,6 +156,7 @@ export function HowItWorks() {
         </div>
       </section>
 
+      {/* CHALLENGES */}
       <section className='relative bg-[var(--ft-bg-black)] py-16 lg:py-20'>
         <div className='mx-auto max-w-7xl px-6'>
           <div className='mb-16 text-center'>
@@ -176,13 +172,12 @@ export function HowItWorks() {
             {challengeSection.solve_sub_steps.map((step: any, index: any) => (
               <div
                 key={index}
-                className='animate-fadeInUp feature-card group rounded-2xl bg-[var(--ft-light)] p-8 text-center'
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className='feature-card group rounded-2xl bg-[var(--ft-light)] p-8 text-center'
               >
-                <h3 className='mb-3 text-xl font-bold text-white'>
+                <h3 className='mb-3 break-words text-xl font-bold text-white'>
                   {step.label}
                 </h3>
-                <p className='text-sm leading-relaxed text-[var(--ft-only-gray)]'>
+                <p className='break-words text-sm leading-relaxed text-[var(--ft-only-gray)]'>
                   {step.sublabel}
                 </p>
               </div>
@@ -191,6 +186,7 @@ export function HowItWorks() {
         </div>
       </section>
 
+      {/* CTA */}
       <section className='relative bg-[#1f7201] py-16 lg:py-20'>
         <div className='mx-auto max-w-4xl px-6 text-center'>
           <h2 className='mb-6 text-3xl font-bold text-white md:text-4xl'>
@@ -199,17 +195,20 @@ export function HowItWorks() {
           <p className='mb-8 text-lg text-[var(--ft-only-gray)]'>
             {startBuilding?.subheading}
           </p>
-          <div className='flex flex-wrap justify-center gap-4'>
-            <button className='cta-button rounded-full bg-[var(--ft-primary)] px-8 py-4 font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white'>
-              <Link to={startBuilding?.primaryCtaLink}> {startBuilding?.primaryCtaText}</Link>
+
+          <div className='flex flex-col items-center gap-4 sm:flex-row sm:justify-center'>
+            <button className='cta-button w-full sm:w-auto rounded-full bg-[var(--ft-primary)] px-8 py-4 font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white'>
+              <Link to={startBuilding?.primaryCtaLink}>{startBuilding?.primaryCtaText}</Link>
             </button>
-            <button className='cta-button rounded-full border border-white bg-transparent px-8 py-4 font-medium text-white transition-all hover:bg-white hover:text-black'>
-              <Link to={startBuilding?.secondaryCtaLink}> {startBuilding?.secondaryCtaText}</Link>
+
+            <button className='cta-button w-full sm:w-auto rounded-full border border-white bg-transparent px-8 py-4 font-medium text-white transition-all hover:bg-white hover:text-black'>
+              <Link to={startBuilding?.secondaryCtaLink}>{startBuilding?.secondaryCtaText}</Link>
             </button>
           </div>
         </div>
       </section>
 
+      {/* NEED INFO */}
       <section className='relative bg-[var(--ft-bg-black)] py-16 lg:py-20'>
         <div className='mx-auto max-w-4xl px-6 text-center'>
           <h2 className='mb-6 text-3xl font-bold text-[var(--ft-text-color)] md:text-4xl'>
@@ -218,16 +217,19 @@ export function HowItWorks() {
           <p className='mb-8 text-lg text-[var(--ft-text-color)]'>
             {needMoreInfo?.subheading}
           </p>
-          <div className='flex flex-wrap justify-center gap-4'>
-            <button className='rounded-full bg-[var(--ft-primary)] px-8 py-4 font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white'>
-              <Link to={needMoreInfo?.primaryCtaLink}> {needMoreInfo?.primaryCtaText}</Link>
+
+          <div className='flex flex-col items-center gap-4 sm:flex-row sm:justify-center'>
+            <button className='w-full sm:w-auto rounded-full bg-[var(--ft-primary)] px-8 py-4 font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white'>
+              <Link to={needMoreInfo?.primaryCtaLink}>{needMoreInfo?.primaryCtaText}</Link>
             </button>
-            <button className='rounded-full border border-[var(--ft-btn-hover)] bg-transparent px-8 py-4 font-medium text-[var(--ft-btn-hover)] transition-all hover:bg-[var(--ft-primary)] hover:text-black'>
-              <Link to={needMoreInfo?.secondaryCtaLink}> {needMoreInfo?.secondaryCtaText}</Link>
+
+            <button className='w-full sm:w-auto rounded-full border border-[var(--ft-btn-hover)] bg-transparent px-8 py-4 font-medium text-[var(--ft-btn-hover)] transition-all hover:bg-[var(--ft-primary)] hover:text-black'>
+              <Link to={needMoreInfo?.secondaryCtaLink}>{needMoreInfo?.secondaryCtaText}</Link>
             </button>
           </div>
         </div>
       </section>
+
     </HomeLayout>
   )
 }

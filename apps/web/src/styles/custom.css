@@ -10,7 +10,8 @@
   color: transparent;
   display: inline-block;
 }
-.serv-banner .text-gradient, .form-main .text-gradient{
+.serv-banner .text-gradient,
+.form-main .text-gradient {
   background: linear-gradient(
     to right,
     oklch(0.8 0.23 139.18) 0%,
@@ -23,7 +24,7 @@
   display: inline-block;
 }
 .text-gradient-2 {
-    color: #0b1f0b;
+  color: #0b1f0b;
 }
 
 /* Feature Card Styles */
@@ -190,16 +191,6 @@ button[class*='px-6 py-2 rounded-full']:active {
   border: 1px solid var(--ft-primary);
 }
 
-
-
-
-
-
-
-
-
-
-
 /* Winners Hero Banner */
 .winners-hero-banner {
   position: relative;
@@ -207,12 +198,7 @@ button[class*='px-6 py-2 rounded-full']:active {
 }
 
 .winners-gradient-text {
-  background: linear-gradient(
-    to right,
-    #ffffff 0%,
-    #e0e0e0 50%,
-    #ffffff 100%
-  );
+  background: linear-gradient(to right, #ffffff 0%, #e0e0e0 50%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -236,7 +222,8 @@ button[class*='px-6 py-2 rounded-full']:active {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
     transform: scale(1);
   }
@@ -279,22 +266,32 @@ button[class*='px-6 py-2 rounded-full']:active {
 }
 /* Dark mode backgrounds (optional - keeps original gradients) */
 .dark .winner-card:nth-child(1) {
-  background: linear-gradient(to bottom right, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.05)) !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 215, 0, 0.2),
+    rgba(255, 165, 0, 0.05)
+  ) !important;
 }
 
 .dark .winner-card:nth-child(2) {
-  background: linear-gradient(to bottom right, rgba(192, 192, 192, 0.2), rgba(128, 128, 128, 0.05)) !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(192, 192, 192, 0.2),
+    rgba(128, 128, 128, 0.05)
+  ) !important;
 }
 
 .dark .winner-card:nth-child(3) {
-  background: linear-gradient(to bottom right, rgba(205, 127, 50, 0.2), rgba(139, 69, 19, 0.05)) !important;
+  background: linear-gradient(
+    to bottom right,
+    rgba(205, 127, 50, 0.2),
+    rgba(139, 69, 19, 0.05)
+  ) !important;
 }
 
 /* ========================================
    ANIMATIONS
    ======================================== */
-
-
 
 @keyframes fadeInUp {
   from {
@@ -339,12 +336,9 @@ button[class*='px-6 py-2 rounded-full']:active {
 .animate-fadeIn {
   animation: fadeIn 0.8s ease-out forwards;
 }
-.footer-logo-sec img{
-      filter: brightness(5.5) grayscale(1) !important;
+.footer-logo-sec img {
+  filter: brightness(5.5) grayscale(1) !important;
 }
-
-
-
 
 /* ========================================
    RESPONSIVE DESIGN
@@ -401,11 +395,6 @@ button[class*='px-6 py-2 rounded-full']:active {
   }
 }
 
-
-
-
-
-
 /* ========================================
    HOW IT WORKS PAGE - REDESIGNED STYLES
    ======================================== */
@@ -442,7 +431,7 @@ button[class*='px-6 py-2 rounded-full']:active {
   .timeline-step-card:nth-child(even) {
     margin-left: auto;
   }
-  
+
   .timeline-step-card:nth-child(even):hover {
     transform: translateX(-10px);
   }
@@ -508,7 +497,8 @@ button[class*='px-6 py-2 rounded-full']:active {
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.5;
   }
@@ -529,10 +519,18 @@ button[class*='px-6 py-2 rounded-full']:active {
   animation-play-state: running;
 }
 
-.detail-item:nth-child(1) { animation-delay: 0.1s; }
-.detail-item:nth-child(2) { animation-delay: 0.2s; }
-.detail-item:nth-child(3) { animation-delay: 0.3s; }
-.detail-item:nth-child(4) { animation-delay: 0.4s; }
+.detail-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.detail-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.detail-item:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.detail-item:nth-child(4) {
+  animation-delay: 0.4s;
+}
 
 @keyframes slideInDetail {
   to {
@@ -548,7 +546,8 @@ button[class*='px-6 py-2 rounded-full']:active {
 }
 
 @keyframes bounceArrow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -611,7 +610,7 @@ button[class*='px-6 py-2 rounded-full']:active {
   transform: scaleY(1);
 }
 
-.faq-accordion-item[aria-expanded="true"] {
+.faq-accordion-item[aria-expanded='true'] {
   background: linear-gradient(
     260deg,
     rgba(9, 34, 0, 0.5) 0%,
@@ -679,7 +678,9 @@ button[class*='px-6 py-2 rounded-full']:active {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
+  transition:
+    width 0.6s ease,
+    height 0.6s ease;
   z-index: -1;
 }
 
@@ -701,8 +702,40 @@ button[class*='px-6 py-2 rounded-full']:active {
   animation-delay: 4s;
 }
 
+.social-btn {
+  display: flex;
+  height: 48px;
+  width: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #071004;
+  color: var(--ft-primary);
+  transition: 0.3s;
+}
+.social-btn:hover {
+  background: var(--ft-primary);
+  color: black;
+}
+.social-btn-small {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #071004;
+  color: var(--ft-primary);
+  transition: 0.3s;
+}
+.social-btn-small:hover {
+  background: var(--ft-primary);
+  color: black;
+}
+
 @keyframes floatOrb {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   33% {
@@ -824,24 +857,27 @@ html {
   }
 }
 
-
-
-.other-bg{
-    background-image: url(../../public/images/serv-bg.jpg);
-    background-position: center center;
-    background-size: cover;
-    background-repeat: no-repeat;
+.other-bg {
+  background-image: url(../../public/images/serv-bg.jpg);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .other-bg-overlay {
-    background-color: #000000b0;
-    width: 100%;
-    height: 100%;
+  background-color: #000000b0;
+  width: 100%;
+  height: 100%;
 }
 
-
-
-@media(max-width: 1024px){
-  .hero-section{
+@media (max-width: 1024px) {
+  .hero-section {
     padding-top: 130px;
+  }
+  .proj-main-box {
+    padding: 15px;
+  }
+  .proj-btn-box {
+    padding: 15px;
+    max-width: 320px;
   }
 }

@@ -149,22 +149,22 @@ export function Contact() {
   return (
     <HomeLayout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[var(--ft-dark)] pt-30 pb-16 lg:pt-32 lg:pb-20 border border-b-[var(--ft-light)]">
+      <section className="relative overflow-hidden bg-[var(--ft-dark)] pt-24 pb-12 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-20 border border-b-[var(--ft-light)]">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-1/2 -right-1/4 h-96 w-96 rounded-full bg-[var(--ft-primary)] opacity-10 blur-3xl"></div>
-          <div className="absolute -bottom-1/2 -left-1/4 h-96 w-96 rounded-full bg-[var(--ft-primary)] opacity-10 blur-3xl"></div>
+          <div className="absolute -top-1/2 -right-1/4 h-64 w-64 sm:h-96 sm:w-96 rounded-full bg-[var(--ft-primary)] opacity-10 blur-3xl"></div>
+          <div className="absolute -bottom-1/2 -left-1/4 h-64 w-64 sm:h-96 sm:w-96 rounded-full bg-[var(--ft-primary)] opacity-10 blur-3xl"></div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 text-center">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <div
             className={`transition-all duration-1000 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
           >
-            <h1 className="text-gradient mb-6 text-4xl font-bold md:text-5xl lg:text-6xl">
+            <h1 className="text-gradient mb-4 sm:mb-6 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl">
               Get in Touch
             </h1>
-            <p className="mx-auto max-w-3xl text-lg text-[var(--ft-text-color)] md:text-xl">
+            <p className="mx-auto max-w-xl sm:max-w-2xl lg:max-w-3xl text-base text-[var(--ft-text-color)] sm:text-lg md:text-xl px-2">
               Have questions about challenges, submissions, or partnerships? 
               We're here to help you build on Kadena.
             </p>
@@ -173,34 +173,34 @@ export function Contact() {
       </section>
 
       {/* Contact Methods Grid */}
-      <section className="relative bg-[var(--ft-dark-bg)] py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-16 text-center">
-            <h2 className="text-gradient mb-4 text-4xl font-bold md:text-5xl">
+      <section className="relative bg-[var(--ft-dark-bg)] py-12 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-10 sm:mb-14 lg:mb-16 text-center">
+            <h2 className="text-gradient mb-3 sm:mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">
               Connect With Us
             </h2>
-            <p className="text-[var(--ft-only-gray)]">
+            <p className="text-[var(--ft-only-gray)] text-sm sm:text-base">
               Choose your preferred way to reach out
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {contactInfo.map((info, index) => (
               <a
                 key={index}
                 href={info.link}
-                className="animate-fadeInUp feature-card group block rounded-2xl bg-[var(--ft-light)] p-8 text-center transition-all hover:-translate-y-2"
+                className="animate-fadeInUp feature-card group block rounded-2xl bg-[var(--ft-light)] p-6 sm:p-8 text-center transition-all hover:-translate-y-2"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="mb-6 flex justify-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all group-hover:scale-110">
+                <div className="mb-4 sm:mb-6 flex justify-center">
+                  <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all group-hover:scale-110">
                     {info.icon}
                   </div>
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-white">
+                <h3 className="mb-2 text-lg sm:text-xl font-bold text-white">
                   {info.title}
                 </h3>
-                <p className="mb-3 text-sm text-[var(--ft-primary)]">
+                <p className="mb-2 sm:mb-3 text-xs sm:text-sm text-[var(--ft-primary)] break-all">
                   {info.detail}
                 </p>
                 <p className="text-xs text-[var(--ft-only-gray)]">
@@ -213,41 +213,41 @@ export function Contact() {
       </section>
 
       {/* Contact Form & Info Section */}
-      <section className="relative bg-[var(--ft-bg-black)] py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <section className="relative bg-[var(--ft-bg-black)] py-12 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 sm:gap-10 lg:gap-16 grid-cols-1 lg:grid-cols-2">
             {/* Contact Form */}
             <div
               className={`transition-all duration-1000 ${
                 isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
               }`}
             >
-              <div className="rounded-3xl bg-[var(--ft-light)] p-8 lg:p-10">
-                <h2 className="text-white mb-6 text-3xl font-bold md:text-4xl">
+              <div className="rounded-2xl sm:rounded-3xl bg-[var(--ft-light)] p-6 sm:p-8 lg:p-10">
+                <h2 className="text-white mb-3 sm:mb-6 text-2xl font-bold sm:text-3xl md:text-4xl">
                   Send Us a Message
                 </h2>
-                <p className="mb-8 text-[var(--ft-only-gray)]">
+                <p className="mb-6 sm:mb-8 text-sm sm:text-base text-[var(--ft-only-gray)]">
                   Fill out the form and we'll get back to you within 24 hours.
                 </p>
 
                 {submitSuccess ? (
-                  <div className="rounded-2xl border border-[var(--ft-primary)] bg-[var(--ft-dark-bg)] p-8 text-center">
+                  <div className="rounded-2xl border border-[var(--ft-primary)] bg-[var(--ft-dark-bg)] p-6 sm:p-8 text-center">
                     <div className="mb-4 flex justify-center">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--ft-primary)]">
-                        <FiCheck className="h-8 w-8 text-black" />
+                      <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-[var(--ft-primary)]">
+                        <FiCheck className="h-7 w-7 sm:h-8 sm:w-8 text-black" />
                       </div>
                     </div>
-                    <h3 className="mb-2 text-2xl font-bold text-white">
+                    <h3 className="mb-2 text-xl sm:text-2xl font-bold text-white">
                       Message Sent!
                     </h3>
-                    <p className="text-[var(--ft-only-gray)]">
+                    <p className="text-sm sm:text-base text-[var(--ft-only-gray)]">
                       Thanks for reaching out. We'll respond to <strong className="text-white">{formData.email}</strong> soon.
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     {submitError && (
-                      <div className="rounded-xl border border-red-500 bg-red-500/10 p-4">
+                      <div className="rounded-xl border border-red-500 bg-red-500/10 p-3 sm:p-4">
                         <div className="flex items-start gap-3">
                           <FiAlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
                           <div>
@@ -258,7 +258,7 @@ export function Contact() {
                       </div>
                     )}
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-white">
+                      <label className="mb-1.5 sm:mb-2 block text-sm font-medium text-white">
                         Full Name
                       </label>
                       <input
@@ -267,13 +267,13 @@ export function Contact() {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
+                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-sm sm:text-base text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
                         placeholder="John Doe"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-white">
+                      <label className="mb-1.5 sm:mb-2 block text-sm font-medium text-white">
                         Email Address
                       </label>
                       <input
@@ -282,20 +282,20 @@ export function Contact() {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
+                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-sm sm:text-base text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
                         placeholder="john@example.com"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-white">
+                      <label className="mb-1.5 sm:mb-2 block text-sm font-medium text-white">
                         Category
                       </label>
                       <select
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
-                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-white focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
+                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-sm sm:text-base text-white focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
                       >
                         <option value="general">General Inquiry</option>
                         <option value="technical">Technical Support</option>
@@ -306,7 +306,7 @@ export function Contact() {
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-white">
+                      <label className="mb-1.5 sm:mb-2 block text-sm font-medium text-white">
                         Subject
                       </label>
                       <input
@@ -315,13 +315,13 @@ export function Contact() {
                         value={formData.subject}
                         onChange={handleInputChange}
                         required
-                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
+                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-sm sm:text-base text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
                         placeholder="How can we help you?"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-white">
+                      <label className="mb-1.5 sm:mb-2 block text-sm font-medium text-white">
                         Message
                       </label>
                       <textarea
@@ -330,7 +330,7 @@ export function Contact() {
                         onChange={handleInputChange}
                         required
                         rows={6}
-                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20"
+                        className="w-full rounded-xl border border-[#071004] bg-[#071004] px-4 py-3 text-sm sm:text-base text-white placeholder-[var(--ft-only-gray)] focus:border-[var(--ft-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--ft-primary)] focus:ring-opacity-20 resize-none"
                         placeholder="Tell us more about your inquiry..."
                       />
                     </div>
@@ -338,7 +338,7 @@ export function Contact() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--ft-primary)] px-8 py-4 font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white disabled:opacity-50"
+                      className="flex w-full items-center justify-center gap-2 rounded-full bg-[var(--ft-primary)] px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <>
@@ -359,26 +359,26 @@ export function Contact() {
 
             {/* Office Info & FAQ */}
             <div
-              className={`space-y-8 transition-all delay-200 duration-1000 ${
+              className={`space-y-6 sm:space-y-8 transition-all delay-200 duration-1000 ${
                 isVisible ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
               }`}
             >
               {/* Office Information */}
-              <div className="rounded-3xl bg-[var(--ft-light)] p-8">
-                <h3 className="mb-6 text-2xl font-bold text-white">
+              <div className="rounded-2xl sm:rounded-3xl bg-[var(--ft-light)] p-6 sm:p-8">
+                <h3 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-white">
                   Office Information
                 </h3>
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {officeInfo.map((info, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)]">
+                    <div key={index} className="flex items-start gap-3 sm:gap-4">
+                      <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)]">
                         {info.icon}
                       </div>
                       <div>
-                        <h4 className="mb-1 font-semibold text-white">
+                        <h4 className="mb-0.5 sm:mb-1 text-sm sm:text-base font-semibold text-white">
                           {info.title}
                         </h4>
-                        <p className="text-sm text-[var(--ft-only-gray)]">
+                        <p className="text-xs sm:text-sm text-[var(--ft-only-gray)]">
                           {info.detail}
                         </p>
                       </div>
@@ -388,56 +388,56 @@ export function Contact() {
               </div>
 
               {/* Social Links */}
-              <div className="rounded-3xl bg-[var(--ft-light)] p-8">
-                <h3 className="mb-6 text-2xl font-bold text-white">
+              <div className="rounded-2xl sm:rounded-3xl bg-[var(--ft-light)] p-6 sm:p-8">
+                <h3 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-white">
                   Follow Us
                 </h3>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-3 sm:gap-4">
                   <a
                     href="#"
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
+                    className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
                   >
-                    <FiTwitter size={24} />
+                    <FiTwitter size={22} />
                   </a>
                   <a
                     href="#"
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
+                    className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
                   >
-                    <FiGithub size={24} />
+                    <FiGithub size={22} />
                   </a>
                   <a
                     href="#"
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
+                    className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
                   >
-                    <FiLinkedin size={24} />
+                    <FiLinkedin size={22} />
                   </a>
                   <a
                     href="#"
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
+                    className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#071004] text-[var(--ft-primary)] transition-all hover:bg-[var(--ft-primary)] hover:text-black"
                   >
-                    <FiMessageSquare size={24} />
+                    <FiMessageSquare size={22} />
                   </a>
                 </div>
               </div>
 
               {/* Quick FAQ */}
-              <div className="rounded-3xl bg-[var(--ft-light)] p-8">
-                <h3 className="mb-6 text-2xl font-bold text-white">
+              <div className="rounded-2xl sm:rounded-3xl bg-[var(--ft-light)] p-6 sm:p-8">
+                <h3 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-white">
                   Quick Answers
                 </h3>
                 <div className="space-y-4">
                   {faqs.slice(0, 2).map((faq, index) => (
                     <div key={index} className="border-b border-[var(--ft-dark-bg)] pb-4 last:border-0 last:pb-0">
-                      <h4 className="mb-2 font-semibold text-white">
+                      <h4 className="mb-1.5 sm:mb-2 text-sm sm:text-base font-semibold text-white">
                         {faq.question}
                       </h4>
-                      <p className="text-sm text-[var(--ft-only-gray)]">
+                      <p className="text-xs sm:text-sm text-[var(--ft-only-gray)]">
                         {faq.answer}
                       </p>
                     </div>
                   ))}
                 </div>
-                <a href="faqs" className="mt-6 text-sm font-medium text-[var(--ft-primary)] hover:underline">
+                <a href="faqs" className="mt-4 sm:mt-6 inline-block text-sm font-medium text-[var(--ft-primary)] hover:underline">
                   View All FAQs →
                 </a>
               </div>
@@ -447,19 +447,19 @@ export function Contact() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative bg-[#1f7201] py-20">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="mb-6 text-3xl font-bold text-white md:text-4xl">
+      <section className="relative bg-[#1f7201] py-12 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="mb-4 sm:mb-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
             Ready to Start Building?
           </h2>
-          <p className="mb-8 text-lg text-[var(--ft-only-gray)]">
+          <p className="mb-6 sm:mb-8 text-base sm:text-lg text-[var(--ft-only-gray)] max-w-2xl mx-auto">
             Don't wait! Join active challenges and start building production-ready MVPs on Kadena.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button className="rounded-full bg-[var(--ft-primary)] px-8 py-4 font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
+            <button className="w-full sm:w-auto rounded-full bg-[var(--ft-primary)] px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-medium text-black transition-all hover:bg-[var(--ft-btn-hover)] hover:text-white">
               Browse Challenges
             </button>
-            <button className="rounded-full border border-white bg-transparent px-8 py-4 font-medium text-white transition-all hover:bg-white hover:text-black">
+            <button className="w-full sm:w-auto rounded-full border border-white bg-transparent px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base font-medium text-white transition-all hover:bg-white hover:text-black">
               Join Community
             </button>
           </div>

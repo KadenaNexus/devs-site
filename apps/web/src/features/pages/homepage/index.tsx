@@ -166,13 +166,13 @@ export function Homepage() {
                 : 'translate-y-10 opacity-0'
             }`}
           >
-            <div className='grid grid-cols-2 gap-8 lg:grid-cols-4'>
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
               {stats.map((stat: any, index: any) => (
                 <div
                   key={index}
                   className='stat-card space-y-1 rounded-xl bg-[var(--ft-light)] p-6 text-center backdrop-blur-sm'
                 >
-                  <h3 className='text-3xl font-bold text-white md:text-3xl'>
+                  <h3 className='text-3xl font-bold break-words text-white md:text-3xl'>
                     {isVisible &&
                       (isNaN(parseFloat(stat.value)) ? (
                         stat.value
@@ -181,10 +181,11 @@ export function Homepage() {
                       ))}
                   </h3>
 
-                  <p className='text-sm font-medium text-[var(--ft-only-gray)]'>
+                  <p className='text-sm font-medium break-words text-[var(--ft-only-gray)]'>
                     {stat.label}
                   </p>
-                  <p className='text-sm text-[var(--ft-only-gray)]'>
+
+                  <p className='text-sm break-words text-[var(--ft-only-gray)]'>
                     {stat.sublabel}
                   </p>
                 </div>
@@ -232,6 +233,7 @@ export function Homepage() {
             </h2>
           </div>
 
+          {/* Added only small-screen spacing fix */}
           <div className='proj-grid mx-auto grid auto-rows-fr gap-10 md:grid-cols-2'>
             {challenges.map((challenge, index) => {
               const isExpanded = expandedChallengeId === challenge.id
@@ -240,20 +242,21 @@ export function Homepage() {
               return (
                 <div
                   key={challenge.id}
-                  className='upcoming-card relative h-full'
+                  className='upcoming-card relative h-full w-full'
                   style={{ animationDelay: `${index * 0.2}s` }}
                 >
-                  <div className='proj-main-box relative h-full rounded-[10px] bg-[var(--ft-light)] p-9 pb-0'>
-                    <div className='proj-inner-box relative flex h-full flex-col bg-[var(--background)] p-9'>
-                      {/* Header */}
-                      <div className='mb-8 flex items-center justify-between'>
+                  <div className='proj-main-box relative h-full rounded-[10px] bg-[var(--ft-light)] p-9'>
+                    {/* Prevent overflow without touching padding */}
+                    <div className='proj-inner-box relative flex h-full min-h-full flex-col bg-[var(--background)] p-9'>
+                      {/* Header (FIX: allow wrap on small screens) */}
+                      <div className='mb-8 flex flex-wrap items-center justify-between gap-4'>
                         <div
                           className={`${challenge.badgeColor} badge-float rounded-lg px-4 py-4 text-xl font-bold text-[var(--ft-primary-foreground)] shadow-lg`}
                         >
                           {challenge.badge}
                         </div>
 
-                        <div className='timer-pulse flex items-center gap-2 rounded-full border border-[var(--ft-primary)] bg-[var(--ft-light)] px-4 py-2'>
+                        <div className='timer-pulse flex shrink-0 items-center gap-2 rounded-full border border-[var(--ft-primary)] bg-[var(--ft-light)] px-4 py-2'>
                           <svg
                             className='h-4 w-4 text-[var(--ft-primary)]'
                             fill='none'
@@ -267,7 +270,7 @@ export function Homepage() {
                               d='M12 6v6l4 2'
                             />
                           </svg>
-                          <span className='text-sm font-medium text-[var(--ft-primary)]'>
+                          <span className='text-sm font-medium whitespace-nowrap text-[var(--ft-primary)]'>
                             {challenge.timeLeft}
                           </span>
                         </div>
@@ -275,7 +278,8 @@ export function Homepage() {
 
                       {/* Content */}
                       <div className='mb-6 space-y-3'>
-                        <h3 className='text-2xl font-bold text-[var(--ft-text-color)] lg:text-3xl'>
+                        {/* Prevent title overflow */}
+                        <h3 className='text-2xl font-bold break-words text-[var(--ft-text-color)] lg:text-3xl'>
                           {challenge.title}
                         </h3>
 
@@ -284,7 +288,7 @@ export function Homepage() {
                             isExpanded ? 'max-h-[1000px]' : 'max-h-[4.5em]'
                           }`}
                         >
-                          <p className='text-sm leading-relaxed text-[var(--ft-text-gray)]'>
+                          <p className='text-sm leading-relaxed break-words text-[var(--ft-text-gray)]'>
                             {challenge.description}
                           </p>
                         </div>
@@ -306,14 +310,14 @@ export function Homepage() {
                           <p className='mb-1 text-xs text-[var(--ft-text-gray)]'>
                             Prize pool
                           </p>
-                          <p className='text-3xl font-bold text-[var(--ft-text-color)]'>
+                          <p className='text-3xl font-bold break-words text-[var(--ft-text-color)]'>
                             {challenge.prizePool}
                           </p>
                         </div>
                       </div>
 
-                      {/* Buttons */}
-                      <div className='proj-btn-box mt-auto flex flex-wrap gap-5'>
+                      {/* Buttons (FIX: stack properly on mobile without changing design) */}
+                      <div className='proj-btn-box mt-auto flex flex-col gap-5 sm:flex-row'>
                         <Link
                           to={`/challenge/${challenge.challengeId}`}
                           className='flex-1 rounded-full bg-[var(--ft-primary)] px-6 py-3 text-center text-sm font-medium text-black transition-all duration-300 hover:bg-[var(--ft-btn-hover)] hover:text-white'
@@ -338,137 +342,152 @@ export function Homepage() {
       </section>
 
       <section className='relative overflow-hidden bg-[var(--ft-bg-black)] py-20 lg:py-32'>
-        <div className='relative z-10 mx-auto max-w-7xl px-6 lg:px-8'>
-          <div className='mb-16 text-center'>
-            <h2 className='fade-in text-gradient text-4xl font-bold md:text-5xl lg:text-6xl'>
-              Recent Winners & Submissions
-            </h2>
-          </div>
+  <div className='relative z-10 mx-auto max-w-7xl px-6 lg:px-8'>
+    
+    <div className='mb-16 text-center'>
+      <h2 className='fade-in text-gradient text-4xl font-bold md:text-5xl lg:text-6xl'>
+        Recent Winners & Submissions
+      </h2>
+    </div>
 
-          <div className='grid gap-10 lg:grid-cols-2'>
-            <div className='space-y-4'>
-              {recentWinners.map((winner, index) => (
-                <div
-                  key={winner.id}
-                  className='home-winner-card home-recent-winner-item mb-6 flex items-center justify-between rounded-2xl bg-[var(--ft-light)] p-6 backdrop-blur-sm last:mb-0'
-                  style={{ animationDelay: `${index * 0.1}s` }}
+    {/* Grid */}
+    <div className='grid gap-10 lg:grid-cols-2'>
+      
+      {/* LEFT SIDE - Winners */}
+      <div className='space-y-4'>
+        {recentWinners.map((winner, index) => (
+          <div
+            key={winner.id}
+            className='home-winner-card home-recent-winner-item mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[var(--ft-light)] p-6 backdrop-blur-sm last:mb-0'
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            
+            <div className='flex min-w-0 items-center gap-4'>
+              <div className='flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[rgba(0,186,124,0.21)] bg-[rgba(0,186,124,0.21)]'>
+                <svg
+                  className='h-8 w-8 text-gray-400'
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
                 >
-                  <div className='flex items-center gap-4'>
-                    <div className='flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-[rgba(0,186,124,0.21)] bg-[rgba(0,186,124,0.21)]'>
-                      <svg
-                        className='h-8 w-8 text-gray-400'
-                        fill='currentColor'
-                        viewBox='0 0 20 20'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z'
-                          clipRule='evenodd'
-                        />
-                      </svg>
-                    </div>
+                  <path
+                    fillRule='evenodd'
+                    d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </div>
 
-                    <div>
-                      <h3 className='text-lg font-bold text-white'>
-                        {winner.name}
-                      </h3>
-                      <p className='text-sm text-white'>{winner.timeAgo}</p>
-                    </div>
-                  </div>
-
-                  <div className='approved-badge flex items-center gap-2 rounded-full border border-[var(--ft-primary)] bg-[var(--ft-light)] px-5 py-3'>
-                    <span className='text-sm font-medium text-white'>
-                      Approved
-                    </span>
-                    <svg
-                      className='h-4 w-4 text-white'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      stroke='currentColor'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M5 13l4 4L19 7'
-                      />
-                    </svg>
-                  </div>
-                </div>
-              ))}
+              <div className='min-w-0'>
+                <h3 className='truncate text-lg font-bold text-white'>
+                  {winner.name}
+                </h3>
+                <p className='truncate text-sm text-white'>
+                  {winner.timeAgo}
+                </p>
+              </div>
             </div>
 
-            <div className='space-y-6 rounded-2xl bg-[var(--ft-light)] p-8'>
-              <div className='mb-6 flex items-center justify-between'>
-                <h3 className='text-2xl font-bold text-white'>
-                  Top Submisssion
-                </h3>
-                <StrokeButton>View All</StrokeButton>
-              </div>
-
-              <div className='space-y-4'>
-                {topSubmissions.map((submission, index) => (
-                  <div
-                    key={submission.id}
-                    className='home-submission-card rounded-2xl bg-[#000000] p-6 backdrop-blur-sm'
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                  >
-                    <div className='mb-4 flex items-center gap-4'>
-                      <div className='flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#0D1D18] text-lg font-bold text-white'>
-                        {submission.badge}
-                      </div>
-
-                      <div className='flex-1'>
-                        <h4 className='mb-1 text-lg font-bold text-white'>
-                          {submission.title}
-                        </h4>
-                      </div>
-
-                      <div className='text-lg font-bold text-emerald-400'>
-                        {submission.score}
-                      </div>
-                    </div>
-
-                    <div className='flex gap-5'>
-                      {submission.github_url && (
-                        <a
-                          href={submission.github_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='flex-1'
-                        >
-                          <FillButton className='w-full'>
-                            GitHub Link
-                          </FillButton>
-                        </a>
-                      )}
-
-                      {submission.demo_url && (
-                        <a
-                          href={submission.demo_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='flex-1'
-                        >
-                          <StrokeButton className='w-full'>
-                            Live Demo
-                          </StrokeButton>
-                        </a>
-                      )}
-
-                      {!submission.github_url && !submission.demo_url && (
-                        <p className='text-sm text-gray-400'>
-                          No links available
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className='approved-badge flex shrink-0 items-center gap-2 rounded-full border border-[var(--ft-primary)] bg-[var(--ft-light)] px-5 py-3'>
+              <span className='text-sm font-medium text-white'>
+                Approved
+              </span>
+              <svg
+                className='h-4 w-4 text-white'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M5 13l4 4L19 7'
+                />
+              </svg>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* RIGHT SIDE - Top Submissions */}
+      <div className='space-y-6 rounded-2xl bg-[var(--ft-light)] p-8'>
+        
+        <div className='mb-6 flex flex-wrap items-center justify-between gap-4'>
+          <h3 className='text-2xl font-bold text-white'>
+            Top Submisssion
+          </h3>
+          <StrokeButton>View All</StrokeButton>
         </div>
-      </section>
+
+        <div className='space-y-4'>
+          {topSubmissions.map((submission, index) => (
+            <div
+              key={submission.id}
+              className='home-submission-card rounded-2xl bg-[#000000] p-6 backdrop-blur-sm'
+              style={{ animationDelay: `${index * 0.15}s` }}
+            >
+              
+              <div className='mb-4 flex flex-wrap items-center gap-4'>
+                
+                <div className='flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#0D1D18] text-lg font-bold text-white'>
+                  {submission.badge}
+                </div>
+
+                <div className='min-w-0 flex-1'>
+                  <h4 className='truncate text-lg font-bold text-white'>
+                    {submission.title}
+                  </h4>
+                </div>
+
+                <div className='shrink-0 text-lg font-bold text-emerald-400'>
+                  {submission.score}
+                </div>
+              </div>
+
+              {/* Links */}
+              <div className='flex flex-col gap-5 sm:flex-row'>
+                
+                {submission.github_url && (
+                  <a
+                    href={submission.github_url}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='flex-1'
+                  >
+                    <FillButton className='w-full'>
+                      GitHub Link
+                    </FillButton>
+                  </a>
+                )}
+
+                {submission.demo_url && (
+                  <a
+                    href={submission.demo_url}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='flex-1'
+                  >
+                    <StrokeButton className='w-full'>
+                      Live Demo
+                    </StrokeButton>
+                  </a>
+                )}
+
+                {!submission.github_url && !submission.demo_url && (
+                  <p className='text-sm text-gray-400'>
+                    No links available
+                  </p>
+                )}
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
     </HomeLayout>
   )
 }
