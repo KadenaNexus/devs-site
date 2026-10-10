@@ -1,0 +1,40 @@
+Kadena Devs (kadenadevs.kadena.ws) – new site, 9 Oct 2026
+
+WHAT THIS IS
+The challenge program is closed, so the React app (sign-up, submissions, challenge
+pages, admin) is retired. The site becomes one static page: projects, the note about
+the challenges, and how to get in touch. Front end only. No backend, no database.
+
+FILES
+- index.html            the whole site (CSS, JS, logo and favicon inline)
+- og.png                link-preview image for X / Telegram, served at /og.png
+- nginx-kadenadevs.conf location rules: static root + redirects for the old app routes
+
+STEPS
+1. Back up the current build and keep it (in case anything from the old app is needed):
+     sudo mv /var/www/kadenadevs.kadena.ws /var/www/kadenadevs.kadena.ws.bak-$(date +%F)
+   (adjust the path to wherever nginx `root` points for this host)
+2. sudo mkdir -p /var/www/kadenadevs.kadena.ws
+   sudo cp index.html og.png /var/www/kadenadevs.kadena.ws/
+3. In the nginx server block for kadenadevs.kadena.ws, replace the root / index /
+   location rules with the contents of nginx-kadenadevs.conf (keep the listen,
+   server_name and SSL lines as they are). If the app had a backend/API upstream
+   (proxy_pass) for sign-ups or submissions, remove that location too and stop the
+   service; nothing on the new page calls it.
+     sudo nginx -t && sudo systemctl reload nginx
+4. If the old app ran a Node/PM2 process for this host, stop and disable it.
+
+CHECK (private window)
+- https://kadenadevs.kadena.ws loads the new page; the code card types and reaches "Deployed"
+- https://kadenadevs.kadena.ws/challenge-list redirects to the projects section
+- Projects list shows 5 live (incl. Quantum-Safe Kadena) and 5 in development (incl. Kadena Privacy)
+- Dark/light toggle works; phone width has no horizontal scroll
+- Paste the URL in Telegram: the preview shows the dark hero image
+
+ROLLBACK
+  sudo rm -rf /var/www/kadenadevs.kadena.ws && sudo mv /var/www/kadenadevs.kadena.ws.bak-YYYY-MM-DD /var/www/kadenadevs.kadena.ws
+  and restore the old nginx location rules.
+
+UPDATING LATER
+Project rows are plain HTML in index.html (search for "group open" and "group done").
+Move a row between the two groups to change its status; copy a row to add a project.
