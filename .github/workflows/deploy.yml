@@ -1,8 +1,9 @@
-# https://kadenadevs.kadena.ws/: main goes live, other branches go to preview.kadena.ws/devs-site/<branch>/ (see KadenaNexus/homepage docs/DEPLOY-STANDARD.md)
 name: deploy
+# Shared workflow checks pull requests; only a main push updates the live destination.
 on:
+  pull_request:
+    branches: [main]
   push:
-    paths: ["static-site/**", ".github/workflows/deploy.yml"]
   workflow_dispatch:
 jobs:
   site:
@@ -10,5 +11,6 @@ jobs:
     with:
       source: static-site
       files: "index.html og.png"
+      target: /var/www/kadenadevs.kadena.ws
       url: https://kadenadevs.kadena.ws/
     secrets: inherit
