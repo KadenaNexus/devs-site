@@ -406,6 +406,18 @@ footer a:hover{color:var(--sand)}
   };
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (still) { pre.innerHTML = render(chars.length); st.className = 'st ok'; stt.textContent = 'Deployed'; out.forEach(e => e.classList.add('on')); return; }
+  // Keep the card one size while it types: measure the finished contract once (and on resize) and reserve
+  // that height, so the page below never moves as lines appear.
+  const fit = () => {
+    const now = pre.innerHTML;
+    pre.style.minHeight = '';
+    pre.innerHTML = render(chars.length);
+    pre.style.minHeight = pre.offsetHeight + 'px';
+    pre.innerHTML = now;
+  };
+  fit();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fit, 150); });
+  if (document.fonts) document.fonts.ready.then(fit);
   let i = 0, t;
   function type() {
     i = Math.min(chars.length, i + (Math.random() < .25 ? 2 : 1));
